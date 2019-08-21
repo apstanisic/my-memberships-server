@@ -1,0 +1,30 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/indent": ["off", 2],
+    "quotes": ["warn", "single"],
+    "require-atomic-updates": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/no-parameter-properties": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-console": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "no-unreachable": "warn",
+    "no-return-await": "error",
+    "@typescript-eslint/no-empty-interface": "off"
+  }
+}
