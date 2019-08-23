@@ -7,9 +7,10 @@ services:
     ports:
       - 6379:6379
     networks:
-      - moj_gym_network
+      - my_subs_network
 
   db:
+    container_name: 'my_sub_pg'
     image: postgres
     restart: unless-stopped
     ports:
@@ -21,7 +22,7 @@ services:
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
     networks:
-      - moj_gym_network
+      - my_subs_network
 
 networks:
-  moj_gym_network:
+  my_subs_network:

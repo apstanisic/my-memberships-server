@@ -8,6 +8,7 @@ import { PasswordResetController } from './password-reset.controller';
 import { ConfigService } from '../config/config.service';
 import { ConfigModule } from '../config/config.module';
 import { MailModule } from '../mail/mail.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { MailModule } from '../mail/mail.module';
         };
       }
     }),
-    MailModule
+    MailModule,
+    UserModule
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController, PasswordResetController],

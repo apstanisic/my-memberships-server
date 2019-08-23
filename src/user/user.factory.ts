@@ -1,8 +1,8 @@
 import * as Faker from 'faker';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../../src/user/user.entity';
+import { User } from './user.entity';
 
-export default function userFactory() {
+export function generateUser() {
   const user = new User();
   user.id = Faker.random.uuid();
   user.email = Faker.internet.email();

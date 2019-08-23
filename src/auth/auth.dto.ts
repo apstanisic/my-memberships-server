@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  MinLength,
-  IsString,
-  IsOptional
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { User } from '../user/user.entity';
 
 /* Data provided for login */

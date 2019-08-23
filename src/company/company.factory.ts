@@ -1,8 +1,9 @@
 import * as Faker from 'faker';
-import { Company } from '../../src/company/company.entity';
-import { Weekdays } from '../../src/company/location.dto';
+import { Company } from './company.entity';
+import { Weekdays } from './location.dto';
+import { User } from '../user/user.entity';
 
-const workhours: Record<Weekdays, string> = {
+const workhours = {
   monday: '09:00-21:00',
   tuesday: '09:00-21:00',
   wednesday: '09:00-21:00',
@@ -12,7 +13,7 @@ const workhours: Record<Weekdays, string> = {
   sunday: '09:00-15:00'
 };
 
-export default function companyFactory() {
+export function generateCompany(users: User[]) {
   const company = new Company();
   company.emails = [Faker.internet.email()];
   company.name = Faker.company.companyName();
@@ -29,6 +30,7 @@ export default function companyFactory() {
       workingHours: workhours
     }
   ];
+  company.owner = Faker.random.arrayElement(users);
 
   return company;
 }

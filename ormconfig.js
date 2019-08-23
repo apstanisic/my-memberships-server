@@ -28,10 +28,10 @@ if (process.env.NODE_ENV === 'production') {
   config.entities = ['dist/**/*.entity.js'];
 } else {
   config.synchronize = true;
-  // config.logging = 'all';
+  config.logging = 'all';
   config.migrations = ['db/migrations/*{.ts,.js}'];
   config.entities = ['src/**/*.entity{.ts,.js}'];
-  config.migrationsRun = true;
+  // config.migrationsRun = true;
 }
 
 module.exports = config;
