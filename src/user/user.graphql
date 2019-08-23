@@ -1,0 +1,30 @@
+type User {
+  id: ID!
+  ownerCompanies: [Company]!
+  companiesWhereAdmin: [Company]!
+  subscriptions: [Subscription]!
+  email: String!
+  name: String
+  avatar: String
+  phoneNumber: String
+}
+
+
+user {
+  subscriptions {
+    company
+  }
+}
+
+company {
+  subscriptions {
+    user
+  }
+
+}
+
+companies {
+  subscriptions {
+    user
+  }
+}

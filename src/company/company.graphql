@@ -1,0 +1,32 @@
+type Company {
+  id: ID!
+  name: String!
+  owner: User!
+  admins: [User!]!
+  phoneNumbers: [String!]!
+  emails: [String!]!
+  locations: [Location!]!
+}
+
+type Location {
+  address: String!
+  workingHours: Weekdays!
+  phoneNumber: String!
+  email: String!
+  cooridnates: Cooridnates!
+}
+
+type Cooridnates {
+  lat: String!
+  long: String!
+}
+
+type Weekdays {
+  monday: String!
+  tuesday: String!
+  wednesday: String!
+  thursday: String!
+  friday: String!
+  saturday: String!
+  sunday: String!
+}

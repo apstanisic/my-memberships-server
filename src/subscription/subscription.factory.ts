@@ -1,12 +1,9 @@
 import * as Faker from 'faker';
-import { Subscription } from '../../src/subscription/subscription.entity';
-import { User } from '../../src/user/user.entity';
-import { Company } from '../../src/company/company.entity';
+import { Subscription } from './subscription.entity';
+import { User } from '../user/user.entity';
+import { Company } from '../company/company.entity';
 
-export default function subscriptionFactory(
-  users: User[],
-  companies: Company[]
-) {
+export function generateSubscription(users: User[], companies: Company[]) {
   const random = Faker.random.arrayElement;
   const sub = new Subscription();
 

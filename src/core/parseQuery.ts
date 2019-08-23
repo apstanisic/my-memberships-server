@@ -9,6 +9,7 @@ import {
   FindOperator,
   In
 } from 'typeorm';
+import { convertToObject } from './helpers';
 
 /*
   Parse query to TypeOrm valid query
@@ -17,7 +18,10 @@ import {
   If no key is provided it will assume equal
 */
 type OrmQuery<T = any> = Record<string, FindOperator<T>>;
-export default function parseQuery(query: Record<string, any>) {
+export default function parseQuery(
+  query: Record<string, any> | string | null | undefined
+) {
+  query = convertToObject(query);
   // Here we will put processed filters
   const typeOrmQuery: OrmQuery = {};
 
@@ -54,8 +58,8 @@ export default function parseQuery(query: Record<string, any>) {
         }
         break;
       case 'man':
-        typeOrmQuery[`${name}__man`] = value;
         // Do nothing, handle manually
+        typeOrmQuery[`${name}__man`] = value;
         break;
       // If it isn't provided, assume equal
       default:
