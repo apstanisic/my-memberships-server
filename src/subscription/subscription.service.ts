@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subscription } from './subscription.entity';
 import { Company } from '../company/company.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class SubscriptionService {
@@ -12,8 +13,8 @@ export class SubscriptionService {
   ) {}
 
   /* Get subscription for provider ownerId */
-  getSubscriptionsByUserId(ownerId: string) {
-    return this.repository.find({ where: { ownerId } });
+  getUsersSubscriptions(owner: User) {
+    return this.repository.find({ where: { owner } });
   }
 
   /* Get subscription for provider ownerId */

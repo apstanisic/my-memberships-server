@@ -9,13 +9,18 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { CompanyModule } from '../company/company.module';
 import { UserModule } from '../user/user.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
+import { AccessControlModule } from '../access-control/access-control.module';
 
 @Module({
   imports: [
-    ConfigModule,
     TypeOrmModule.forRoot(),
-    GraphQLModule.forRoot({ autoSchemaFile: 'schema.graphql' }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: 'schema.graphql',
+      context: ({ req }) => ({ req })
+    }),
+    ConfigModule,
     AuthModule,
+    AccessControlModule,
     MailModule,
     UserModule,
     CompanyModule,
@@ -23,6 +28,5 @@ import { SubscriptionModule } from '../subscription/subscription.module';
   ],
   controllers: [AppController],
   providers: [AppService]
-  // exports: [ConfigModule, AuthModule, MailModule, AdsModule, StorageModule]
 })
 export class AppModule {}

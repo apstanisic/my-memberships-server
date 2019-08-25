@@ -28,7 +28,7 @@ export class UserController {
 
   /* Update user password */
   @Put('password')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard())
   async changePassword(@Body() data: UpdatePasswordData): Promise<User> {
     const { email, oldPassword, newPassword } = data;
 
@@ -40,7 +40,7 @@ export class UserController {
 
   /* Update user info */
   @Put()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard())
   async updateUserInfo(
     @Body() userInfo: UpdateUserInfo,
     @GetUser() user: User
@@ -51,13 +51,13 @@ export class UserController {
 
   /* Get user info */
   @Get('account')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard())
   getAccount(@GetUser() user: User) {
     return user;
   }
 
   @Delete('account')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard())
   async deleteUser(
     @GetUser() user: User,
     @Body() { email, password }: AuthData

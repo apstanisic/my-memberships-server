@@ -44,3 +44,11 @@ export function convertToObject<T = any>(
   if (typeof query === 'string') return JSON.parse(query);
   return { ...query };
 }
+
+export function toArray<T>(item: T | T[]): T[] {
+  if (Array.isArray(item)) {
+    return item;
+  } else {
+    return [item];
+  }
+}

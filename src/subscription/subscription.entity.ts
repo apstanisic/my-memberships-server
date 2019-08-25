@@ -54,6 +54,25 @@ export class Subscription {
   @Min(0)
   price: number;
 
+  /* When was subscription deleted */
+  @Column({ nullable: true })
+  deletedAt?: Date;
+
+  /* Who deleted subscription */
+  @Column({ nullable: true })
+  deletedBy?: User;
+
+  /* Why was subscription deleted */
+  @Column({ nullable: true })
+  deletedReason: string;
+
+  // @Column({ nullable: true, type: 'simple-json' })
+  // deleted: {
+  //   reason: string;
+  //   by: User;
+  //   at: Date;
+  // };
+
   /* When was subscription updated */
   @UpdateDateColumn()
   @Exclude()
