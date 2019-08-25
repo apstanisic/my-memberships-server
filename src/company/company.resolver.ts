@@ -7,17 +7,13 @@ import {
 } from '@nestjs/graphql';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
-import { UsersService } from '../user/user.service';
 import { User } from '../user/user.entity';
 import { Int } from 'type-graphql';
 
 /* Resolves top level company */
 @Resolver((of: any) => Company)
 export class CompanyResolver {
-  constructor(
-    private readonly companyService: CompanyService,
-    private readonly userService: UsersService
-  ) {}
+  constructor(private readonly companyService: CompanyService) {}
 
   /* Returns paginated companies */
   @Query(returns => [Company], { name: 'companies' })
@@ -27,6 +23,7 @@ export class CompanyResolver {
     @Args({ name: 'page', nullable: true, type: () => Int }) page: number = 1
   ): Promise<Company[]> {
     return this.companyService.find(filter);
+    // return this.companyService.paginate(filter, page)
   }
 
   /* Returns company by id */

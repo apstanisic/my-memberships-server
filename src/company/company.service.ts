@@ -20,11 +20,11 @@ export class CompanyService {
 
   /* Find companies that match criteria with pagination */
   async paginate(
-    criteria: OrmQuery = {},
+    criteria: any = {},
     page: number = 1
   ): Promise<PaginationResult<Company>> {
     return paginate({
-      criteria,
+      criteria: parseQuery(criteria),
       options: { page },
       repository: this.repository
     });

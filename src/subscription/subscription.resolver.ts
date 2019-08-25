@@ -1,53 +1,45 @@
-import { Resolver, Root, ResolveProperty, Parent } from '@nestjs/graphql';
-import { FieldResolver } from 'type-graphql';
+import { Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 import { Subscription } from './subscription.entity';
 import { User } from '../user/user.entity';
 import { SubscriptionService } from './subscription.service';
 import { Company } from '../company/company.entity';
-import { generateSubscription } from './subscription.factory';
-import { generateUser } from '../user/user.factory';
-import { generateCompany } from '../company/company.factory';
 
+/**
+ * Resolves subscriptions
+ */
 @Resolver((of: any) => Subscription)
 export class SubscriptionResolver {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   /* Get users subscriptions */
   @ResolveProperty('subscriptions', type => [Subscription])
-  getUsersSubscriptions(@Parent() user: User) {
-    return this.subscriptionService.getSubscriptionsByUserId(user.id);
+  getUsersSubscriptions(@Parent() user: User): Promise<Subscription[]> {
+    return this.subscriptionService.getUsersSubscriptions(user);
   }
 }
 
-/* Resolves subscriptions when parent is user */
+/**
+ * Resolves subscriptions when parent is user
+ */
 @Resolver((of: any) => User)
 export class UserSubscriptionResolver {
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(private readonly userService: SubscriptionService) {}
 
   @ResolveProperty('subscriptions', type => [Subscription])
-  getUsersSubscriptions() {
-    // return this.subscriptionService.getSubscriptionsByUserId(user.id);
-    return [
-      generateSubscription(
-        [generateUser()],
-        [generateCompany([generateUser()])]
-      )
-    ];
+  getUsersSubscriptions(@Parent() user: User): Promise<Subscription[]> {
+    return this.userService.getUsersSubscriptions(user);
   }
 }
 
-/* Resolves subscriptions when parent is user */
+/**
+ * Resolves subscriptions when parent is company
+ */
 @Resolver((of: any) => Company)
 export class CompanySubscriptionResolver {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @ResolveProperty('subscriptions', type => [Subscription])
-  async getUserCompanies(@Parent() company: Company) {
-    const res = await this.subscriptionService.getCompaniesSubscriptions(
-      company
-    );
-    console.log(res);
-    res.forEach(console.log);
-    return res;
+  async getUserCompanies(@Parent() company: Company): Promise<Subscription[]> {
+    return this.subscriptionService.getCompaniesSubscriptions(company);
   }
 }

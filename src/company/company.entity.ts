@@ -51,6 +51,10 @@ export class Company {
   @Field(type => [Subscription])
   subscriptions: Subscription[];
 
+  /* Description of company, it's prices */
+  @Column()
+  description: string;
+
   /* Company's main phone number */
   @Column({ type: 'simple-array' })
   @Field(type => [String])
