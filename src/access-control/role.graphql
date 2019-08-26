@@ -1,0 +1,6 @@
+type Role {
+  id: ID!
+  user: User!
+  resourceId: String
+  resourceType: String
+}

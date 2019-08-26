@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeepPartial } from 'typeorm';
 import { Company } from './company.entity';
 import parseQuery from '../core/parseQuery';
-import { OrmQuery } from '../core/orm-query.pipe';
 import { PaginationResult, paginate } from '../core/pagination';
 
 @Injectable()

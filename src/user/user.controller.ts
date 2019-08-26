@@ -28,19 +28,20 @@ export class UserController {
 
   /* Update user password */
   @Put('password')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async changePassword(@Body() data: UpdatePasswordData): Promise<User> {
     const { email, oldPassword, newPassword } = data;
 
     const user = await this.usersService.findForLogin(email, oldPassword);
     if (!user) throw new HttpException('Error updating', 500);
-    await user.setPassword(newPassword);
+    user.password = newPassword;
+    // await user.setPassword(newPassword);
     return this.usersService.update(user, user);
   }
 
   /* Update user info */
   @Put()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async updateUserInfo(
     @Body() userInfo: UpdateUserInfo,
     @GetUser() user: User
@@ -51,19 +52,19 @@ export class UserController {
 
   /* Get user info */
   @Get('account')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   getAccount(@GetUser() user: User) {
     return user;
   }
 
   @Delete('account')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   async deleteUser(
     @GetUser() user: User,
     @Body() { email, password }: AuthData
   ) {
     if (user.email !== email) throw new ForbiddenException();
-    if (!(await user.comparePassword(password))) throw new ForbiddenException();
+    if (!(await user.checkPassword(password))) throw new ForbiddenException();
     try {
       // for (let i = 0; i < user.ads.length; i++) {
       //   await this.adService.remove(user.ads[i]);

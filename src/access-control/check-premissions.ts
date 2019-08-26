@@ -71,9 +71,7 @@ function canDoToAll(user: User, premission: Permission): boolean {
   });
 }
 
-/**
- * Convert strings to array of Permission enums
- */
+/** Convert strings to array of Permission enums */
 export function stringsToPermissions(
   permissions: string | string[]
 ): Permission[] {

@@ -18,6 +18,7 @@ export function generateCompany(users: User[]) {
   company.emails = [Faker.internet.email()];
   company.name = Faker.company.companyName();
   company.phoneNumbers = [Faker.phone.phoneNumber()];
+  company.description = Faker.lorem.paragraph(4);
   company.locations = [
     {
       cooridnates: {
