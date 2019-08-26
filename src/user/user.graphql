@@ -1,14 +1,15 @@
+
 type User {
   id: ID!
-  ownerCompanies: [Company]!
-  companiesWhereAdmin: [Company]!
-  subscriptions: [Subscription]!
+  roles: [Role!]!
+  subscriptions: [Subscription!]!
   email: String!
   name: String
   avatar: String
   phoneNumber: String
 }
-
+  # ownedCompanies: [Company!]!
+  # companiesWhereAdmin: [Company!]!
 
 user {
   subscriptions {

@@ -9,10 +9,8 @@ export class SubscriptionMigration1566417766995 implements MigrationInterface {
     const subscriptions: Subscription[] = [];
 
     const users: User[] = await queryRunner.manager.find(User);
-    console.log(users);
 
     const companies: Company[] = await queryRunner.manager.find(Company);
-    console.log(companies);
 
     for (let i = 0; i < 1500; i++) {
       subscriptions.push(generateSubscription(users, companies));

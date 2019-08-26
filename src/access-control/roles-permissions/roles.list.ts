@@ -55,6 +55,15 @@ export enum RoleEnum {
   appOwner = 'app_owner'
 }
 
+export const availableRoles = [
+  'guest',
+  'user',
+  'company_admin',
+  'company_owner',
+  'app_admin',
+  'app_owner'
+];
+
 export const rolesPremissions: Record<RoleEnum, Permission[]> = {
   user,
   guest,

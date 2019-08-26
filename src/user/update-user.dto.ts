@@ -2,7 +2,6 @@ import { IsOptional, IsEmail, IsString, MinLength } from 'class-validator';
 
 /**
  * Data that is provided when changing user info
- * No password
  */
 export class UpdateUserInfo {
   @IsOptional()
@@ -16,11 +15,11 @@ export class UpdateUserInfo {
 
   @IsOptional()
   @IsString()
-  @MinLength(5)
+  @MinLength(8)
   phoneNumber?: string;
 
   @IsOptional()
   @IsString()
-  @MinLength(5)
+  @MinLength(10)
   avatar?: string;
 }
