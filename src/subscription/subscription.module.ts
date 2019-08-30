@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubscriptionController } from './subscription.controller';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from './subscription.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   CompanySubscriptionResolver,
   SubscriptionResolver,
-  UserSubscriptionResolver
+  UserSubscriptionResolver,
 } from './subscription.resolver';
 
 @Module({
@@ -17,7 +17,7 @@ import {
     SubscriptionService,
     SubscriptionResolver,
     UserSubscriptionResolver,
-    CompanySubscriptionResolver
-  ]
+    CompanySubscriptionResolver,
+  ],
 })
 export class SubscriptionModule {}

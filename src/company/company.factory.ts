@@ -10,7 +10,7 @@ const workhours = {
   thursday: '09:00-21:00',
   friday: '09:00-21:00',
   saturday: '09:00-18:00',
-  sunday: '09:00-15:00'
+  sunday: '09:00-15:00',
 };
 
 export function generateCompany(users: User[]) {
@@ -23,13 +23,13 @@ export function generateCompany(users: User[]) {
     {
       cooridnates: {
         lat: Faker.address.latitude(),
-        long: Faker.address.longitude()
+        long: Faker.address.longitude(),
       },
       address: Faker.address.streetAddress(),
       email: Faker.internet.email(),
       phoneNumber: Faker.phone.phoneNumber(),
-      workingHours: workhours
-    }
+      workingHours: workhours,
+    },
   ];
   company.owner = Faker.random.arrayElement(users);
 

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { toArray } from '../core/helpers';
+import { castArray } from 'lodash';
 
 /**
  * Decorator that set metadata. It set requires permissions for given
@@ -10,8 +10,8 @@ import { toArray } from '../core/helpers';
  */
 export function RequiredPremissions(
   permissions: string | string[],
-  targetName?: string
+  targetName?: string,
 ) {
-  const permissionsArray = toArray(permissions);
+  const permissionsArray = castArray(permissions);
   return SetMetadata('required_premissions', [permissionsArray, targetName]);
 }

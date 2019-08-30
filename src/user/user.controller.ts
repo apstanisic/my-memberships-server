@@ -9,12 +9,12 @@ import {
   ClassSerializerInterceptor,
   Delete,
   ForbiddenException,
-  InternalServerErrorException
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
 import { User } from './user.entity';
-import { UpdatePasswordData, AuthData } from '../auth/auth.dto';
+import { UpdatePasswordData, LoginData } from '../auth/auth.dto';
 import { UsersService } from './user.service';
 import { removeEmptyItems } from '../core/helpers';
 import { UpdateUserInfo } from './update-user.dto';
@@ -22,9 +22,7 @@ import { UpdateUserInfo } from './update-user.dto';
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
-  constructor(
-    private readonly usersService: UsersService // @Inject(forwardRef(() => AdsService)) private readonly adService: AdsService
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   /* Update user password */
   @Put('password')
@@ -44,7 +42,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async updateUserInfo(
     @Body() userInfo: UpdateUserInfo,
-    @GetUser() user: User
+    @GetUser() user: User,
   ): Promise<User> {
     const newData = removeEmptyItems(userInfo);
     return this.usersService.update(user, newData);
@@ -61,7 +59,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async deleteUser(
     @GetUser() user: User,
-    @Body() { email, password }: AuthData
+    @Body() { email, password }: LoginData,
   ) {
     if (user.email !== email) throw new ForbiddenException();
     if (!(await user.checkPassword(password))) throw new ForbiddenException();

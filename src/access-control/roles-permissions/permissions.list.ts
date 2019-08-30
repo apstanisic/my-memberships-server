@@ -26,3 +26,34 @@ export enum Permission {
   'create_company:any' = 'create_company:any'
   //   'cancel_subscription:any',
 }
+// const paths = [
+//   '/company/comp_id/subscriptions/sub_id',
+//   '/user/user_id/subs/sub_id'
+// ];
+/**
+ * /* read, write    ---- app_owner
+ *
+ * /company/* read, write  ---- app_admin
+ * /user/* read, write
+ * /company/comp_id/subscriptions
+ *                 /admin
+ * /company/comp_id/owner
+ * /company/comp_id/* read, write   --- owner_comp_id
+ *
+ * /company/comp_id/* read    ---- admin_comp_id
+ * /company/comp_id/subs/* read, write
+ *
+ * // company/comp_id/info read, write
+ * /user/user_id/* read
+ * /user/user_id/subs/
+ * /company/subscription read, write
+ * /company/member read, write
+ *
+ *
+p, admin, gym-id, /gym/gym-id/*
+p, app_admin, *, /gym/*
+p, app_admin, *, /user/*
+p, app_admin, *, /user/owner_id deny
+ *
+ *
+ */

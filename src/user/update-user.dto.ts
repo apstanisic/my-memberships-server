@@ -1,8 +1,8 @@
-import { IsOptional, IsEmail, IsString, MinLength } from 'class-validator';
+import {
+  IsOptional, IsEmail, IsString, MinLength,
+} from 'class-validator';
 
-/**
- * Data that is provided when changing user info
- */
+/** Data that is provided when changing user info */
 export class UpdateUserInfo {
   @IsOptional()
   @IsEmail()

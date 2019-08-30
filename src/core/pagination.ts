@@ -6,18 +6,23 @@ import parseQuery from './parseQuery';
 class Paginator<T> {
   /* Page which user requests, default to first */
   page: number = 1;
+
   /* Items per page */
   limit: number = 12;
+
   /* Order, excepts any column, by default show newest */
   order: Record<string, any> = { createdAt: 'DESC' };
+
   response: Record<any, any> = {};
+
   /* Should we avoid parsing query to create compatible TypeOrm query */
   shouldParseQuery?: boolean;
+
   /* Options to be provided to query */
   options: Record<string, any> = {};
 
   constructor(params: Params) {
-    this.page = parseInt(params.page as string) || this.page;
+    this.page = Number(params.page) || this.page;
     this.limit = params.limit || this.limit;
     this.order = params.order || this.order;
     this.shouldParseQuery = params.shouldParseQuery;
@@ -28,7 +33,7 @@ class Paginator<T> {
     this.options = {
       skip: (this.page - 1) * this.limit,
       take: this.limit + 1,
-      order: this.order
+      order: this.order,
       // cache: true
     };
   }
@@ -37,7 +42,7 @@ class Paginator<T> {
   async execute<T>(repo: Repository<T>, criteria: {}) {
     const result = await repo.find({
       where: this.shouldParseQuery ? parseQuery(criteria) : criteria,
-      ...this.options
+      ...this.options,
     });
     const lastPage = this.limit >= result.length;
     if (!lastPage) {
@@ -47,9 +52,9 @@ class Paginator<T> {
       pagination: {
         lastPage,
         page: this.page,
-        perPage: this.limit
+        perPage: this.limit,
       },
-      data: result
+      data: result,
     };
   }
 }
@@ -87,7 +92,7 @@ interface PaginateProps<T> {
 export function paginate<T>({
   repository,
   criteria: query,
-  options
+  options,
 }: PaginateProps<T>) {
   const pag = new Paginator(options);
   pag.prepare();

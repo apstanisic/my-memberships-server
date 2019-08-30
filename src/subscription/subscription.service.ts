@@ -9,15 +9,15 @@ import { User } from '../user/user.entity';
 export class SubscriptionService {
   constructor(
     @InjectRepository(Subscription)
-    private readonly repository: Repository<Subscription>
+    private readonly repository: Repository<Subscription>,
   ) {}
 
-  /* Get subscription for provider ownerId */
+  /* Get subscriptions for provided user */
   getUsersSubscriptions(owner: User) {
     return this.repository.find({ where: { owner } });
   }
 
-  /* Get subscription for provider ownerId */
+  /** Get subscriptions for provided company */
   getCompaniesSubscriptions(company: Company) {
     return this.repository.find({ where: { company } });
   }

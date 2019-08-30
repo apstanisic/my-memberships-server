@@ -6,6 +6,6 @@ export class AppService {
   constructor(private readonly configService: ConfigService) {}
 
   homePage(): string {
-    return 'Moj Gym Api';
+    return 'My subscriptions Api Home page';
   }
 }

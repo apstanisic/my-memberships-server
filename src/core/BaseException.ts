@@ -6,7 +6,9 @@ interface Params {
 
 export default class BaseException {
   statusCode: number;
+
   message: string;
+
   error: any;
 
   constructor({ message = '', error = '', statusCode = 500 }: Params) {

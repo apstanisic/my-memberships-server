@@ -12,7 +12,7 @@ export class SubscriptionResolver {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   /* Get users subscriptions */
-  @ResolveProperty('subscriptions', type => [Subscription])
+  @ResolveProperty('subscriptions', (type) => [Subscription])
   getUsersSubscriptions(@Parent() user: User): Promise<Subscription[]> {
     return this.subscriptionService.getUsersSubscriptions(user);
   }
@@ -25,7 +25,7 @@ export class SubscriptionResolver {
 export class UserSubscriptionResolver {
   constructor(private readonly userService: SubscriptionService) {}
 
-  @ResolveProperty('subscriptions', type => [Subscription])
+  @ResolveProperty('subscriptions', (type) => [Subscription])
   getUsersSubscriptions(@Parent() user: User): Promise<Subscription[]> {
     return this.userService.getUsersSubscriptions(user);
   }
@@ -38,7 +38,7 @@ export class UserSubscriptionResolver {
 export class CompanySubscriptionResolver {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
-  @ResolveProperty('subscriptions', type => [Subscription])
+  @ResolveProperty('subscriptions', (type) => [Subscription])
   async getUserCompanies(@Parent() company: Company): Promise<Subscription[]> {
     return this.subscriptionService.getCompaniesSubscriptions(company);
   }
