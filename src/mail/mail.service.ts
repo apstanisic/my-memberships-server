@@ -6,28 +6,31 @@ interface MailData extends mailgun.messages.SendData {
   [key: string]: any;
 }
 
+/**
+ * @todo This should be more generic
+ */
 @Injectable()
 export class MailService {
   private mg: mailgun.Mailgun;
+
   private data: MailData;
 
   constructor(private readonly configService: ConfigService) {
     this.mg = mailgun({
       apiKey: configService.get('MAILGUN_ACTIVE_API_KEY'),
-      domain: configService.get('MAILGUN_DOMAIN')
+      domain: configService.get('MAILGUN_DOMAIN'),
     });
     this.data = {
-      from:
-        'Nadji auto test <postmaster@sandbox21d33c531d11422b870651057720097e.mailgun.org>',
+      from: configService.get('MAILGUN_SENDER'),
       to: 'test@nadjiauto.com',
-      subject: 'Nadji auto'
+      subject: 'Service Email',
     };
   }
 
   /* It will get all passed object keys, and replace detault object with it */
   send(data: MailData) {
     const mergedData = { ...this.data };
-    Object.keys(data).forEach(prop => {
+    Object.keys(data).forEach((prop) => {
       mergedData[prop] = data[prop];
     });
     return this.mg.messages().send(mergedData);
@@ -38,10 +41,9 @@ export class MailService {
   React instance
   */
   getDomainUrl() {
-    const url =
-      process.env.NODE_ENV === 'production'
-        ? 'https://www.nadjiauto.com'
-        : 'http://localhost:3000';
+    const url = process.env.NODE_ENV === 'production'
+      ? 'https://www.nadjiauto.com'
+      : 'http://localhost:3000';
     return url;
   }
 
@@ -50,7 +52,7 @@ export class MailService {
       to,
       'h:X-Mailgun-Variables': templateData,
       template: 'confirm_email',
-      subject: 'Potvrda naloga'
+      subject: 'Potvrda naloga',
     });
   }
 
@@ -59,7 +61,7 @@ export class MailService {
       to,
       'h:X-Mailgun-Variables': templateData,
       subject: 'Nadji auto - Resetovanje sifre',
-      template: 'password_recovery'
+      template: 'password_recovery',
     });
   }
 }

@@ -14,9 +14,9 @@ interface Params {
 export function checkRole({ role, user, resourceId }: Params) {
   if (resourceId !== undefined) {
     const rolesForProvidedResource = user.roles.filter(
-      userRole => role === userRole && userRole.resourceId === resourceId
+      (userRole) => role === userRole && userRole.resourceId === resourceId,
     );
-    return rolesForProvidedResource.some(r => r === role);
+    return rolesForProvidedResource.some((r) => r === role);
   }
-  return user.roles.some(userRole => userRole === role && !userRole.resourceId);
+  return user.roles.some((userRole) => userRole === role && !userRole.resourceId);
 }

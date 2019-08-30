@@ -7,30 +7,30 @@ import {
   Equal,
   Like,
   FindOperator,
-  In
+  In,
 } from 'typeorm';
 import { convertToObject } from './helpers';
 
-/*
-  Parse query to TypeOrm valid query
-  covert hello__lt to LessThan
-  First part is property name, second part is comparison key
-  If no key is provided it will assume equal
-*/
+/**
+ * Parse query to TypeOrm valid query
+ * covert hello__lt to LessThan
+ * First part is property name, second part is comparison key
+ * If no key is provided it will assume equal
+ */
 type OrmQuery<T = any> = Record<string, FindOperator<T>>;
 export default function parseQuery(
-  query: Record<string, any> | string | null | undefined
+  query: Record<string, any> | string | null | undefined,
 ) {
-  query = convertToObject(query);
+  const queryObject = convertToObject(query);
   // Here we will put processed filters
   const typeOrmQuery: OrmQuery = {};
 
   // For every key value pair
-  for (const filter in query) {
+  Object.keys(queryObject).forEach(filter => {
     // Get value
-    const value = query[filter];
+    const value = queryObject[filter];
     // Seperate name and comparison parts
-    const [name, comparison] = (filter + '').split('__');
+    const [name, comparison] = `${filter}`.split('__');
     // Use provided comparison part
 
     switch (comparison) {
@@ -50,7 +50,7 @@ export default function parseQuery(
         typeOrmQuery[name] = In(value);
         break;
       case 'lk':
-        typeOrmQuery[name] = Like('%' + value + '%');
+        typeOrmQuery[name] = Like(`%${value}%`);
         break;
       case 'btw':
         if (Array.isArray(value) && value.length === 2) {
@@ -66,7 +66,7 @@ export default function parseQuery(
         typeOrmQuery[name] = Equal(value);
         break;
     }
-  }
+  });
 
   return typeOrmQuery;
 }

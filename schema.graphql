@@ -3,7 +3,9 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-"""Company Model"""
+"""
+Company Model
+"""
 type Company {
   id: ID!
   name: String!
@@ -39,7 +41,9 @@ type Query {
   company(id: String!): Company!
 }
 
-"""Subscription Model"""
+"""
+Subscription Model
+"""
 type Subscription {
   id: ID!
   company: Company!
@@ -50,7 +54,9 @@ type Subscription {
   subscriptions: [Subscription!]!
 }
 
-"""User Model"""
+"""
+User Model
+"""
 type User {
   id: ID!
   ownedCompanies: [Company!]!
@@ -70,4 +76,13 @@ type Weekdays {
   friday: String!
   saturday: String!
   sunday: String!
+}
+
+query {
+  user {
+    subscriptions
+  }
+  company {
+    subscriptions
+  }
 }

@@ -1,37 +1,32 @@
-import { SerializeOptions } from '@nestjs/common';
-import { Exclude } from 'class-transformer';
-import { IsDate, IsPositive, IsNumber, Min } from 'class-validator';
-import { Field, ID, ObjectType } from 'type-graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  ManyToOne
-} from 'typeorm';
+import { IsDate, IsNumber, Min } from 'class-validator';
+import { Field, ObjectType } from 'type-graphql';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import * as moment from 'moment';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
-import * as moment from 'moment';
 import { DefaultEntity } from '../core/default.entity';
-import { DeletedColumns } from '../core/delete.entity';
+import { DeletedColumns } from '../core/deleted-columns.entity';
 
 @Entity('subscriptions')
 @ObjectType({ description: 'Subscription Model' })
 export class Subscription extends DefaultEntity {
   /* Company where subscription is valid */
-  @ManyToOne(type => Company, company => company.subscriptions)
-  @Field(type => Company)
+  @ManyToOne((type) => Company, (company) => company.subscriptions)
+  @Field((type) => Company)
   company: Company;
 
   /** Subscription owner */
-  @ManyToOne(type => User, user => user.subscriptions)
-  @Field(type => User)
+  @ManyToOne((type) => User, (user) => user.subscriptions)
+  @Field((type) => User)
   owner: User;
 
   /** Subscription owner id  */
   @Column()
   ownerId: string;
+
+  /** Company id  */
+  @Column()
+  companyId: string;
 
   /* Date from which subscription is valid */
   @Column()
@@ -53,7 +48,7 @@ export class Subscription extends DefaultEntity {
   price: number;
 
   /** Standard deleted columns */
-  @Column(type => DeletedColumns)
+  @Column((type) => DeletedColumns)
   deleted: DeletedColumns;
 
   /**
@@ -62,7 +57,7 @@ export class Subscription extends DefaultEntity {
    */
   setDuration(
     duration: moment.Duration = moment.duration(1, 'month'),
-    timeFrom: moment.Moment = moment()
+    timeFrom: moment.Moment = moment(),
   ) {
     this.from = timeFrom.toDate();
     this.to = timeFrom

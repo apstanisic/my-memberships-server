@@ -1,7 +1,9 @@
-import { User } from '../user/user.entity';
 import { ManyToOne, Entity, Column } from 'typeorm';
+import { User } from '../user/user.entity';
 import { RoleEnum } from './roles-permissions/roles.list';
 import { DefaultEntity } from '../core/default.entity';
+import { Subscription } from '../subscription/subscription.entity';
+import { Company } from '../company/company.entity';
 
 @Entity()
 export class Role extends DefaultEntity {
@@ -10,10 +12,11 @@ export class Role extends DefaultEntity {
   name: RoleEnum;
 
   /** User that have this role */
-  @ManyToOne(type => User, user => user.roles)
+  @ManyToOne((type) => User, (user) => user.roles)
   user: User;
 
   /** Id of resource user have access with this role */
+  /** @todo This should be companyId ??????? */
   @Column({ nullable: true })
   resourceId?: string;
 
@@ -33,3 +36,44 @@ export class Role extends DefaultEntity {
    * allowed: boolean;
    */
 }
+
+/**
+ *
+ *
+ * admin: company/cf23j98f2j3/subscriptions/*:read
+ * admin: company/cf23j98f2j3/subscriptions/*:update
+ * admin: company/cf23j98f2j3/subscriptions/*:delete
+ *
+ *
+ * user: company/cf23j98f2j3/subscriptions/fjdsaiofsda:delete
+ * user: company/cf23j98f2j3/subscriptions/fjdsaiofsda:delete
+ *
+ *
+ *
+ */
+
+function convertTopremission() {
+  const sub = new Subscription();
+  return `company/${sub.companyId}/subscription/${sub.id}`;
+}
+
+function compTOper() {
+  const com = new Company();
+  return `company/${com.id}`;
+}
+const supad = '*';
+const comAd = 'company/fdsafdsa/subscription/*';
+
+// const adminRoles = `company/${comAd.id}/`
+/**
+ *
+ *
+ *
+ *
+ * Role
+ * policy id,
+ * user
+ * resource
+ * accessType
+ *
+ */

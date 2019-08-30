@@ -25,7 +25,7 @@ export class PermissionsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const [metadataPermissions, targetName] = this.reflector.get<Metadata>(
       'required_premissions',
-      context.getHandler()
+      context.getHandler(),
     );
 
     // If premissions are not passed everyone is allowed
@@ -35,7 +35,7 @@ export class PermissionsGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     // Get Id from req object
     const resourceId: string = request.params[targetName as any];
-    const user: User = request.user;
+    const { user } = request;
     return user.allowedTo(requiredPermissions, resourceId);
   }
 }

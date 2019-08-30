@@ -9,19 +9,22 @@ import {
   JoinTable,
   OneToMany,
   BeforeUpdate,
-  BeforeInsert
+  BeforeInsert,
 } from 'typeorm';
-import { IsEmail, MinLength, ValidateNested, validate } from 'class-validator';
+import {
+  IsEmail, MinLength, ValidateNested, validate,
+} from 'class-validator';
 import { Exclude, classToClass } from 'class-transformer';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Location } from './location.dto';
 import { User } from '../user/user.entity';
 import BaseException from '../core/BaseException';
 import { Subscription } from '../subscription/subscription.entity';
+import { DefaultEntity } from '../core/default.entity';
 
 @Entity('companies')
 @ObjectType({ description: 'Company Model' })
-export class Company {
+export class Company extends DefaultEntity {
   /* Company name */
   @Column()
   @Field()
@@ -29,8 +32,8 @@ export class Company {
   name: string;
 
   /* Company owner */
-  @ManyToOne(type => User)
-  @Field(type => User)
+  @ManyToOne((type) => User)
+  @Field((type) => User)
   owner: User;
 
   // /* Owner id */
@@ -45,8 +48,8 @@ export class Company {
   // @ValidateNested()
   // admins: User[];
 
-  @OneToMany(type => Subscription, subscription => subscription.company)
-  @Field(type => [Subscription])
+  @OneToMany((type) => Subscription, (subscription) => subscription.company)
+  @Field((type) => [Subscription])
   subscriptions: Subscription[];
 
   /** Description of company, it's prices */
@@ -55,19 +58,19 @@ export class Company {
 
   /* Company's main phone number */
   @Column({ type: 'simple-array' })
-  @Field(type => [String])
+  @Field((type) => [String])
   @MinLength(8, { each: true })
   phoneNumbers: string[];
 
   /* Company's main email */
   @Column({ type: 'simple-array' })
-  @Field(type => [String])
+  @Field((type) => [String])
   @IsEmail({}, { each: true })
   emails: string[];
 
   /* All gyms location */
   // TODO: This probably causes problems
   @Column({ type: 'simple-json' })
-  @Field(type => [Location])
+  @Field((type) => [Location])
   locations: Location[];
 }

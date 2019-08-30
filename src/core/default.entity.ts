@@ -3,7 +3,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
-  BeforeUpdate
+  BeforeUpdate,
 } from 'typeorm';
 import { Field, ID } from 'type-graphql';
 import { Exclude, classToClass } from 'class-transformer';
@@ -16,7 +16,7 @@ import BaseException from './BaseException';
  */
 export abstract class DefaultEntity {
   @PrimaryGeneratedColumn('uuid')
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @UpdateDateColumn()

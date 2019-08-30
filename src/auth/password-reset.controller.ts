@@ -6,80 +6,76 @@ import {
   ForbiddenException,
   BadRequestException,
   UseInterceptors,
-  ClassSerializerInterceptor
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { User } from '../user/user.entity';
-import { AuthData } from './auth.dto';
-import { UsersService } from '../user/user.service';
 import * as moment from 'moment';
-import { ValidateEmailPipe } from './parse-email.pipe';
+import { classToClass } from 'class-transformer';
+import { User } from '../user/user.entity';
+import { LoginData } from './auth.dto';
+import { UsersService } from '../user/user.service';
+import { ValidateEmailPipe } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
+import { GetUserByEmailPipe } from '../user/get-user-by-email.pipe';
 
+/** Controller for password reseting */
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PasswordResetController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
-  /* send email with reset instruction */
+  /** Send email with reset instruction */
   @Post('forgot-password/:email')
   async sendPasswordRecoveryMail(
-    @Param('email', ValidateEmailPipe) email: string
+    @Param('email', ValidateEmailPipe) email: string,
   ) {
+    // Don't throw error, just say that you sent mail, if user doesn't exist
     const user = await this.usersService.findOne({ email });
-    /* Don't throw error, just say that you sent mail, if email doesn't exist */
-    if (user !== undefined) {
-      user.generateSecureToken();
-      this.usersService.update(user);
-      const token = user.secureToken;
+    if (!user) return { message: 'Password reset email is sent. ' };
 
-      const templateData = {
-        token,
-        email: user.email,
-        url: this.mailService.getDomainUrl()
-      };
-      // TODO: Replace this email addres
-      const res = await this.mailService.sendResetPasswordEmail({
-        templateData,
-        to: 'vegujame@coinlink.club'
-      });
+    const token = user.generateSecureToken();
+    await this.usersService.update(user);
 
-      console.log(res);
+    const templateData = {
+      token,
+      email: user.email,
+      url: this.mailService.getDomainUrl(),
+    };
 
-      // mail(user.email, token)
-    }
+    await this.mailService.sendResetPasswordEmail({
+      templateData,
+      to: user.email,
+    });
+
     return { message: 'Password reset email is sent. ' };
   }
 
-  /* Reset user password */
+  /** Reset user password */
   @Post('reset-password/:email/:token')
   async resetPassword(
-    @Param('email', ValidateEmailPipe) email: string,
+    @Param('email', GetUserByEmailPipe) user: User,
     @Param('token') token: string,
-    @Body() data: AuthData
+    @Body() data: LoginData,
   ): Promise<User> {
-    const user = await this.usersService.findOne({ email });
-
-    if (user === undefined || !user.tokenCreatedAt) {
-      throw new ForbiddenException();
-    }
+    if (!user.compareToken(token)) throw new ForbiddenException();
 
     const expired = moment(user.tokenCreatedAt)
       .add(2, 'hours')
-      .isAfter(moment());
+      .isBefore(moment());
 
-    if (user.secureToken !== token || !expired) {
+    if (expired) {
       throw new BadRequestException(
-        'Link is eather not valid or is expired. Try again.'
+        'Link is not valid. Link is valid for 2 hours',
       );
     }
 
-    await user.setPassword(data.password);
-    user.secureToken = undefined;
-    user.tokenCreatedAt = undefined;
-    await this.usersService.update(user);
+    const clonedUser = classToClass(user);
+
+    clonedUser.password = data.password;
+    clonedUser.disableSecureToken();
+    await this.usersService.update(clonedUser);
 
     return user;
   }

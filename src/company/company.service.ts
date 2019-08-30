@@ -9,7 +9,7 @@ import { PaginationResult, paginate } from '../core/pagination';
 export class CompanyService {
   constructor(
     @InjectRepository(Company)
-    private readonly repository: Repository<Company>
+    private readonly repository: Repository<Company>,
   ) {}
 
   /* Find companies that match criteria */
@@ -20,12 +20,12 @@ export class CompanyService {
   /* Find companies that match criteria with pagination */
   async paginate(
     criteria: any = {},
-    page: number = 1
+    page: number = 1,
   ): Promise<PaginationResult<Company>> {
     return paginate({
       criteria: parseQuery(criteria),
       options: { page },
-      repository: this.repository
+      repository: this.repository,
     });
   }
 
@@ -49,7 +49,7 @@ export class CompanyService {
   /* Update company */
   async update(
     company: Company,
-    changedData: DeepPartial<Company>
+    changedData: DeepPartial<Company>,
   ): Promise<Company> {
     this.repository.merge(company, changedData);
     await company.validate();

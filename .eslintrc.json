@@ -3,10 +3,17 @@
     "es6": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": ["airbnb-base"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -15,16 +22,29 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "@typescript-eslint/indent": ["off", 2],
-    "quotes": ["warn", "single"],
-    "require-atomic-updates": "off",
-    "@typescript-eslint/explicit-member-accessibility": "off",
-    "@typescript-eslint/no-parameter-properties": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "no-console": "warn",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "no-unreachable": "warn",
-    "no-return-await": "error",
-    "@typescript-eslint/no-empty-interface": "off"
+    "import/prefer-default-export": "off", // NestJs prefers
+    "no-unused-vars": "off", // Sometimes import is used only for typedef
+    "no-useless-constructor": "off", // Can be used for DI
+    "no-empty-function": "off", // Can be used for DI
+    "class-methods-use-this": "off", // Stupid rule. Not every method needs this
+    "arrow-parens": "off", // Code is more concise
+    "max-classes-per-file": "off", // Many dto classes are simply small
+    "no-underscore-dangle": "off"
+    // "import/no-unresolved": "off",
+    // "import/prefer-default-export": "off",
+    // "no-useless-constructor": "off",
+    // "@typescript-eslint/indent": ["off", 2],
+    // "quotes": ["warn", "single"],
+    // "require-atomic-updates": "off",
+    // "@typescript-eslint/explicit-member-accessibility": "off",
+    // "@typescript-eslint/no-parameter-properties": "off",
+    // "@typescript-eslint/no-explicit-any": "off",
+    // "@typescript-eslint/no-unused-vars": "off",
+    // "no-console": "warn",
+    // "@typescript-eslint/explicit-function-return-type": "off",
+    // "no-unreachable": "warn",
+    // "no-return-await": "error",
+    // "@typescript-eslint/no-empty-interface": "off",
+    // "@typescript-eslint/no-inferrable-types": "off"
   }
 }

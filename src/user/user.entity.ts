@@ -4,14 +4,20 @@ import {
   OneToMany,
   Index,
   BeforeUpdate,
-  BeforeInsert
+  BeforeInsert,
 } from 'typeorm';
-import { IsEmail, validate, MinLength, IsString } from 'class-validator';
+import {
+  IsEmail,
+  validate,
+  MinLength,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import BaseException from '../core/BaseException';
 import * as uuid from 'uuid';
 import { ObjectType, Field } from 'type-graphql';
+import BaseException from '../core/BaseException';
 import { isBcryptHash } from '../core/helpers';
 import { Subscription } from '../subscription/subscription.entity';
 import { Role } from '../access-control/roles.entity';
@@ -40,15 +46,18 @@ export class User extends DefaultEntity {
   email: string;
 
   /** Users password */
-  @Column()
+  @Column({ name: 'password' })
   @IsString()
   @MinLength(6)
+  @MaxLength(220)
   @Exclude()
-  password: string;
+  _password: string;
 
   /** User real name */
   @Column()
   @Field()
+  @IsString()
+  @MinLength(2)
   name: string;
 
   /** User's profile picture */
@@ -76,15 +85,38 @@ export class User extends DefaultEntity {
   @Exclude()
   tokenCreatedAt?: Date;
 
+  set password(newPassword: string) {
+    this._password = bcrypt.hashSync(newPassword);
+  }
+
   /** Check if provided password is valid */
   checkPassword(enteredPassword: string): Promise<boolean> {
-    return bcrypt.compare(enteredPassword, this.password);
+    return bcrypt.compare(enteredPassword, this._password);
   }
 
   /** Generate secure token to be used for password reset... */
   generateSecureToken() {
     this.secureToken = uuid();
     this.tokenCreatedAt = new Date();
+    return this.secureToken;
+  }
+
+  /** Call this method after token is used */
+  disableSecureToken() {
+    this.secureToken = undefined;
+    this.tokenCreatedAt = undefined;
+  }
+
+  /**
+   *
+   * Check if provided token is valid
+   * User's token and createdAt date must be not null
+   */
+  compareToken(token: string) {
+    if (!this.secureToken) return false;
+    if (!this.tokenCreatedAt) return false;
+    if (this.secureToken !== token) return false;
+    return true;
   }
 
   /**
@@ -95,20 +127,9 @@ export class User extends DefaultEntity {
    */
   allowedTo(
     permissions: Permission | Permission[],
-    resourceId?: string
+    resourceId?: string,
   ): boolean {
     return checkPremissions({ permissions, resourceId, user: this });
-  }
-
-  /** Has password if not hashed. It will check if password is valid */
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    if (!isBcryptHash(this.password)) {
-      const error = await validate(this.password);
-      if (error.length > 0) throw new BaseException({ error });
-      this.password = await bcrypt.hash(this.password, 12);
-    }
   }
 }
 //

@@ -13,18 +13,16 @@ export const has = Object.prototype.hasOwnProperty;
 export function removeEmptyItems(obj: Record<string, any>) {
   const validItems: any = {};
 
-  for (const key in obj) {
-    if (has.call(obj, key)) {
-      if (obj[key] !== '' && obj[key] !== null && obj[key] !== undefined) {
-        validItems[key] = obj[key];
-      }
+  Object.keys(obj).forEach((key: string) => {
+    if (obj[key] !== '' && obj[key] !== null && obj[key] !== undefined) {
+      validItems[key] = obj[key];
     }
-  }
+  });
 
   return validItems;
 }
 
-/** Make pause for provided miliseconds*/
+/** Make pause for provided miliseconds */
 export function wait(time: number) {
   return new Promise((res, rej) => {
     try {
@@ -51,7 +49,7 @@ export function isBcryptHash(text: string | any) {
  * Always returns new object
  */
 export function convertToObject<T = any>(
-  query: Record<string, T> | string | null | undefined
+  query: Record<string, T> | string | null | undefined,
 ): Record<string, T> {
   if (query === null || query === undefined) return {};
   if (typeof query === 'string') return JSON.parse(query);
@@ -59,13 +57,27 @@ export function convertToObject<T = any>(
 }
 
 /**
- * Accepts either array or other. If not array, convert to array.
- * Othervise return array
+ * Accepts array or any other type.
+ * If not array, make it a single item array.
+ * Othervise return array,
+ * Lodash have this method
+ * @deprecated Use lodash built in method
  */
-export function toArray<T>(item: T | T[]): T[] {
+export function castArray<T>(item: T | T[]): T[] {
   if (Array.isArray(item)) {
     return item;
-  } else {
-    return [item];
   }
+  return [item];
+}
+
+/**
+ * Disables certain key in object
+ * For example, object can't have field that contains password
+ * Eg. 'password', 'password_lt', 'awesomepasswordfield'
+ */
+export function hasForbiddenKey(
+  obj: Record<string, any>,
+  key: string,
+): boolean {
+  return Object.keys(obj).every((objectKey) => objectKey.toLowerCase().includes(key.toLowerCase()));
 }

@@ -1,8 +1,7 @@
-import { IsString, IsOptional, IsNumberString, IsUUID } from 'class-validator';
+import { IsOptional, IsNumberString, IsUUID } from 'class-validator';
 
 /* Valid uuid string */
 export class IdParam {
-  @IsString()
   @IsUUID()
   id: string;
 }

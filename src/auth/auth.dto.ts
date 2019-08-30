@@ -1,8 +1,8 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { User } from '../user/user.entity';
 
-/* Data provided for login */
-export class AuthData {
+/** Data provided for login */
+export class LoginData {
   @IsNotEmpty()
   @IsEmail()
   email: string;
@@ -12,7 +12,7 @@ export class AuthData {
   password: string;
 }
 
-/* Data that is provided when changing password */
+/** Data that is provided when changing password */
 export class UpdatePasswordData {
   @IsEmail()
   email: string;
@@ -20,13 +20,13 @@ export class UpdatePasswordData {
   @IsNotEmpty()
   oldPassword: string;
 
-  @IsNotEmpty()
-  @MinLength(4)
+  @MinLength(8)
   newPassword: string;
 }
 
-/* Server response for successful login */
+/** Server response for successful login */
 export class SignInResponse {
   token: string;
+
   user: Partial<User>;
 }

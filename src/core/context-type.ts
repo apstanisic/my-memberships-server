@@ -9,7 +9,6 @@ export enum ExecutionContextType {
  * Get Execution Context type
  * @see https://github.com/nestjs/nest/issues/1581
  */
-export const getContextType = (context: ArgumentsHost) =>
-  context.getArgs().length === 4
-    ? ExecutionContextType.GQL
-    : ExecutionContextType.HTTP;
+export const getContextType = (context: ArgumentsHost) => (context.getArgs().length === 4
+  ? ExecutionContextType.GQL
+  : ExecutionContextType.HTTP);

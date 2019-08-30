@@ -1,8 +1,8 @@
 type Subscription {
   id: ID!
-  company: Company
-  owner: User
-  from: Date
-  to: Date
-  price: Int
+  company: Company!
+  owner: User!
+  from: DateTime!
+  to: DateTime!
+  price: Int!
 }

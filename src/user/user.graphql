@@ -4,7 +4,7 @@ type User {
   roles: [Role!]!
   subscriptions: [Subscription!]!
   email: String!
-  name: String
+  name: String!
   avatar: String
   phoneNumber: String
 }

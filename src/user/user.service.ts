@@ -1,24 +1,28 @@
 import {
   Injectable,
   BadRequestException,
-  NotFoundException
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
-import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 import parseQuery from '../core/parseQuery';
 import BaseException from '../core/BaseException';
-import { AuthData } from '../auth/auth.dto';
+import { LoginData } from '../auth/auth.dto';
 import { UpdateUserInfo } from './update-user.dto';
+import { hasForbiddenKey } from '../core/helpers';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<User>
+    @InjectRepository(User) private readonly repository: Repository<User>,
   ) {}
 
   /** Find single user with any query */
   findOne(criteria: Record<string, any>): Promise<User | undefined> {
+    // Cant filter password
+    if (hasForbiddenKey(criteria, 'password')) throw new ForbiddenException();
     return this.repository.findOne({ where: parseQuery(criteria) });
   }
 
@@ -28,7 +32,7 @@ export class UsersService {
   }
 
   /** Create user */
-  async create({ email, password }: AuthData): Promise<User> {
+  async create({ email, password }: LoginData): Promise<User> {
     const userExist = await this.findOne({ email });
     if (userExist) throw new BaseException({ message: 'User exist' });
 

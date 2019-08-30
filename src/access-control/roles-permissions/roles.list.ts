@@ -11,7 +11,7 @@ const guest: Permission[] = [];
 const user: Permission[] = guest.concat([
   Permission['cancel_subscription:own'],
   Permission['request_subscription:own'],
-  Permission['create_company:any']
+  Permission['create_company:any'],
 ]);
 
 /* What company admin can do */
@@ -21,7 +21,7 @@ const companyAdmin: Permission[] = user.concat([
   Permission['remove_member_subscription:own'],
   Permission['approve_subscription:own'],
   Permission['ban_member:own'],
-  Permission['unban_member:own']
+  Permission['unban_member:own'],
 ]);
 
 /* What company owner can do */
@@ -30,29 +30,33 @@ const companyOwner: Permission[] = companyAdmin.concat([
   Permission['delete_company:own'],
   Permission['change_company_owner:own'],
   Permission['add_company_admin:own'],
-  Permission['remove_company_admin:own']
+  Permission['remove_company_admin:own'],
 ]);
 
 /* What app admin can do */
 const appAdmin: Permission[] = user.concat([
   Permission['delete_company:any'],
   Permission['delete_user:any'],
-  Permission['change_company_owner:any']
+  Permission['change_company_owner:any'],
 ]);
 
 /* What app owner can do */
 const appOwner: Permission[] = appAdmin.concat([
   Permission['add_app_admin:any'],
-  Permission['remove_app_admin:any']
+  Permission['remove_app_admin:any'],
 ]);
 
+/**
+ * @todo Fix in furute. This is eslint typescript error
+ */
+/* eslint-disable */
 export enum RoleEnum {
   guest = 'guest',
   user = 'user',
   companyAdmin = 'company_admin',
   companyOwner = 'company_owner',
   appAdmin = 'app_admin',
-  appOwner = 'app_owner'
+  appOwner = 'app_owner',
 }
 
 export const availableRoles = [
@@ -61,7 +65,7 @@ export const availableRoles = [
   'company_admin',
   'company_owner',
   'app_admin',
-  'app_owner'
+  'app_owner',
 ];
 
 export const rolesPremissions: Record<RoleEnum, Permission[]> = {
@@ -70,5 +74,5 @@ export const rolesPremissions: Record<RoleEnum, Permission[]> = {
   app_admin: appAdmin,
   app_owner: appOwner,
   company_owner: companyOwner,
-  company_admin: companyAdmin
+  company_admin: companyAdmin,
 };
