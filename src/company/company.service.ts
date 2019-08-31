@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Company } from './company.entity';
 import parseQuery from '../core/parseQuery';
-import { PaginationResult, paginate } from '../core/pagination';
+import { paginate, PaginationResponse } from '../core/pagination';
 
 @Injectable()
 export class CompanyService {
@@ -12,16 +12,16 @@ export class CompanyService {
     private readonly repository: Repository<Company>,
   ) {}
 
-  /* Find companies that match criteria */
-  find(criteria: any, page?: number) {
+  /** Find companies that match criteria */
+  find(criteria: any = {}): Promise<Company[]> {
     return this.repository.find({ where: parseQuery(criteria) });
   }
 
-  /* Find companies that match criteria with pagination */
+  /** Find companies that match criteria with pagination */
   async paginate(
     criteria: any = {},
     page: number = 1,
-  ): Promise<PaginationResult<Company>> {
+  ): PaginationResponse<Company> {
     return paginate({
       criteria: parseQuery(criteria),
       options: { page },
@@ -29,29 +29,25 @@ export class CompanyService {
     });
   }
 
-  /* Find company by id */
-  findById(id: string): Promise<Company> {
-    return this.repository.findOneOrFail(id);
+  /** Find company by id */
+  findOne(id: string): Promise<Company | undefined> {
+    return this.repository.findOne(id);
   }
 
-  /* Create new company */
+  /** Create new company */
   async save(data: Company): Promise<Company> {
     const company = await this.repository.create(data);
-    await company.validate();
     return this.repository.save(company);
   }
 
-  /* Delete company */
+  /** Delete company */
   async delete(company: Company): Promise<Company> {
     return this.repository.remove(company);
   }
 
-  /* Update company */
-  async update(
-    company: Company,
-    changedData: DeepPartial<Company>,
-  ): Promise<Company> {
-    this.repository.merge(company, changedData);
+  /** Update company */
+  async update(company: Company, data: Partial<Company>): Promise<Company> {
+    this.repository.merge(company, data);
     await company.validate();
     return this.repository.save(company);
   }

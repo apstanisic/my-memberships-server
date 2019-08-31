@@ -77,6 +77,8 @@ export interface PaginationResult<T = any> {
   data: T[];
 }
 
+export type PaginationResponse<T> = Promise<PaginationResult<T>>;
+
 interface PaginateProps<T> {
   repository: Repository<T>;
   criteria: Record<string, any>;

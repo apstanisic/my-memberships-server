@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import {
   Resolver,
   Query,
@@ -16,22 +17,24 @@ export class CompanyResolver {
   constructor(private readonly companyService: CompanyService) {}
 
   /* Returns paginated companies */
-  @Query((returns) => [Company], { name: 'companies' })
+  @Query(returns => [Company], { name: 'companies' })
   async getCompanies(
     @Args({ name: 'filter', nullable: true, type: () => String })
-      filter?: string,
-      @Args({ name: 'page', nullable: true, type: () => Int }) page: number = 1,
+    filter?: string,
+    @Args({ name: 'page', nullable: true, type: () => Int }) page: number = 1,
   ): Promise<Company[]> {
     return this.companyService.find(filter);
     // return this.companyService.paginate(filter, page)
   }
 
   /* Returns company by id */
-  @Query((returns) => Company, { name: 'company' })
+  @Query(returns => Company, { name: 'company' })
   async getCompanyById(
     @Args({ name: 'id', type: () => String }) id: string,
-  ): Promise<Company> {
-    return this.companyService.findById(id);
+  ): Promise<Company | undefined> {
+    const company = await this.companyService.findOne(id);
+    if (!company) throw new NotFoundException();
+    return company;
   }
 }
 
@@ -40,7 +43,7 @@ export class CompanyResolver {
 export class UserCompanyResolver {
   constructor(private readonly companyService: CompanyService) {}
 
-  @ResolveProperty('ownedCompanies', (type) => [Company])
+  @ResolveProperty('ownedCompanies', type => [Company])
   getUserCompanies(@Parent() user: User) {
     return this.companyService.find({ ownerId: user.id });
   }

@@ -19,12 +19,14 @@ function canDoToOwnResource(
   resourceId: string,
 ): boolean {
   const rolesForProvidedResource = user.roles.filter(
-    (role) => role.resourceId === resourceId,
+    role => role.resourceId === resourceId,
   );
   // Now that resurceId does not metter, check if provided roles have provided premission
-  return rolesForProvidedResource.some((role) => allRoles[role.name].some(
-    (premissionsForThisRole) => premissionsForThisRole === premission,
-  ));
+  return rolesForProvidedResource.some(role =>
+    allRoles[role.name].some(
+      premissionsForThisRole => premissionsForThisRole === premission,
+    ),
+  );
 }
 
 /**
@@ -33,9 +35,10 @@ function canDoToOwnResource(
  */
 function canDoToAll(user: User, premission: Permission): boolean {
   return user.roles.some(
-    (role) => allRoles[role.name].some(
-      (premissionsForThisRole) => premissionsForThisRole === premission,
-    ) && !role.resourceId,
+    role =>
+      allRoles[role.name].some(
+        premissionsForThisRole => premissionsForThisRole === premission,
+      ) && !role.resourceId,
   );
 }
 
@@ -44,7 +47,7 @@ export function stringsToPermissions(
   permissions: string | string[],
 ): Permission[] {
   return castArray(permissions).map(
-    (per) => Permission[per as any] as Permission,
+    per => Permission[per as any] as Permission,
   );
 }
 
@@ -71,7 +74,7 @@ export function checkPremissions({
   // If provided premission is string convert to array
   const premissionsArray = castArray(permissions);
 
-  return premissionsArray.every((premission) => {
+  return premissionsArray.every(premission => {
     // If resourceId is provided, only check roles for current resource.
     if (resourceId !== undefined) {
       return canDoToOwnResource(user, premission, resourceId);

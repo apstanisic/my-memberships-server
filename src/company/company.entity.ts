@@ -1,24 +1,8 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  CreateDateColumn,
-  ManyToOne,
-  ManyToMany,
-  JoinTable,
-  OneToMany,
-  BeforeUpdate,
-  BeforeInsert,
-} from 'typeorm';
-import {
-  IsEmail, MinLength, ValidateNested, validate,
-} from 'class-validator';
-import { Exclude, classToClass } from 'class-transformer';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { IsEmail, Length, IsString } from 'class-validator';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Location } from './location.dto';
 import { User } from '../user/user.entity';
-import BaseException from '../core/BaseException';
 import { Subscription } from '../subscription/subscription.entity';
 import { DefaultEntity } from '../core/default.entity';
 
@@ -28,12 +12,13 @@ export class Company extends DefaultEntity {
   /* Company name */
   @Column()
   @Field()
-  @MinLength(6)
+  @IsString()
+  @Length(6, 200)
   name: string;
 
   /* Company owner */
-  @ManyToOne((type) => User)
-  @Field((type) => User)
+  @ManyToOne(type => User)
+  @Field(type => User)
   owner: User;
 
   // /* Owner id */
@@ -48,29 +33,32 @@ export class Company extends DefaultEntity {
   // @ValidateNested()
   // admins: User[];
 
-  @OneToMany((type) => Subscription, (subscription) => subscription.company)
-  @Field((type) => [Subscription])
+  @OneToMany(type => Subscription, subscription => subscription.company)
+  @Field(type => [Subscription])
   subscriptions: Subscription[];
 
   /** Description of company, it's prices */
-  @Column()
+  @Column({ type: 'text' })
+  @IsString()
+  @Length(4, 3000)
   description: string;
 
   /* Company's main phone number */
   @Column({ type: 'simple-array' })
-  @Field((type) => [String])
-  @MinLength(8, { each: true })
+  @Field(type => [String])
+  @IsString({ each: true })
+  @Length(8, 30, { each: true })
   phoneNumbers: string[];
 
   /* Company's main email */
   @Column({ type: 'simple-array' })
-  @Field((type) => [String])
+  @Field(type => [String])
   @IsEmail({}, { each: true })
   emails: string[];
 
   /* All gyms location */
   // TODO: This probably causes problems
   @Column({ type: 'simple-json' })
-  @Field((type) => [Location])
+  @Field(type => [Location])
   locations: Location[];
 }
