@@ -1,79 +1,40 @@
 import { ManyToOne, Entity, Column } from 'typeorm';
 import { User } from '../user/user.entity';
-import { RoleEnum } from './roles-permissions/roles.list';
+import { RoleEnum, RoleName } from './roles-permissions/roles.list';
 import { DefaultEntity } from '../core/default.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { Company } from '../company/company.entity';
 
+/**
+ * To add admin for company f32 to user
+ * @example
+ * const role = new Role();
+ * role.user = user;
+ * role.domain = 'f32';
+ * role.name = 'admin';
+ * role.description = 'You are admin in company f32. Happy b-day';
+ * repo.save(role);
+ */
 @Entity()
 export class Role extends DefaultEntity {
-  /** Role name */
-  @Column()
-  name: RoleEnum;
-
   /** User that have this role */
-  @ManyToOne((type) => User, (user) => user.roles)
+  @ManyToOne(type => User, user => user.roles)
   user: User;
 
-  /** Id of resource user have access with this role */
-  /** @todo This should be companyId ??????? */
-  @Column({ nullable: true })
-  resourceId?: string;
-
   @Column()
-  resourceType: string;
+  userId: string;
 
-  // @Column()
-  // description?: string;
+  /** Role name */
+  @Column()
+  name: RoleName;
 
   /**
-   * @TODO User can be specificly
-   * forbidden from certain feature.
-   * For example, He is currently banned, but
-   * will be allowed in the future again.
-   * @example
-   *  @Column({default: true})
-   * allowed: boolean;
+   * Domain this role belongs to. In this app domain is company
+   * In other domain can be city. Domain limit the reach of user.
    */
+  @Column({ default: '*' })
+  domain: string;
+
+  @Column({ type: 'text', nullable: true })
+  description?: string;
 }
-
-/**
- *
- *
- * admin: company/cf23j98f2j3/subscriptions/*:read
- * admin: company/cf23j98f2j3/subscriptions/*:update
- * admin: company/cf23j98f2j3/subscriptions/*:delete
- *
- *
- * user: company/cf23j98f2j3/subscriptions/fjdsaiofsda:delete
- * user: company/cf23j98f2j3/subscriptions/fjdsaiofsda:delete
- *
- *
- *
- */
-
-function convertTopremission() {
-  const sub = new Subscription();
-  return `company/${sub.companyId}/subscription/${sub.id}`;
-}
-
-function compTOper() {
-  const com = new Company();
-  return `company/${com.id}`;
-}
-const supad = '*';
-const comAd = 'company/fdsafdsa/subscription/*';
-
-// const adminRoles = `company/${comAd.id}/`
-/**
- *
- *
- *
- *
- * Role
- * policy id,
- * user
- * resource
- * accessType
- *
- */

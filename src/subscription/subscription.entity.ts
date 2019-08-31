@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, Min } from 'class-validator';
+import { IsDate, IsNumber, Min, Max } from 'class-validator';
 import { Field, ObjectType } from 'type-graphql';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import * as moment from 'moment';
@@ -11,13 +11,13 @@ import { DeletedColumns } from '../core/deleted-columns.entity';
 @ObjectType({ description: 'Subscription Model' })
 export class Subscription extends DefaultEntity {
   /* Company where subscription is valid */
-  @ManyToOne((type) => Company, (company) => company.subscriptions)
-  @Field((type) => Company)
+  @ManyToOne(type => Company, company => company.subscriptions)
+  @Field(type => Company)
   company: Company;
 
   /** Subscription owner */
-  @ManyToOne((type) => User, (user) => user.subscriptions)
-  @Field((type) => User)
+  @ManyToOne(type => User, user => user.subscriptions)
+  @Field(type => User)
   owner: User;
 
   /** Subscription owner id  */
@@ -45,10 +45,11 @@ export class Subscription extends DefaultEntity {
   @Field()
   @IsNumber()
   @Min(0)
+  @Max(10000000)
   price: number;
 
   /** Standard deleted columns */
-  @Column((type) => DeletedColumns)
+  @Column(type => DeletedColumns)
   deleted: DeletedColumns;
 
   /**

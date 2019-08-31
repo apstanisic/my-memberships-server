@@ -1,13 +1,13 @@
 import { ObjectType, Field } from 'type-graphql';
 
-@ObjectType()
-class Cooridnates {
-  @Field()
-  lat: string;
+// @ObjectType()
+// class Cooridnates {
+//   @Field()
+//   lat: string;
 
-  @Field()
-  long: string;
-}
+//   @Field()
+//   long: string;
+// }
 
 @ObjectType()
 export class Weekdays {
@@ -38,7 +38,7 @@ export class Location {
   @Field()
   address: string;
 
-  @Field((type) => Weekdays)
+  @Field(type => Weekdays)
   workingHours?: Weekdays;
 
   @Field()
@@ -47,9 +47,17 @@ export class Location {
   @Field()
   email?: string;
 
-  @Field((type) => Cooridnates)
-  cooridnates?: {
-    lat: string;
-    long: string;
-  };
+  // @Field(type => Cooridnates)
+  // cooridnates?: {
+  //   lat: string;
+  //   long: string;
+  // };
+
+  // In future maybe add number that represents position in
+  // globe, so it's less expensive to find near places
+  @Field()
+  lat: number;
+
+  @Field()
+  long: number;
 }
