@@ -4,7 +4,6 @@ import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import * as uuid from 'uuid';
 import { Field } from 'type-graphql';
-import { checkPremissions } from '../access-control/check-premissions';
 import { DefaultEntity } from '../core/default.entity';
 import { IUser } from './user.interface';
 import { Role } from '../access-control/roles.entity';
@@ -93,16 +92,5 @@ export abstract class BaseUser extends DefaultEntity implements IUser {
     if (!this.tokenCreatedAt) return false;
     if (this.secureToken !== token) return false;
     return true;
-  }
-
-  /**
-   * Check if user has required premission.
-   * If resource is not provided it will check if user is allowed for all
-   * @example
-   *   user.allowedTo('delete_company', 'fdsa0fdsaf')
-   */
-  allowedTo(domain: string, action: string = 'write'): boolean {
-    return false;
-    // return checkPremissions({ permissions, resourceId, user: this });
   }
 }

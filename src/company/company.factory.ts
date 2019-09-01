@@ -2,6 +2,7 @@ import * as Faker from 'faker';
 import { Company } from './company.entity';
 import { Weekdays } from './location.dto';
 import { User } from '../user/user.entity';
+import { companiesCategories, CompanyCategory } from './categories.list';
 
 const workhours = {
   monday: '09:00-21:00',
@@ -19,12 +20,11 @@ export function generateCompany(users: User[]) {
   company.name = Faker.company.companyName();
   company.phoneNumbers = [Faker.phone.phoneNumber()];
   company.description = Faker.lorem.paragraph(4);
+  company.category = Faker.random.arrayElement(companiesCategories as any);
   company.locations = [
     {
-      cooridnates: {
-        lat: Faker.address.latitude(),
-        long: Faker.address.longitude(),
-      },
+      lat: Number(Faker.address.latitude()),
+      long: Number(Faker.address.longitude()),
       address: Faker.address.streetAddress(),
       email: Faker.internet.email(),
       phoneNumber: Faker.phone.phoneNumber(),

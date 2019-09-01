@@ -1,20 +1,16 @@
 import * as Faker from 'faker';
 import { Role } from './roles.entity';
-import { availableRoles, RoleEnum } from './roles-permissions/roles.list';
+import { availableRoles } from './roles.list';
 import { User } from '../user/user.entity';
+import { Company } from '../company/company.entity';
 
-interface HasId {
-  id: string;
-}
-
-export function generateRole(users: User[], resources: HasId[] = []) {
+export function generateRole(users: User[], companies: Company[] = []) {
   const random = Faker.random.arrayElement;
 
   const role = new Role();
-  // role.resourceId;
   role.user = random(users);
-  role.name = random(availableRoles) as RoleEnum;
-  role.resourceId = random(resources).id;
+  role.name = random(availableRoles as any);
+  role.domain = random(companies).id;
 
   return role;
 }

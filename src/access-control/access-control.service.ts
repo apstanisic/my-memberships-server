@@ -5,12 +5,14 @@ import { Enforcer, newEnforcer } from 'casbin';
 import { User } from '../user/user.entity';
 import { Role } from './roles.entity';
 import { Company } from '../company/company.entity';
-import { RoleName } from './roles-permissions/roles.list';
+import { RoleName } from './roles.list';
+import { casbinValidDomain } from './casbin/custom-matchers';
 
-interface AddRoleInterface {
+interface ChangeRoleDto {
   user: User;
   domain: Company;
   roleName: RoleName;
+  description?: string;
 }
 
 @Injectable()
@@ -20,9 +22,12 @@ export class AccessControlService {
   constructor(
     @InjectRepository(User) private readonly repository: Repository<Role>,
   ) {
-    newEnforcer('casbin-model.conf', 'casbin-policies.csv').then(enforcer => {
-      this.enforcer = enforcer;
-    });
+    newEnforcer('casbin/casbin-model.conf', 'casbin/casbin-policies.csv').then(
+      enforcer => {
+        this.enforcer = enforcer;
+        this.enforcer.addFunction('validDomain', casbinValidDomain);
+      },
+    );
   }
 
   /**
@@ -32,7 +37,11 @@ export class AccessControlService {
    * Can be /company/comp-id or /user/user-id
    * @param action Action you want to perform on resource: read, write...
    */
-  async enforce(user: User, resourcePath: string, action: string = 'write') {
+  async isAllowed(
+    user: User,
+    resourcePath: string,
+    action: string = 'write',
+  ): Promise<boolean> {
     const checks: Promise<boolean>[] = [];
     user.roles.forEach(({ domain }) => {
       checks.push(this.enforcer.enforce(user.id, domain, resourcePath, action));
@@ -41,22 +50,26 @@ export class AccessControlService {
     return responses.some(response => response);
   }
 
-  addRole({ user, domain, roleName }: AddRoleInterface) {
+  /** Add role to user */
+  addRole({
+    user,
+    domain,
+    roleName,
+    description,
+  }: ChangeRoleDto): Promise<Role> {
     const role = new Role();
     role.user = user;
     role.domain = domain.id;
     role.name = roleName;
+    if (description) role.description = description;
 
-    this.repository.save(role);
+    return this.repository.save(role);
   }
 
-  async removeRole({ user, domain, roleName }: AddRoleInterface) {
+  /** Remove role from user. Returns deleted role */
+  async removeRole({ user, domain, roleName }: ChangeRoleDto): Promise<Role> {
     const role = await this.repository.findOneOrFail({
-      where: {
-        user,
-        domain,
-        name: roleName,
-      },
+      where: { user, domain, name: roleName },
     });
     return this.repository.remove(role);
   }

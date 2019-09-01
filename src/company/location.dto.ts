@@ -1,63 +1,20 @@
-import { ObjectType, Field } from 'type-graphql';
-
-// @ObjectType()
-// class Cooridnates {
-//   @Field()
-//   lat: string;
-
-//   @Field()
-//   long: string;
-// }
-
-@ObjectType()
-export class Weekdays {
-  @Field()
+export interface Weekdays {
   monday: string;
-
-  @Field()
   tuesday: string;
-
-  @Field()
   wednesday: string;
-
-  @Field()
   thursday: string;
-
-  @Field()
   friday: string;
-
-  @Field()
   saturday: string;
-
-  @Field()
   sunday: string;
 }
 
-@ObjectType()
-export class Location {
-  @Field()
+// In future maybe add number that represents position in
+// globe, so it's less expensive to find near places
+export interface Location {
   address: string;
-
-  @Field(type => Weekdays)
   workingHours?: Weekdays;
-
-  @Field()
   phoneNumber?: string;
-
-  @Field()
   email?: string;
-
-  // @Field(type => Cooridnates)
-  // cooridnates?: {
-  //   lat: string;
-  //   long: string;
-  // };
-
-  // In future maybe add number that represents position in
-  // globe, so it's less expensive to find near places
-  @Field()
   lat: number;
-
-  @Field()
   long: number;
 }
