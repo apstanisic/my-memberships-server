@@ -1,7 +1,8 @@
 import { ManyToOne, Entity, Column } from 'typeorm';
+import { Field } from 'type-graphql';
 import { User } from '../user/user.entity';
 import { RoleName } from './roles.list';
-import { DefaultEntity } from '../core/default.entity';
+import { DefaultEntity } from '../core/entities/default.entity';
 
 /**
  * To add admin for company f32 to user
@@ -17,14 +18,17 @@ import { DefaultEntity } from '../core/default.entity';
 export class Role extends DefaultEntity {
   /** User that have this role */
   @ManyToOne(type => User, user => user.roles)
+  @Field(type => User)
   user: User;
 
   /** User's id */
   @Column()
+  @Field()
   userId: string;
 
   /** Role name */
   @Column()
+  @Field(type => String)
   name: RoleName;
 
   /**
@@ -33,6 +37,7 @@ export class Role extends DefaultEntity {
    * Keep domain as string so it can be portable and not app specific.
    */
   @Column({ default: '*' })
+  @Field()
   domain: string;
 
   /**
@@ -40,5 +45,6 @@ export class Role extends DefaultEntity {
    * For example, owner can leave reason why admin have this role
    */
   @Column({ type: 'text', nullable: true })
+  @Field(type => String, { nullable: true })
   description?: string;
 }

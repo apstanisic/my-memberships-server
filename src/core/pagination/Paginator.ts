@@ -1,9 +1,18 @@
 import { Repository } from 'typeorm';
-import parseQuery from './parseQuery';
+import parseQuery from '../typeorm/parseQuery';
+import {
+  PaginationInternalParams,
+  PaginationResponse,
+} from './pagination.types';
 
-/* TODO: Add firstPageUrl, nextPageUrl, prevPageUrl */
-/* Class for paginating results with TypeOrm */
-class Paginator<T> {
+/**
+ * Class for paginating results with TypeOrm
+ * Don't use this class directly, except when in specical situations.
+ * If you use this class offten, that means that helper is not good.
+ * Use paginate function insted.
+ * @todo Add firstPageUrl, nextPageUrl, prevPageUrl
+ */
+export class Paginator<T> {
   /* Page which user requests, default to first */
   page: number = 1;
 
@@ -21,7 +30,7 @@ class Paginator<T> {
   /* Options to be provided to query */
   options: Record<string, any> = {};
 
-  constructor(params: Params) {
+  constructor(params: PaginationInternalParams) {
     this.page = Number(params.page) || this.page;
     this.limit = params.limit || this.limit;
     this.order = params.order || this.order;
@@ -39,7 +48,7 @@ class Paginator<T> {
   }
 
   /* Execute query */
-  async execute<T>(repo: Repository<T>, criteria: {}) {
+  async execute<T>(repo: Repository<T>, criteria: {}): PaginationResponse<T> {
     const result = await repo.find({
       where: this.shouldParseQuery ? parseQuery(criteria) : criteria,
       ...this.options,
@@ -57,46 +66,4 @@ class Paginator<T> {
       data: result,
     };
   }
-}
-/* Parameters that are provided to paginate function */
-interface Params {
-  page: string | number;
-  limit?: number;
-  order?: Record<string, any>;
-  relations?: any;
-  shouldParseQuery?: boolean;
-}
-
-/* Response object from pagination */
-export interface PaginationResult<T = any> {
-  pagination: {
-    lastPage: boolean;
-    page: number;
-    perPage: number;
-  };
-  data: T[];
-}
-
-export type PaginationResponse<T> = Promise<PaginationResult<T>>;
-
-interface PaginateProps<T> {
-  repository: Repository<T>;
-  criteria: Record<string, any>;
-  options: Params;
-}
-
-/**
- * Helper method for Paginator class
- * @param repository TypeOrm repository to be used to fetch data
- * @param criteria query that needs to be have
- * @param options that tell pagination what to get
- */
-export function paginate<T>({
-  repository,
-  criteria: query,
-  options,
-}: PaginateProps<T>) {
-  const pag = new Paginator(options);
-  pag.prepare();
-  return pag.execute(repository, query);
 }
