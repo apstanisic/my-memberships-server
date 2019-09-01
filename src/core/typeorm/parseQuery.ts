@@ -9,7 +9,7 @@ import {
   FindOperator,
   In,
 } from 'typeorm';
-import { convertToObject } from './helpers';
+import { convertToObject } from '../helpers';
 
 /**
  * Parse query to TypeOrm valid query

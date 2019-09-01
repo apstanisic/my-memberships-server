@@ -1,6 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { RequiredRoles } from '../access-control/roles.decorator';
 
 @Controller()
 export class AppController {

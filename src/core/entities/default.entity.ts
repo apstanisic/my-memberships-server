@@ -8,7 +8,7 @@ import {
 import { Field, ID } from 'type-graphql';
 import { Exclude, classToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import BaseException from './BaseException';
+import BaseException from '../BaseException';
 
 /**
  * All entities should extend this class
@@ -16,7 +16,7 @@ import BaseException from './BaseException';
  */
 export abstract class DefaultEntity {
   @PrimaryGeneratedColumn('uuid')
-  @Field((type) => ID)
+  @Field(type => ID)
   id: string;
 
   @UpdateDateColumn()
@@ -24,6 +24,7 @@ export abstract class DefaultEntity {
   updatedAt: Date;
 
   @CreateDateColumn()
+  @Field()
   @Exclude()
   createdAt: Date;
 

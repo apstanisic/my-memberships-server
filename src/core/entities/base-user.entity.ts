@@ -1,22 +1,17 @@
-import { Column, Index, OneToMany } from 'typeorm';
+import { Column, Index } from 'typeorm';
 import { IsEmail, IsString, Length } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import * as uuid from 'uuid';
 import { Field } from 'type-graphql';
-import { DefaultEntity } from '../core/default.entity';
+import { DefaultEntity } from './default.entity';
 import { IUser } from './user.interface';
-import { Role } from '../access-control/roles.entity';
 
 /**
  * This should be general user that can be extracted in seperate module.
  * There should be another entity User that contains app specific properties.
  */
 export abstract class BaseUser extends DefaultEntity implements IUser {
-  /** All roles user have */
-  @OneToMany(type => Role, role => role.user, { eager: true })
-  roles: Role[];
-
   /** User Email, has to be unique and to be valid email */
   @Column()
   @Index({ unique: true })

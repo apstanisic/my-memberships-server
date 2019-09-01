@@ -1,5 +1,6 @@
 import { Column, ManyToOne } from 'typeorm';
-import { User } from '../user/user.entity';
+import { Field } from 'type-graphql';
+import { User } from '../../user/user.entity';
 
 /**
  * This entity is designed to be embedded
@@ -10,13 +11,16 @@ import { User } from '../user/user.entity';
 export class DeletedColumns {
   /** When was entity deleted. */
   @Column({ nullable: true, type: 'date' })
+  @Field({ nullable: true })
   at?: Date;
 
   /** User that deleted this entity */
-  @ManyToOne((type) => User, { nullable: true })
+  @ManyToOne(type => User, { nullable: true })
+  @Field({ nullable: true })
   by?: string;
 
   /* Why was entity deleted */
   @Column({ nullable: true })
+  @Field()
   reason: string;
 }

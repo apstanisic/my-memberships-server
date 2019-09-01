@@ -5,7 +5,7 @@ import { Validator } from 'class-validator';
 /**
  * Pipe to get page for pagination
  * @example
- *   method(@Param(ValidUUID) id: string) {}
+ *   method(@Param('id', ValidUUID) id: string) {}
  * @todo Check if this works
  */
 @Injectable()
