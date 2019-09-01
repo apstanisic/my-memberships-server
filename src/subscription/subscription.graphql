@@ -1,8 +1,12 @@
 type Subscription {
   id: ID!
   company: Company!
+  companyId: Company!
   owner: User!
-  from: DateTime!
-  to: DateTime!
+  ownerId: User!
+  startsAt: DateTime!
+  expiresAt: DateTime!
   price: Int!
+  allowedUses: String
+  usedAmount: Int!
 }

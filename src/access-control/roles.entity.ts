@@ -1,9 +1,7 @@
 import { ManyToOne, Entity, Column } from 'typeorm';
 import { User } from '../user/user.entity';
-import { RoleEnum, RoleName } from './roles-permissions/roles.list';
+import { RoleName } from './roles.list';
 import { DefaultEntity } from '../core/default.entity';
-import { Subscription } from '../subscription/subscription.entity';
-import { Company } from '../company/company.entity';
 
 /**
  * To add admin for company f32 to user
@@ -21,6 +19,7 @@ export class Role extends DefaultEntity {
   @ManyToOne(type => User, user => user.roles)
   user: User;
 
+  /** User's id */
   @Column()
   userId: string;
 
@@ -30,11 +29,16 @@ export class Role extends DefaultEntity {
 
   /**
    * Domain this role belongs to. In this app domain is company
-   * In other domain can be city. Domain limit the reach of user.
+   * In other domain can be city, or store. Domain limit the reach of user.
+   * Keep domain as string so it can be portable and not app specific.
    */
   @Column({ default: '*' })
   domain: string;
 
+  /**
+   * Description for this specific role to this user.
+   * For example, owner can leave reason why admin have this role
+   */
   @Column({ type: 'text', nullable: true })
   description?: string;
 }

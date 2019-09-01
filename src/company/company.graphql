@@ -2,7 +2,9 @@ type Company {
   id: ID!
   name: String!
   owner: User!
-  admins: [User!]!
+  ownerId: String!
+  category: String!
+  description: String!
   phoneNumbers: [String!]!
   emails: [String!]!
   locations: [Location!]!
@@ -10,15 +12,11 @@ type Company {
 
 type Location {
   address: String!
-  workingHours: Weekdays!
-  phoneNumber: String!
-  email: String!
-  cooridnates: Cooridnates!
-}
-
-type Cooridnates {
-  lat: String!
-  long: String!
+  workingHours: Weekdays
+  phoneNumber: String
+  email: String
+  lat: String
+  long: String
 }
 
 type Weekdays {
