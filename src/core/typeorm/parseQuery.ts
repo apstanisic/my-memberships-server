@@ -32,6 +32,8 @@ export default function parseQuery(
     // Seperate name and comparison parts
     const [name, comparison] = `${filter}`.split('__');
     // Use provided comparison part
+    // Don't filter pagination
+    if (filter.startsWith('pg')) return;
 
     switch (comparison) {
       case 'lt':
@@ -56,6 +58,8 @@ export default function parseQuery(
         if (Array.isArray(value) && value.length === 2) {
           typeOrmQuery[name] = Between(value[0], value[1]);
         }
+        break;
+      case 'pg':
         break;
       case 'man':
         // Do nothing, handle manually

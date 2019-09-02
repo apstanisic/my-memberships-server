@@ -32,11 +32,12 @@ export class PermissionsGuard implements CanActivate {
     //   'required_premissions',
     //   context.getHandler(),
     // );
-    const [execute, action, resourcePath] = this.reflector.get<Metadata>(
+    const data = this.reflector.get<Metadata>(
       'access_control',
       context.getHandler(),
     );
-    if (!execute) return true;
+    if (!data) return true;
+    const [execute, action, resourcePath] = data;
     // @IsAllowed('read')
 
     // If premissions are not passed everyone is allowed

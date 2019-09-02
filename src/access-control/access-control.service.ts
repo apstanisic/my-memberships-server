@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,12 +23,13 @@ export class AccessControlService {
   constructor(
     @InjectRepository(Role) private readonly repository: Repository<Role>,
   ) {
-    newEnforcer('casbin/casbin-model.conf', 'casbin/casbin-policies.csv').then(
-      enforcer => {
-        this.enforcer = enforcer;
-        this.enforcer.addFunction('validDomain', casbinValidDomain);
-      },
-    );
+    newEnforcer(
+      path.join(__dirname, './casbin/casbin-model.conf'),
+      path.join(__dirname, './casbin/casbin-policies.csv'),
+    ).then(enforcer => {
+      this.enforcer = enforcer;
+      this.enforcer.addFunction('validDomain', casbinValidDomain);
+    });
   }
 
   /**
