@@ -32,7 +32,7 @@ export abstract class DefaultEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async validate() {
-    const error = await validate(classToClass(this));
+    const error = await validate(this);
     if (error.length > 0) throw new BaseException({ error });
   }
 }

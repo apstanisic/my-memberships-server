@@ -23,5 +23,7 @@ export function paginate<T>({
 }: PaginateProps<T>): PaginationResponse<T> {
   const pag = new Paginator(options);
   pag.prepare();
+  console.log('final criteria', criteria);
+
   return pag.execute(repository, criteria);
 }

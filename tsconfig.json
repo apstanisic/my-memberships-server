@@ -10,6 +10,7 @@
     "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
+    "baseUrl": "./src",
     "incremental": true
   },
   "exclude": ["node_modules"],

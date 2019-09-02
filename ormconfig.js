@@ -17,10 +17,10 @@ const config = {
     type: 'redis',
     options: {
       port: envs.REDIS_PORT,
-      host: envs.REDIS_HOST
+      host: envs.REDIS_HOST,
     },
-    duration: 30000
-  }
+    duration: 30000,
+  },
 };
 
 /* Production and development specific settings */

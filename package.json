@@ -8,11 +8,12 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint --fix src --ext .js,.ts",
     "build": "rimraf dist && tsc",
-    "start": "NODE_ENV=production node  dist/main.js",
+    "start": "ts-node  dist/server.js",
     "dev": "nodemon",
     "debug": "nodemon --config nodemon-debug.json",
     "sync-schema": "ts-node ./node_modules/.bin/typeorm schema:sync",
-    "test-data": "ts-node ./node_modules/.bin/typeorm migration:run"
+    "test-data": "ts-node ./node_modules/.bin/typeorm migration:run",
+    "webpack": "webpack --config webpack.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^6.6.3",
@@ -62,10 +63,14 @@
     "eslint-plugin-import": "^2.18.2",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
+    "ts-loader": "^6.0.4",
     "ts-node": "8.3.0",
     "tsconfig-paths": "3.8.0",
-    "typescript": "3.6.2",
-    "wait-on": "^3.3.0"
+    "typescript": "3.5.3",
+    "wait-on": "^3.3.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
+    "webpack-node-externals": "^1.7.2"
   },
   "prettier": {
     "singleQuote": true,

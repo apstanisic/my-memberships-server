@@ -31,7 +31,7 @@ export class Company extends DefaultEntity {
   subscriptions: Subscription[];
 
   /** What type of business is this company */
-  @Column({ type: 'string' })
+  @Column()
   @Field(type => String)
   category: CompanyCategory;
 

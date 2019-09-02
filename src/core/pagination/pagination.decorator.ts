@@ -17,10 +17,14 @@ function convert(query: Record<string, any>): PaginationExposedParams {
   const params: PaginationExposedParams = {};
 
   const page = parseInt(query[pageField], 10);
-  params.page = Number.isNaN(page) || page < 1 ? 1 : page;
+  if (!Number.isNaN(page)) {
+    params.page = page;
+  }
 
   const limit = parseInt(query[limitField], 10);
-  params.limit = Number.isNaN(limit) || limit < 1 ? 1 : limit;
+  if (!Number.isNaN(limit)) {
+    params.limit = limit;
+  }
 
   params.cursor = `${query[cursorField]}`;
 

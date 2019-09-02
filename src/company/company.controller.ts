@@ -31,10 +31,10 @@ export class CompaniesController {
 
   /* Get ads, filtered and paginated */
   @Get()
-  get(
-    @Query(OrmQueryPipe) query: OrmQuery,
-    @GetPagination() pg: PgParams,
-  ): PaginationResponse<Company> {
+  get(@Query() query: any, @GetPagination() pg: PgParams) {
+    console.log('query', query);
+    console.log('pg', pg);
+
     return this.service.paginate(query, pg);
   }
 

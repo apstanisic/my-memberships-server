@@ -5,7 +5,6 @@ import {
   PaginationResponse,
   PaginationResult,
 } from './pagination.types';
-import { plainToClass } from 'class-transformer';
 
 /**
  * Class for paginating results with TypeOrm
@@ -22,7 +21,9 @@ export class Paginator<T> {
   limit: number = 12;
 
   /* Order, excepts any column, by default show newest */
-  order: Record<string, any> = { createdAt: 'DESC' };
+  orderDirection: string = 'DESC';
+
+  orderColumn: string = 'createdAt';
 
   response: Record<any, any> = {};
 
@@ -35,7 +36,10 @@ export class Paginator<T> {
   constructor(params: PaginationInternalParams) {
     this.page = Number(params.page) || this.page;
     this.limit = params.limit || this.limit;
-    this.order = params.order || this.order;
+    if (params.order) {
+      this.orderDirection = params.order.direction;
+      this.orderDirection = params.order.direction;
+    }
     this.shouldParseQuery = params.shouldParseQuery;
   }
 
@@ -44,7 +48,7 @@ export class Paginator<T> {
     this.options = {
       skip: (this.page - 1) * this.limit,
       take: this.limit + 1,
-      order: this.order,
+      order: { [this.orderColumn]: this.orderDirection },
       // cache: true
     };
   }
