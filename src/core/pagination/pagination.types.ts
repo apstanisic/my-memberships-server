@@ -19,12 +19,13 @@ export interface PaginationInternalParams extends PaginationExposedParams {
 }
 
 /** Response object from pagination */
-interface PaginationResult<T = any> {
+export class PaginationResult<T = any> {
   pagination: {
     lastPage: boolean;
     page: number;
     perPage: number;
   };
+
   data: T[];
 }
 

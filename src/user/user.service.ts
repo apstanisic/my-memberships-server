@@ -2,16 +2,12 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import BaseException from '../core/BaseException';
 import { LoginData } from '../auth/auth.dto';
-import { UpdateUserInfo } from './update-user.dto';
-import { hasForbiddenKey } from '../core/helpers';
-import parseQuery from '../core/typeorm/parseQuery';
 import { BaseService } from '../core/base.service';
 
 @Injectable()

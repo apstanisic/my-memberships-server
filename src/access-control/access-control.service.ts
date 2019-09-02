@@ -20,7 +20,7 @@ export class AccessControlService {
   enforcer: Enforcer;
 
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<Role>,
+    @InjectRepository(Role) private readonly repository: Repository<Role>,
   ) {
     newEnforcer('casbin/casbin-model.conf', 'casbin/casbin-policies.csv').then(
       enforcer => {
