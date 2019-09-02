@@ -1,7 +1,0 @@
-type Role {
-  id: ID!
-  user: User!
-  userId: String!
-  domain: String!
-  description: String
-}

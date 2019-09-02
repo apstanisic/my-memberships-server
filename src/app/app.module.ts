@@ -14,10 +14,11 @@ import { AccessControlModule } from '../access-control/access-control.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.graphql',
-      context: ({ req }) => ({ req }),
-    }),
+    // First make good rest then convert to graphql
+    // GraphQLModule.forRoot({
+    //   autoSchemaFile: 'schema.graphql',
+    //   context: ({ req }) => ({ req }),
+    // }),
     ConfigModule,
     AuthModule,
     AccessControlModule,

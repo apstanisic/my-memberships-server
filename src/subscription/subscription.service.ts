@@ -9,7 +9,7 @@ import { paginate } from '../core/pagination/paginate.helper';
 import { BaseService } from '../core/base.service';
 
 @Injectable()
-export class SubscriptionService extends BaseService {
+export class SubscriptionService extends BaseService<Subscription> {
   constructor(
     @InjectRepository(Subscription)
     protected readonly repository: Repository<Subscription>,

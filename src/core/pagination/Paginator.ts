@@ -3,7 +3,9 @@ import parseQuery from '../typeorm/parseQuery';
 import {
   PaginationInternalParams,
   PaginationResponse,
+  PaginationResult,
 } from './pagination.types';
+import { plainToClass } from 'class-transformer';
 
 /**
  * Class for paginating results with TypeOrm
@@ -57,13 +59,14 @@ export class Paginator<T> {
     if (!lastPage) {
       result.pop();
     }
-    return {
-      pagination: {
-        lastPage,
-        page: this.page,
-        perPage: this.limit,
-      },
-      data: result,
+    const response = new PaginationResult<T>();
+    response.pagination = {
+      lastPage,
+      page: this.page,
+      perPage: this.limit,
     };
+    response.data = result;
+
+    return response;
   }
 }
