@@ -12,7 +12,14 @@ import {
   Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+<<<<<<< HEAD
 import { PaginationOptions } from '../core/pagination/pagination.types';
+=======
+import {
+  PaginationOptions,
+  PaginationResponse,
+} from '../core/pagination/pagination.types';
+>>>>>>> 689fcc0990449f776251d6ed6e408a7dc0159ef4
 import { Company } from './company.entity';
 import { User } from '../user/user.entity';
 import { CompanyService } from './company.service';
@@ -28,8 +35,13 @@ export class CompaniesController {
 
   /** Get companies, filtered and paginated */
   @Get()
+<<<<<<< HEAD
   get(@Query() filter: any, @GetPagination() pg: PaginationOptions) {
     return this.service.paginate({ filter, pg });
+=======
+  get(@Query() query: any, @GetPagination() pg: PaginationOptions) {
+    return this.service.paginate(query, pg);
+>>>>>>> 689fcc0990449f776251d6ed6e408a7dc0159ef4
   }
 
   /** Get company by id */
