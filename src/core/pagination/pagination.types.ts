@@ -19,7 +19,7 @@ export interface PaginationInternalParams extends PaginationOptions {
 export class _PaginationResult<T = any> {
   /** Pagination metadata */
   pagination: {
-    count: number;
+    amount: number;
     isLastPage: boolean;
     startsAt?: string;
     endsAt?: string;

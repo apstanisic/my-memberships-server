@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import BaseException from '../core/BaseException';
+import { BaseException } from '../core/custom-exceptions';
 import { LoginData } from '../auth/auth.dto';
 import { BaseService } from '../core/base.service';
 

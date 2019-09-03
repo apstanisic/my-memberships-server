@@ -1,10 +1,12 @@
+import { InternalServerErrorException } from '@nestjs/common';
+
 interface Params {
   message?: string;
   statusCode?: number;
   error?: any;
 }
 
-export default class BaseException {
+export class BaseException {
   statusCode: number;
 
   message: string;
@@ -17,3 +19,5 @@ export default class BaseException {
     this.message = message;
   }
 }
+
+export class InternalError extends InternalServerErrorException {}

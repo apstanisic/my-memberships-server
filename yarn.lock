@@ -511,6 +511,11 @@
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
 
+"@types/sqlstring@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@types/sqlstring/-/sqlstring-2.2.1.tgz#5c1459ce14be0e74bd9648097bbee58f5c669f20"
+  integrity sha512-aoPCWl1XeUuVXslgwN06FKhVyJq8rqlKk2czbEnk9+R0OQd+JPJDmOjySnULGTeZzr6YB6+3VyFrEiOlFoMgYA==
+
 "@types/uuid@^3.4.5":
   version "3.4.5"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.5.tgz#d4dc10785b497a1474eae0ba7f0cb09c0ddfd6eb"
@@ -6155,6 +6160,11 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
+
+sqlstring@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.1.tgz#475393ff9e91479aea62dcaf0ca3d14983a7fb40"
+  integrity sha1-R1OT/56RR5rqYtyvDKPRSYOn+0A=
 
 sshpk@^1.7.0:
   version "1.16.1"

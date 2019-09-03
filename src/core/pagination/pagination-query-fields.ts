@@ -4,4 +4,4 @@
 export const limitField = 'pg_limit';
 export const cursorField = 'pg_cursor';
 /** Values are 'ASC' or 'DESC' */
-export const orderByField = 'pg_order_by';
+export const orderByField = 'pg_order';
