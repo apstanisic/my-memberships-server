@@ -12,11 +12,12 @@ import {
 } from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
 import { DefaultEntity } from './entities/default.entity';
+import { HasId } from './interfaces';
 
 /**
  * Base service that implements some basic crud methods
  */
-export abstract class BaseService<T = any> {
+export abstract class BaseService<T extends HasId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
   private logger = new Logger();
@@ -67,6 +68,8 @@ export abstract class BaseService<T = any> {
     criteria: any = {},
     pgParams: PaginationOptions = {},
   ): PaginationResponse<T> {
+    // Pagination has it's own error handling
+    // No need to handle errors 2 times
     return paginate({
       criteria: parseQuery(criteria),
       options: pgParams,

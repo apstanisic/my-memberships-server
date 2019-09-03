@@ -4,9 +4,9 @@ import {
   PaginationResponse,
 } from './pagination.types';
 import { Paginator } from './paginator';
-import { DefaultEntity } from '../entities/default.entity';
+import { HasId } from '../interfaces';
 
-interface PaginateProps<T> {
+interface PaginateProps<T extends HasId> {
   repository: Repository<T>;
   criteria: Record<string, any>;
   options: PaginationInternalParams;
@@ -17,7 +17,7 @@ interface PaginateProps<T> {
  * @param criteria query that needs to be have
  * @param options that tell pagination what to get
  */
-export async function paginate<T>({
+export async function paginate<T extends HasId>({
   repository,
   criteria,
   options,

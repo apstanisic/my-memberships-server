@@ -2,10 +2,7 @@ import { Repository, FindManyOptions } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { Validator, validate } from 'class-validator';
 import { Base64 } from 'js-base64';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { PaginationResponse, _PaginationResult } from './pagination.types';
 import { DefaultEntity } from '../entities/default.entity';
 import { PaginationParamsDto } from './pagination-params.dto';
@@ -54,19 +51,27 @@ export class Paginator<T extends HasId> {
 
     const errors = await validate(params);
     if (errors.length > 0) {
-      throw new BadRequestException('Pagination params invalid');
+      throw new BadRequestException(
+        'Pagination params invalid',
+        JSON.stringify(errors),
+      );
     }
     this.limit = params.limit || this.limit;
-    this.order = params.orderBy || 'DESC';
+    this.order = params.order || 'DESC';
     this.cursor = params.cursor;
   }
 
   /* Execute query */
   async execute(filter: {}): PaginationResponse<T> {
-    const cursorWhere = new ParseCursor(this.cursor).parsed;
+    let cursorQuery;
+    if (this.cursor) {
+      cursorQuery = new ParseCursor(this.cursor).query;
+    } else {
+      cursorQuery = {};
+    }
 
     const result = await this.repo.find({
-      where: { ...cursorWhere, ...filter },
+      where: { ...cursorQuery, ...filter },
       order: { [this.orderColumn]: this.order },
       take: this.limit + 1,
     } as FindManyOptions<T>);
@@ -78,23 +83,23 @@ export class Paginator<T extends HasId> {
   private parseResponse(result: T[]) {
     const response = new _PaginationResult<T>();
     const isLastPage = this.limit >= result.length;
-    console.log(isLastPage, this.limit, result.length);
 
-    let nextCursor;
+    let next;
+    let endsAt;
     /** If it is not last page generate cursor for next page */
     if (!isLastPage && result.length > 0) {
       const nextEntity = result.pop() as T;
-      nextCursor = new GenerateCursor(nextEntity, this.orderColumn).cursor;
+      next = new GenerateCursor(nextEntity, this.orderColumn).cursor;
+      /* Generate last cursor for this page */
+      endsAt = new GenerateCursor(result[result.length - 1]).cursor;
     }
-    /** Generate last cursor for this page */
-    const lastCursor = new GenerateCursor(result[result.length - 1]).cursor;
     /* retur response */
     response.pagination = {
-      count: result.length,
       isLastPage,
+      next,
+      endsAt,
+      amount: result.length,
       startsAt: this.cursor,
-      next: nextCursor,
-      endsAt: lastCursor,
     };
     response.data = result;
     return response;

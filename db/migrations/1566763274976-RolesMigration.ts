@@ -14,5 +14,7 @@ export class RolesMigration1566763274976 implements MigrationInterface {
     generateRole(users, companies);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<any> {}
+  public async down(queryRunner: QueryRunner): Promise<any> {
+    await queryRunner.manager.clear(Role);
+  }
 }

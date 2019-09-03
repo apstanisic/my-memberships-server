@@ -10,7 +10,7 @@ import {
 import { Field, ID } from 'type-graphql';
 import { Exclude, classToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import BaseException from '../BaseException';
+import { BaseException } from '../custom-exceptions';
 
 /**
  * All entities should extend this class
@@ -22,15 +22,15 @@ export abstract class DefaultEntity {
   @Field(type => ID)
   id: string;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   @Exclude()
   updatedAt: Date;
 
   /** Created At has index for cursor pagination */
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   @Index()
   @Field()
-  @Exclude()
+  // @Exclude()
   createdAt: Date;
 
   /* Validate fields */

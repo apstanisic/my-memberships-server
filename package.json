@@ -13,6 +13,7 @@
     "debug": "nodemon --config nodemon-debug.json",
     "sync-schema": "ts-node ./node_modules/.bin/typeorm schema:sync",
     "test-data": "ts-node ./node_modules/.bin/typeorm migration:run",
+    "typeorm": "ts-node ./node_modules/.bin/typeorm",
     "webpack": "webpack --config webpack.config.js"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
+    "sqlstring": "^2.3.1",
     "type-graphql": "^0.17.5",
     "typeorm": "^0.2.18",
     "uuid": "^3.3.3"
@@ -56,6 +58,7 @@
     "@types/mailgun-js": "^0.22.3",
     "@types/node": "^12.7.3",
     "@types/passport-jwt": "^3.0.1",
+    "@types/sqlstring": "^2.2.1",
     "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
