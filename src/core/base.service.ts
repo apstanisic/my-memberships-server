@@ -1,4 +1,4 @@
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial, BaseEntity } from 'typeorm';
 import {
   NotFoundException,
   Logger,
@@ -6,14 +6,19 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import parseQuery from './typeorm/parseQuery';
-import { PaginationResponse, PgParams } from './pagination/pagination.types';
+import {
+  PaginationResponse,
+  PaginationOptions,
+} from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
+import { DefaultEntity } from './entities/default.entity';
+import { HasId } from './interfaces';
 
 /**
  * Base service that implements some basic crud methods
  */
-export abstract class BaseService<T = any> {
-  protected abstract repository: Repository<T>;
+export abstract class BaseService<T extends HasId = any> {
+  constructor(protected readonly repository: Repository<T>) {}
 
   private logger = new Logger();
 
@@ -61,17 +66,15 @@ export abstract class BaseService<T = any> {
   /** Find entities that match criteria with pagination */
   async paginate(
     criteria: any = {},
-    pgParams: PgParams = {},
+    pgParams: PaginationOptions = {},
   ): PaginationResponse<T> {
-    try {
-      return paginate({
-        criteria: parseQuery(criteria),
-        options: pgParams,
-        repository: this.repository,
-      });
-    } catch (error) {
-      throw this.internalError(error);
-    }
+    // Pagination has it's own error handling
+    // No need to handle errors 2 times
+    return paginate({
+      criteria: parseQuery(criteria),
+      options: pgParams,
+      repository: this.repository,
+    });
   }
 
   /* Create new entity */

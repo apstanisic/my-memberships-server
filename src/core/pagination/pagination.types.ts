@@ -1,33 +1,35 @@
 /** Params that user can provide */
-export interface PaginationExposedParams {
-  page?: number;
+export interface PaginationOptions {
   limit?: number;
   cursor?: string;
-  order?: {
-    column: string;
-    direction: 'ASC' | 'DESC';
-  };
+  order?: 'ASC' | 'DESC';
 }
 
-/** Prettier name for PaginationExposedParams */
-export interface PgParams extends PaginationExposedParams {}
-
-/** Parameters that are provided to paginate function */
-export interface PaginationInternalParams extends PaginationExposedParams {
+/** Parameters that are provided to paginate function.
+ * Additional params can only code provide, not user */
+export interface PaginationInternalParams extends PaginationOptions {
   relations?: any;
   shouldParseQuery?: boolean;
 }
 
-/** Response object from pagination */
-export class PaginationResult<T = any> {
+/**
+ * For internal use. Result object from pagination.
+ * Use PaginationResponse for docs
+ */
+export class _PaginationResult<T = any> {
+  /** Pagination metadata */
   pagination: {
-    lastPage: boolean;
-    page: number;
-    perPage: number;
+    amount: number;
+    isLastPage: boolean;
+    startsAt?: string;
+    endsAt?: string;
+    next?: string;
+    previous?: string;
   };
 
+  /** Retrived data */
   data: T[];
 }
 
 /** Every db query is async, so response is always Promise of PgResult */
-export type PaginationResponse<T> = Promise<PaginationResult<T>>;
+export type PaginationResponse<T> = Promise<_PaginationResult<T>>;

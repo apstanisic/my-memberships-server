@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  PgParams,
+  PaginationOptions,
   PaginationResponse,
 } from '../core/pagination/pagination.types';
 import { User } from '../user/user.entity';
@@ -37,7 +37,7 @@ export class SubscriptionController {
   @Get()
   get(
     @Query(OrmQueryPipe) query: OrmQuery,
-    @GetPagination() pg: PgParams,
+    @GetPagination() pg: PaginationOptions,
   ): PaginationResponse<Subscription> {
     return this.service.paginate(query, pg);
   }

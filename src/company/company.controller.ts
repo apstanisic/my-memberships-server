@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  PgParams,
+  PaginationOptions,
   PaginationResponse,
 } from '../core/pagination/pagination.types';
 import { Company } from './company.entity';
@@ -31,10 +31,7 @@ export class CompaniesController {
 
   /* Get ads, filtered and paginated */
   @Get()
-  get(@Query() query: any, @GetPagination() pg: PgParams) {
-    console.log('query', query);
-    console.log('pg', pg);
-
+  get(@Query() query: any, @GetPagination() pg: PaginationOptions) {
     return this.service.paginate(query, pg);
   }
 

@@ -4,27 +4,29 @@ import { Repository } from 'typeorm';
 import { Subscription } from './subscription.entity';
 import { Company } from '../company/company.entity';
 import { User } from '../user/user.entity';
-import { PaginationResponse } from '../core/pagination/pagination.types';
+import {
+  PaginationResponse,
+  PaginationOptions,
+} from '../core/pagination/pagination.types';
 import { paginate } from '../core/pagination/paginate.helper';
 import { BaseService } from '../core/base.service';
 
 @Injectable()
 export class SubscriptionService extends BaseService<Subscription> {
   constructor(
-    @InjectRepository(Subscription)
-    protected readonly repository: Repository<Subscription>,
+    @InjectRepository(Subscription) repository: Repository<Subscription>,
   ) {
-    super();
+    super(repository);
   }
 
   /* Get paginated subscriptions for provided user */
   async getUsersSubscriptions(
     user: User,
-    page: number = 1,
+    options: PaginationOptions = {},
   ): PaginationResponse<Subscription> {
     return paginate({
+      options,
       criteria: { user },
-      options: { page },
       repository: this.repository,
     });
   }
@@ -32,11 +34,11 @@ export class SubscriptionService extends BaseService<Subscription> {
   /** Get paginated subscriptions for provided company */
   async getCompaniesSubscriptions(
     company: Company,
-    page: number = 1,
+    options: PaginationOptions = {},
   ): PaginationResponse<Subscription> {
     return paginate({
+      options,
       criteria: { company },
-      options: { page },
       repository: this.repository,
     });
   }

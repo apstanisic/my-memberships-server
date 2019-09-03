@@ -30,7 +30,9 @@
     "arrow-parens": "off", // Code is more concise
     "max-classes-per-file": "off", // Many dto classes are simply small
     "no-underscore-dangle": "off", // Allow for _private field in typeorm entity
-    "object-curly-newline": "off" // Stupid rule
+    "object-curly-newline": "off", // Stupid rule
+    "consistent-return": "off", // Have ts, no need for this
+    "implicit-arrow-linebreak": "off" // causes problems
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

@@ -12,11 +12,13 @@ export class SubscriptionMigration1566417766995 implements MigrationInterface {
 
     const companies: Company[] = await queryRunner.manager.find(Company);
 
-    for (let i = 0; i < 1500; i++) {
+    for (let i = 0; i < 1500; i += 1) {
       subscriptions.push(generateSubscription(users, companies));
     }
     await queryRunner.manager.save(subscriptions);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<any> {}
+  public async down(queryRunner: QueryRunner): Promise<any> {
+    await queryRunner.manager.clear(Subscription);
+  }
 }
