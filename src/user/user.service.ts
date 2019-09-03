@@ -6,16 +6,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import BaseException from '../core/BaseException';
+import { BaseException } from '../core/custom-exceptions';
 import { LoginData } from '../auth/auth.dto';
 import { BaseService } from '../core/base.service';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
-  constructor(
-    @InjectRepository(User) protected readonly repository: Repository<User>,
-  ) {
-    super();
+  constructor(@InjectRepository(User) repository: Repository<User>) {
+    super(repository);
   }
 
   /**

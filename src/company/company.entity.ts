@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
 import { IsEmail, Length, IsString } from 'class-validator';
 import { Field } from 'type-graphql';
 import { Location } from './location.dto';
@@ -11,6 +11,7 @@ import { CompanyCategory } from './categories.list';
 export class Company extends DefaultEntity {
   /** Company name */
   @Column()
+  @Index()
   @Field()
   @IsString()
   @Length(6, 200)

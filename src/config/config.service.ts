@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InternalError } from '../core/custom-exceptions';
 
 @Injectable()
 export class ConfigService {
@@ -12,7 +13,7 @@ export class ConfigService {
       dotenv.config();
       this.envConfig = dotenv.parse(file);
     } catch (error) {
-      throw new InternalServerErrorException('No .env file found');
+      throw new InternalError('No .env file found');
     }
   }
 
