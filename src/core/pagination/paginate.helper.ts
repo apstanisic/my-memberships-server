@@ -1,5 +1,12 @@
 import { Repository } from 'typeorm';
+<<<<<<< HEAD
 import { PaginationResponse, PaginationOptions } from './pagination.types';
+=======
+import {
+  PaginationInternalParams,
+  PaginationResponse,
+} from './pagination.types';
+>>>>>>> 689fcc0990449f776251d6ed6e408a7dc0159ef4
 import { Paginator } from './paginator';
 import { HasId } from '../interfaces';
 

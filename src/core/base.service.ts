@@ -5,12 +5,17 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
+<<<<<<< HEAD
 import parseQuery from './typeorm/parse-to-orm-query';
+=======
+import parseQuery from './typeorm/parseQuery';
+>>>>>>> 689fcc0990449f776251d6ed6e408a7dc0159ef4
 import {
   PaginationResponse,
   PaginationOptions,
 } from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
+<<<<<<< HEAD
 import { HasId } from './interfaces';
 
 /** Params that can be provided to pagination */
@@ -18,6 +23,10 @@ interface PgMethodParams {
   filter?: Record<string, any> | null;
   pg?: PaginationOptions;
 }
+=======
+import { DefaultEntity } from './entities/default.entity';
+import { HasId } from './interfaces';
+>>>>>>> 689fcc0990449f776251d6ed6e408a7dc0159ef4
 
 /**
  * Base service that implements some basic crud methods
