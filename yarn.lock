@@ -368,6 +368,11 @@
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.0.tgz#56c95c69b51e7168b0d6727005d1fb2a00aaef94"
   integrity sha512-8CBLG8RmxSvoY07FE6M/QpvJ7J5KzeKqF8eWN7Dq6Ks+lBTQae8Roc2G81lUu2Kw5Ju1gymOuvgyUsussbjAaA==
 
+"@types/js-base64@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@types/js-base64/-/js-base64-2.3.1.tgz#c39f14f129408a3d96a1105a650d8b2b6eeb4168"
+  integrity sha512-4RKbhIDGC87s4EBy2Cp2/5S2O6kmCRcZnD5KRCq1q9z2GhBte1+BdsfVKCpG8yKpDGNyEE2G6IqFIh6W2YwWPA==
+
 "@types/json-schema@^7.0.3":
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
@@ -3967,6 +3972,11 @@ iterare@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/iterare/-/iterare-1.2.0.tgz#7427f5ed45986e4b73e2fea903579f1117f3dd15"
   integrity sha512-RxMV9p/UzdK0Iplnd8mVgRvNdXlsTOiuDrqMRnDi3wIhbT+JP4xDquAX9ay13R3CH72NBzQ91KWe0+C168QAyQ==
+
+js-base64@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
+  integrity sha512-M7kLczedRMYX4L8Mdh4MzyAMM9O5osx+4FcOQuTvr3A9F2D9S5JXheN0ewNbrvK2UatkTRhL5ejGmGSjNMiZuw==
 
 js-tokens@^4.0.0:
   version "4.0.0"

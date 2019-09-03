@@ -4,6 +4,8 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  Index,
+  getConnection,
 } from 'typeorm';
 import { Field, ID } from 'type-graphql';
 import { Exclude, classToClass } from 'class-transformer';
@@ -14,6 +16,7 @@ import BaseException from '../BaseException';
  * All entities should extend this class
  * Every entity must have these columns
  */
+@Index(['createdAt', 'id'])
 export abstract class DefaultEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(type => ID)
@@ -23,7 +26,9 @@ export abstract class DefaultEntity {
   @Exclude()
   updatedAt: Date;
 
+  /** Created At has index for cursor pagination */
   @CreateDateColumn()
+  @Index()
   @Field()
   @Exclude()
   createdAt: Date;
