@@ -1,15 +1,12 @@
 import { Repository } from 'typeorm';
-import {
-  PaginationInternalParams,
-  PaginationResponse,
-} from './pagination.types';
+import { PaginationResponse, PaginationOptions } from './pagination.types';
 import { Paginator } from './paginator';
 import { HasId } from '../interfaces';
 
 interface PaginateProps<T extends HasId> {
   repository: Repository<T>;
   criteria: Record<string, any>;
-  options: PaginationInternalParams;
+  options: PaginationOptions;
 }
 /**
  * Simmple helper function for Paginator class

@@ -5,14 +5,19 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import parseQuery from './typeorm/parseQuery';
+import parseQuery from './typeorm/parse-to-orm-query';
 import {
   PaginationResponse,
   PaginationOptions,
 } from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
-import { DefaultEntity } from './entities/default.entity';
 import { HasId } from './interfaces';
+
+/** Params that can be provided to pagination */
+interface PgMethodParams {
+  filter?: Record<string, any> | null;
+  pg?: PaginationOptions;
+}
 
 /**
  * Base service that implements some basic crud methods
@@ -64,14 +69,14 @@ export abstract class BaseService<T extends HasId = any> {
   }
 
   /** Find entities that match criteria with pagination */
-  async paginate(
-    criteria: any = {},
-    pgParams: PaginationOptions = {},
-  ): PaginationResponse<T> {
+  async paginate({
+    filter = null,
+    pg: pgParams = {},
+  }: PgMethodParams = {}): PaginationResponse<T> {
     // Pagination has it's own error handling
     // No need to handle errors 2 times
     return paginate({
-      criteria: parseQuery(criteria),
+      criteria: parseQuery(filter),
       options: pgParams,
       repository: this.repository,
     });

@@ -38,7 +38,7 @@ export class BaseController<T extends BaseService<E>, E> {
 
   /* Get data, filtered and paginated */
   @Get()
-  find(
+  find({ filter: query, pgParams: pagination }
     @Query(OrmQueryPipe) query: OrmQuery,
     @GetPagination() pagination: PaginationOptions,
   ): PaginationResponse<E> {

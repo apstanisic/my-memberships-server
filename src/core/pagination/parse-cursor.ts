@@ -1,33 +1,29 @@
 import { Base64 } from 'js-base64';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { MoreThan, LessThan, FindOperator, Raw } from 'typeorm';
+import { FindOperator, Raw } from 'typeorm';
 import { escape as e } from 'sqlstring';
 import { HasId } from '../interfaces';
 import { InternalError } from '../custom-exceptions';
 
 /** Parse cursor to proper where query part */
 export class ParseCursor<T extends HasId = any> {
-  validator = new Validator();
-
+  /** Part of TypeOrm query used for pagination */
   query: { [key: string]: FindOperator<any> };
 
+  /** Validate values */
+  private validator = new Validator();
+
   /** UUID from cursor (1st param) */
-  id: string;
+  private id: string;
 
   /** Column name from cursor (2nd param) */
-  columnName: string;
+  private columnName: string;
 
   /** Column value from cursor (3nd param) */
-  columnValue: any;
+  private columnValue: any;
 
   /**
-   * @todo Currently only using single column for pagination and order.
-   * There could be missing prop cause timestamp is not unique.
-   * Fix This.
    * @param cursor that needs to be parsed
    * @param order that db will use to sort.
    * It will use column from columnName property
@@ -47,17 +43,22 @@ export class ParseCursor<T extends HasId = any> {
     // this.query = this.parsedValue;
   }
 
-  /** Parse Id to TypeOrm query item */
+  /** Parse cursor to TypeOrm query item */
   private toTypeOrmQuery() {
+    // Id must be valid UUID
     if (!this.validator.isUUID(this.id)) {
       throw new BadRequestException("Cursor's Id part not UUID");
     }
-    // Order is passed in constructor
+
+    // Sign to be use in cursor query. Order is passed in constructor
     // If ascending order use >, if descending use <
     const sign = this.order === 'ASC' ? '>' : '<';
+
+    // Where part in case query value is different then provided cursor value
     const valueIsDiff = (column: string) =>
       `${column} ${sign} ${e(this.columnValue)}`;
 
+    // Where part in case query value is same as provided cursor value
     const valueIsEqual = (column: string) =>
       `${column} = ${e(this.columnValue)}`;
     return {

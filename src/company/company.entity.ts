@@ -27,6 +27,7 @@ export class Company extends DefaultEntity {
   @Field()
   ownerId: string;
 
+  /** All subscriptions in this company (valid, expired and deleted) */
   @OneToMany(type => Subscription, subscription => subscription.company)
   @Field(type => [Subscription])
   subscriptions: Subscription[];
@@ -43,21 +44,24 @@ export class Company extends DefaultEntity {
   @Length(4, 3000)
   description: string;
 
-  /** Company's main phone number */
+  /** Company's main phone numbers */
   @Column({ type: 'simple-array' })
   @Field(type => [String])
   @IsString({ each: true })
   @Length(8, 30, { each: true })
   phoneNumbers: string[];
 
-  /* Company's main email */
+  /** Company's main emails */
   @Column({ type: 'simple-array' })
   @Field(type => [String])
   @IsEmail({}, { each: true })
   emails: string[];
 
-  /* All gyms location */
-  // TODO: This probably causes problems
+  /**
+   * All gyms location
+   * @todo Refactor this
+   * Maybe move Location to defferent table
+   */
   @Column({ type: 'simple-json' })
   @Field(type => [Location])
   locations: Location[];

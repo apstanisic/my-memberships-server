@@ -1,4 +1,4 @@
-import { IsOptional, IsIn, IsInt, IsBase64 } from 'class-validator';
+import { IsOptional, IsIn, IsInt, IsBase64, IsUrl } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsBetween } from '../is-between';
 import { PaginationOptions } from './pagination.types';
@@ -18,4 +18,10 @@ export class PaginationParamsDto implements PaginationOptions {
   @IsInt()
   @IsBetween(1, 48)
   limit?: number;
+
+  /** Current url provided by framework */
+  currentUrl?: string;
+
+  /** All query data */
+  query?: any = {};
 }
