@@ -3,6 +3,8 @@ export interface PaginationOptions {
   limit?: number;
   cursor?: string;
   order?: 'ASC' | 'DESC';
+  currentUrl?: string;
+  query?: any;
 }
 
 /** Parameters that are provided to paginate function.

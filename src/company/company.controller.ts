@@ -12,36 +12,33 @@ import {
   Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  PaginationOptions,
-  PaginationResponse,
-} from '../core/pagination/pagination.types';
+import { PaginationOptions } from '../core/pagination/pagination.types';
 import { Company } from './company.entity';
 import { User } from '../user/user.entity';
 import { CompanyService } from './company.service';
-import { OrmQueryPipe, OrmQuery } from '../core/typeorm/orm-query.pipe';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 
+/** Companies Controller */
 @Controller('companies')
 @UseInterceptors(ClassSerializerInterceptor)
 export class CompaniesController {
   constructor(private readonly service: CompanyService) {}
 
-  /* Get ads, filtered and paginated */
+  /** Get companies, filtered and paginated */
   @Get()
-  get(@Query() query: any, @GetPagination() pg: PaginationOptions) {
-    return this.service.paginate(query, pg);
+  get(@Query() filter: any, @GetPagination() pg: PaginationOptions) {
+    return this.service.paginate({ filter, pg });
   }
 
-  /* Get company by id */
+  /** Get company by id */
   @Get(':id')
   findById(@Param('id') id: string): Promise<Company> {
     return this.service.findById(id);
   }
 
-  /* Create new company */
+  /** Create company */
   @Post()
   @UseGuards(AuthGuard('jwt'))
   async create(
@@ -51,11 +48,11 @@ export class CompaniesController {
     return this.service.create({ ...company, owner: user });
   }
 
-  /* Remove company */
+  /** Remove company */
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   @IfAllowed()
-  remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
+  remove(@Param('id') id: string): Promise<Company> {
     return this.service.delete(id);
   }
 

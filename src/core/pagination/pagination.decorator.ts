@@ -11,11 +11,13 @@ import { PaginationOptions } from './pagination.types';
  * Convert query to pagination request object
  * @param query Query that user passed from request
  */
-function convert(query: Record<string, any>): PaginationOptions {
+function convert(query: Record<string, any>, url?: string): PaginationOptions {
   return {
+    query,
     limit: query[limitField],
     order: query[orderByField],
     cursor: query[cursorField],
+    currentUrl: url,
   };
 }
 
@@ -26,8 +28,8 @@ function convert(query: Record<string, any>): PaginationOptions {
  */
 export const GetPagination = createParamDecorator(
   (data, req): PaginationOptions => {
-    const { query } = req;
-    return convert(query);
+    const { query, originalUrl } = req;
+    return convert(query, originalUrl);
   },
 );
 

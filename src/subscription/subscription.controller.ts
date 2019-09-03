@@ -36,10 +36,10 @@ export class SubscriptionController {
   /* Get ads, filtered and paginated */
   @Get()
   get(
-    @Query(OrmQueryPipe) query: OrmQuery,
+    @Query(OrmQueryPipe) filter: OrmQuery,
     @GetPagination() pg: PaginationOptions,
   ): PaginationResponse<Subscription> {
-    return this.service.paginate(query, pg);
+    return this.service.paginate({ filter, pg });
   }
 
   @Get('many/:ids')

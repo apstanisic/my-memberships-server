@@ -9,6 +9,7 @@ import {
   FindOperator,
   In,
 } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
 import { convertToObject } from '../helpers';
 
 /**
@@ -21,6 +22,7 @@ type OrmQuery<T = any> = Record<string, FindOperator<T>>;
 export default function parseQuery(
   query: Record<string, any> | string | null | undefined,
 ) {
+  // Query might be stringified json, or null. Convert to object first.
   const queryObject = convertToObject(query);
   // Here we will put processed filters
   const typeOrmQuery: OrmQuery = {};
@@ -49,7 +51,13 @@ export default function parseQuery(
         typeOrmQuery[name] = MoreThanOrEqual(value);
         break;
       case 'in':
-        typeOrmQuery[name] = In(value);
+        try {
+          const convertedArray = JSON.parse(value);
+          if (!Array.isArray(convertedArray)) throw new Error('Not array');
+          typeOrmQuery[name] = In(value);
+        } catch (error) {
+          throw new BadRequestException(`${name} is invalid. Value: ${value}`);
+        }
         break;
       case 'lk':
         typeOrmQuery[name] = Like(`%${value}%`);
