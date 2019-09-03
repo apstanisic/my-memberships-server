@@ -19,13 +19,17 @@ import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { BaseService } from './base.service';
 import { GetPagination } from './pagination/pagination.decorator';
-import { PgParams, PaginationResponse } from './pagination/pagination.types';
+import {
+  PaginationOptions,
+  PaginationResponse,
+} from './pagination/pagination.types';
+import { DefaultEntity } from './entities/default.entity';
 
 /**
  * T is custom service, E is entity
  */
 @UseInterceptors(ClassSerializerInterceptor)
-export class BaseController<T extends BaseService<E>, E = any> {
+export class BaseController<T extends BaseService<E>, E> {
   constructor(private readonly service: T) {
     throw new NotImplementedException(
       'Problem with passing params and metadata',
@@ -36,7 +40,7 @@ export class BaseController<T extends BaseService<E>, E = any> {
   @Get()
   find(
     @Query(OrmQueryPipe) query: OrmQuery,
-    @GetPagination() pagination: PgParams,
+    @GetPagination() pagination: PaginationOptions,
   ): PaginationResponse<E> {
     return this.service.paginate(query, pagination);
   }

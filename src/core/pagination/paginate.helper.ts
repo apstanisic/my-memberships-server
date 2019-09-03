@@ -3,7 +3,8 @@ import {
   PaginationInternalParams,
   PaginationResponse,
 } from './pagination.types';
-import { Paginator } from './Paginator';
+import { Paginator } from './paginator';
+import { DefaultEntity } from '../entities/default.entity';
 
 interface PaginateProps<T> {
   repository: Repository<T>;
@@ -16,14 +17,12 @@ interface PaginateProps<T> {
  * @param criteria query that needs to be have
  * @param options that tell pagination what to get
  */
-export function paginate<T>({
+export async function paginate<T>({
   repository,
   criteria,
   options,
 }: PaginateProps<T>): PaginationResponse<T> {
-  const pag = new Paginator(options);
-  pag.prepare();
-  console.log('final criteria', criteria);
-
-  return pag.execute(repository, criteria);
+  const pag = new Paginator(repository);
+  await pag.setOptions(options);
+  return pag.execute(criteria);
 }

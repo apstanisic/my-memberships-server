@@ -1,6 +1,6 @@
 import { IsDate } from 'class-validator';
 import { Field, Int } from 'type-graphql';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, Index } from 'typeorm';
 import * as moment from 'moment';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
@@ -38,12 +38,14 @@ export class Subscription extends DefaultEntity {
 
   /* Date to which subscription is valid */
   @Column()
+  @Index()
   @Field()
   @IsDate()
   expiresAt: Date;
 
   /* How much did this subscription cost */
   @Column()
+  @Index()
   @Field(type => Int)
   @IsBetween(0, 100000)
   price: number;

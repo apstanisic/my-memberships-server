@@ -1,44 +1,22 @@
 /* eslint-disable dot-notation */
 import { createParamDecorator } from '@nestjs/common';
-import { PaginationExposedParams, PgParams } from './pagination.types';
 import {
-  pageField,
   limitField,
   cursorField,
-  directionField,
   orderByField,
 } from './pagination-query-fields';
+import { PaginationOptions } from './pagination.types';
 
 /**
  * Convert query to pagination request object
  * @param query Query that user passed from request
  */
-function convert(query: Record<string, any>): PaginationExposedParams {
-  const params: PaginationExposedParams = {};
-
-  const page = parseInt(query[pageField], 10);
-  if (!Number.isNaN(page)) {
-    params.page = page;
-  }
-
-  const limit = parseInt(query[limitField], 10);
-  if (!Number.isNaN(limit)) {
-    params.limit = limit;
-  }
-
-  params.cursor = `${query[cursorField]}`;
-
-  let direction = query[directionField];
-  if (direction !== 'ASC' && direction !== 'DESC') {
-    direction = 'DESC';
-  }
-
-  params.order = {
-    direction,
-    column: query[orderByField] || 'createdAt',
+function convert(query: Record<string, any>): PaginationOptions {
+  return {
+    limit: query[limitField],
+    order: query[orderByField],
+    cursor: query[cursorField],
   };
-
-  return params;
 }
 
 /**
@@ -47,7 +25,7 @@ function convert(query: Record<string, any>): PaginationExposedParams {
  *  @Query(PgParams)
  */
 export const GetPagination = createParamDecorator(
-  (data, req): PgParams => {
+  (data, req): PaginationOptions => {
     const { query } = req;
     return convert(query);
   },
