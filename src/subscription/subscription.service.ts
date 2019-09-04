@@ -26,7 +26,7 @@ export class SubscriptionService extends BaseService<Subscription> {
   ): PaginationResponse<Subscription> {
     return paginate({
       options,
-      criteria: { user },
+      filter: { user },
       repository: this.repository,
     });
   }
@@ -38,7 +38,7 @@ export class SubscriptionService extends BaseService<Subscription> {
   ): PaginationResponse<Subscription> {
     return paginate({
       options,
-      criteria: { company },
+      filter: { company },
       repository: this.repository,
     });
   }

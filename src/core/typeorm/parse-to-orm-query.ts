@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 import { convertToObject } from '../helpers';
+import { OrmWhere } from '../types';
 
 /**
  * Parse query to TypeOrm valid query
@@ -19,13 +20,13 @@ import { convertToObject } from '../helpers';
  * If no key is provided it will assume equal
  */
 type OrmQuery<T = any> = Record<string, FindOperator<T>>;
-export default function parseQuery(
+export default function parseQuery<T = any>(
   query: Record<string, any> | string | null | undefined,
-) {
+): OrmWhere<T> {
   // Query might be stringified json, or null. Convert to object first.
   const queryObject = convertToObject(query);
   // Here we will put processed filters
-  const typeOrmQuery: OrmQuery = {};
+  const typeOrmQuery: OrmWhere = {};
 
   // For every key value pair
   Object.keys(queryObject).forEach(filter => {

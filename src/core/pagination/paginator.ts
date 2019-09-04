@@ -9,6 +9,7 @@ import { PaginationParamsDto } from './pagination-params.dto';
 import { ParseCursor } from './parse-cursor';
 import { GenerateCursor } from './generate-cursor';
 import { HasId } from '../interfaces';
+import { OrmWhere } from '../types';
 
 /**
  * Format is: uuid;columnName;columnValue;type
@@ -41,7 +42,7 @@ export class Paginator<T extends HasId> {
   private cursor?: string;
 
   /** Query from request. If filter is not provided, use this */
-  private requestQuery: Record<string, any>;
+  private requestQuery: OrmWhere<T>;
 
   constructor(repo: Repository<T>) {
     this.repo = repo;
@@ -65,10 +66,7 @@ export class Paginator<T extends HasId> {
   }
 
   /* Execute query */
-  async execute(
-    filter: Record<string, any> | null = null,
-    useQuery = true,
-  ): PaginationResponse<T> {
+  async execute(filter?: OrmWhere<T>, useQuery = true): PaginationResponse<T> {
     let cursorQuery;
     if (this.cursor) {
       cursorQuery = new ParseCursor(this.cursor).query;
@@ -78,6 +76,9 @@ export class Paginator<T extends HasId> {
     // If filter is not provided,
     // and user didn't forbid to use query, use query
     const whereQuery = filter && useQuery ? filter : this.requestQuery;
+    if (typeof whereQuery === 'string') {
+      throw new BadRequestException('Filter is string');
+    }
 
     const result = await this.repo.find({
       where: { ...whereQuery, ...cursorQuery },

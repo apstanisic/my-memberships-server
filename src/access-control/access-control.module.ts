@@ -16,5 +16,6 @@ import { RoleService } from './role.service';
     // This is needed because of DI
     // { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
+  exports: [RoleService, AccessControlService, PermissionsGuard],
 })
 export class AccessControlModule {}

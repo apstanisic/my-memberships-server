@@ -5,6 +5,7 @@ import { User } from '../user/user.entity';
 import { Role } from './roles.entity';
 import { Company } from '../company/company.entity';
 import { RoleName } from './roles.list';
+import { BaseService } from '../core/base.service';
 
 interface ChangeRoleDto {
   user: User;
@@ -14,10 +15,10 @@ interface ChangeRoleDto {
 }
 
 @Injectable()
-export class RoleService {
-  constructor(
-    @InjectRepository(Role) private readonly repository: Repository<Role>,
-  ) {}
+export class RoleService extends BaseService<Role> {
+  constructor(@InjectRepository(Role) repository: Repository<Role>) {
+    super(repository);
+  }
 
   /** Add role to user */
   addRole({
@@ -31,8 +32,7 @@ export class RoleService {
     role.domain = domain.id;
     role.name = roleName;
     if (description) role.description = description;
-
-    return this.repository.save(role);
+    return this.create(role);
   }
 
   /** Remove role from user. Returns deleted role */
@@ -40,6 +40,7 @@ export class RoleService {
     const role = await this.repository.findOneOrFail({
       where: { user, domain, name: roleName },
     });
+    const roll = this.findOne({ user, domain, name: roleName });
     return this.repository.remove(role);
   }
 }

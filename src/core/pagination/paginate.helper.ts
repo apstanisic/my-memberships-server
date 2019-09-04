@@ -2,10 +2,11 @@ import { Repository } from 'typeorm';
 import { PaginationResponse, PaginationOptions } from './pagination.types';
 import { Paginator } from './paginator';
 import { HasId } from '../interfaces';
+import { OrmWhere } from '../types';
 
 interface PaginateProps<T extends HasId> {
   repository: Repository<T>;
-  criteria: Record<string, any>;
+  filter: OrmWhere<T>;
   options: PaginationOptions;
 }
 /**
@@ -16,10 +17,10 @@ interface PaginateProps<T extends HasId> {
  */
 export async function paginate<T extends HasId>({
   repository,
-  criteria,
+  filter,
   options,
 }: PaginateProps<T>): PaginationResponse<T> {
   const pag = new Paginator(repository);
   await pag.setOptions(options);
-  return pag.execute(criteria);
+  return pag.execute(filter);
 }

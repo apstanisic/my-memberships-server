@@ -32,7 +32,8 @@
     "no-underscore-dangle": "off", // Allow for _private field in typeorm entity
     "object-curly-newline": "off", // Stupid rule
     "consistent-return": "off", // Have ts, no need for this
-    "implicit-arrow-linebreak": "off" // causes problems
+    "implicit-arrow-linebreak": "off", // causes problems
+    "no-dupe-class-members": "off" // ts method overload
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",
