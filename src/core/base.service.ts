@@ -1,4 +1,4 @@
-import { Repository, DeepPartial, BaseEntity } from 'typeorm';
+import { Repository, DeepPartial, BaseEntity, FindConditions } from 'typeorm';
 import {
   NotFoundException,
   Logger,
@@ -12,11 +12,14 @@ import {
 } from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
 import { HasId } from './interfaces';
+import { InternalError } from './custom-exceptions';
+import { OrmWhere } from './types';
 
 /** Params that can be provided to pagination */
-interface PgMethodParams {
-  filter?: Record<string, any> | null;
+interface PgMethodParams<T = any> {
+  filter?: OrmWhere<T>;
   pg?: PaginationOptions;
+  parse?: boolean;
 }
 
 /**
@@ -38,12 +41,17 @@ export abstract class BaseService<T extends HasId = any> {
     return this.throwifNotFound(entity);
   }
 
-  /** Find companies that match criteria */
-  async findOne(criteria: any = {}): Promise<T> {
+  /**
+   * Find companies that match criteria
+   * @param parse Should query be parsed to TypeOrm
+   * @example Left is passed value, right is parsed
+   *  ({ price__lt: 5 } => { price: LessThan(5) })
+   */
+  async findOne(filter: OrmWhere<T>, parse = false): Promise<T> {
     let entity: T | undefined;
     try {
       entity = await this.repository.findOne({
-        where: parseQuery(criteria),
+        where: parse ? parseQuery(filter) : filter,
       });
     } catch (error) {
       throw this.internalError(error);
@@ -59,10 +67,15 @@ export abstract class BaseService<T extends HasId = any> {
     }
   }
 
-  /** Find companies that match criteria */
-  find(criteria: any = {}): Promise<T[]> {
+  /**
+   * Find companies that match criteria
+   * @param parse Should query be parsed to TypeOrm specific
+   */
+  find(filter: OrmWhere<T> = {}, parse = true): Promise<T[]> {
     try {
-      return this.repository.find({ where: parseQuery(criteria) });
+      return this.repository.find({
+        where: parse ? parseQuery(filter) : filter,
+      });
     } catch (error) {
       throw this.internalError(error);
     }
@@ -70,13 +83,14 @@ export abstract class BaseService<T extends HasId = any> {
 
   /** Find entities that match criteria with pagination */
   async paginate({
-    filter = null,
+    filter,
     pg: pgParams = {},
-  }: PgMethodParams = {}): PaginationResponse<T> {
+    parse = true,
+  }: PgMethodParams): PaginationResponse<T> {
     // Pagination has it's own error handling
     // No need to handle errors 2 times
     return paginate({
-      criteria: parseQuery(filter),
+      filter: parse ? parseQuery(filter) : filter,
       options: pgParams,
       repository: this.repository,
     });
@@ -86,9 +100,10 @@ export abstract class BaseService<T extends HasId = any> {
   async create(entity: DeepPartial<T>): Promise<T> {
     try {
       const createdEntity = await this.repository.create(entity);
-      return this.repository.save(createdEntity);
+      const savedEntity = await this.repository.save(createdEntity);
+      return savedEntity;
     } catch (error) {
-      throw new BadRequestException();
+      throw new BadRequestException(error);
     }
   }
 

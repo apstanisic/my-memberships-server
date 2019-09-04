@@ -4,9 +4,10 @@ import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { CompaniesController } from './company.controller';
 import { UserCompanyResolver, CompanyResolver } from './company.resolver';
+import { AccessControlModule } from '../access-control/access-control.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Company])],
+  imports: [TypeOrmModule.forFeature([Company]), AccessControlModule],
   controllers: [CompaniesController],
   providers: [CompanyService, CompanyResolver, UserCompanyResolver],
   exports: [CompanyService],

@@ -21,12 +21,16 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../access-control/permissions.guard';
+import { RoleService } from '../access-control/role.service';
 
 /** Companies Controller */
 @Controller('companies')
 @UseInterceptors(ClassSerializerInterceptor)
 export class CompaniesController {
-  constructor(private readonly service: CompanyService) {}
+  constructor(
+    private readonly service: CompanyService,
+    private readonly roleService: RoleService,
+  ) {}
 
   /** Get companies, filtered and paginated */
   @Get()
@@ -44,10 +48,16 @@ export class CompaniesController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   async create(
-    @Body() company: Partial<Company>,
+    @Body() data: Partial<Company>,
     @GetUser() user: User,
   ): Promise<Company> {
-    return this.service.create({ ...company, owner: user });
+    const company = await this.service.create({ ...data, owner: user });
+    await this.roleService.addRole({
+      user,
+      roleName: 'owner',
+      domain: company,
+    });
+    return company;
   }
 
   /** Remove company */
@@ -69,7 +79,6 @@ export class CompaniesController {
     @Param('id') id: string,
     @Body() updateData: any,
   ): Promise<Company> {
-    throw new GatewayTimeoutException();
     return this.service.update(id, updateData);
   }
 }
