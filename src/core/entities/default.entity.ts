@@ -37,7 +37,9 @@ export abstract class DefaultEntity {
   // @Exclude()
   createdAt: Date;
 
-  /* Validate fields */
+  /** Validate fields
+   * @todo Fix this. I think there is no need for this much casting
+   */
   @BeforeInsert()
   @BeforeUpdate()
   async validate() {
