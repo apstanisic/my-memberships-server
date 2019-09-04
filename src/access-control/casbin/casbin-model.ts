@@ -1,3 +1,10 @@
+import { newModel } from 'casbin';
+
+/**
+ * Configuration for model
+ * If this is file it would have .conf extension
+ */
+const modelConf = `
 [request_definition]
 r = sub, dom, obj, act
 
@@ -16,3 +23,8 @@ e = some(where (p.eft == allow))
 # r.act == p.act just check if user can preform action on object
 [matchers]
 m = r.sub == p.sub && validDomain(r.dom, r.obj) && keyMatch2(r.obj, p.obj) && r.act == p.act
+`;
+
+const casbinModel = newModel();
+casbinModel.loadModelFromText(modelConf);
+export { casbinModel };

@@ -12,6 +12,11 @@ export class LoginData {
   password: string;
 }
 
+export class RegisterData extends LoginData {
+  @MinLength(2)
+  name: string;
+}
+
 /** Data that is provided when changing password */
 export class UpdatePasswordData {
   @IsEmail()

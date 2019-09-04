@@ -1,13 +1,14 @@
-import * as path from 'path';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Enforcer, newEnforcer } from 'casbin';
+import { Enforcer, newEnforcer, StringAdapter } from 'casbin';
 import { User } from '../user/user.entity';
 import { Role } from './roles.entity';
 import { Company } from '../company/company.entity';
 import { RoleName } from './roles.list';
 import { casbinValidDomain } from './casbin/custom-matchers';
+import { casbinPolicies } from './casbin/casbin-policies';
+import { casbinModel } from './casbin/casbin-model';
 
 interface ChangeRoleDto {
   user: User;
@@ -23,10 +24,9 @@ export class AccessControlService {
   constructor(
     @InjectRepository(Role) private readonly repository: Repository<Role>,
   ) {
-    newEnforcer(
-      path.join(__dirname, './casbin/casbin-model.conf'),
-      path.join(__dirname, './casbin/casbin-policies.csv'),
-    ).then(enforcer => {
+    const stringAdapter = new StringAdapter(casbinPolicies);
+
+    newEnforcer(casbinModel, stringAdapter).then(enforcer => {
       this.enforcer = enforcer;
       this.enforcer.addFunction('validDomain', casbinValidDomain);
     });

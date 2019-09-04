@@ -13,7 +13,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
 import { UsersService } from '../user/user.service';
-import { LoginData, SignInResponse } from './auth.dto';
+import { LoginData, SignInResponse, RegisterData } from './auth.dto';
 import { User } from '../user/user.entity';
 import { MailService } from '../mail/mail.service';
 
@@ -36,23 +36,23 @@ export class AuthController {
 
   /* Register new user */
   @Post('register')
-  async register(@Body() data: LoginData) {
+  async register(@Body() data: RegisterData) {
     try {
       const user = await this.usersService.create(data);
       const jwtToken = await this.authService.createJwt(data.email);
 
-      const templateData = {
-        url: this.mailService.getDomainUrl(),
-        email: user.email,
-        token: user.secureToken,
-      };
+      // const templateData = {
+      //   url: this.mailService.getDomainUrl(),
+      //   email: user.email,
+      //   token: user.secureToken,
+      // };
 
-      const res = await this.mailService.sendConfirmationEmail({
-        templateData,
-        to: user.email,
-      });
+      // const res = await this.mailService.sendConfirmationEmail({
+      //   templateData,
+      //   to: user.email,
+      // });
 
-      this.logger.log(res);
+      // this.logger.log(res);
 
       return plainToClass(SignInResponse, { token: jwtToken, user });
     } catch (error) {

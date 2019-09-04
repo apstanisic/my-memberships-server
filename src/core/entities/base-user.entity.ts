@@ -1,5 +1,5 @@
 import { Column, Index } from 'typeorm';
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import * as uuid from 'uuid';
@@ -37,6 +37,7 @@ export abstract class BaseUser extends DefaultEntity implements IUser {
   /** User's profile picture */
   @Column({ nullable: true, type: 'text' })
   @Field({ nullable: true })
+  @IsOptional()
   @Length(4, 600)
   avatar?: string;
 

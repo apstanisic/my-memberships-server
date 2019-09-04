@@ -1,6 +1,6 @@
 {
-  "name": "moj-gym-server",
-  "version": "0.0.1",
+  "name": "my-subscription-server",
+  "version": "0.1.0",
   "description": "",
   "author": "",
   "license": "MIT",
@@ -14,6 +14,7 @@
     "sync-schema": "ts-node ./node_modules/.bin/typeorm schema:sync",
     "test-data": "ts-node ./node_modules/.bin/typeorm migration:run",
     "typeorm": "ts-node ./node_modules/.bin/typeorm",
+    "dev-hmr": "ts-node dist/server.js",
     "webpack": "webpack --config webpack.config.js"
   },
   "dependencies": {
