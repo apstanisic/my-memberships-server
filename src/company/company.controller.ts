@@ -10,6 +10,7 @@ import {
   Body,
   Delete,
   Put,
+  GatewayTimeoutException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationOptions } from '../core/pagination/pagination.types';
@@ -19,6 +20,7 @@ import { CompanyService } from './company.service';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../access-control/permissions.guard';
 
 /** Companies Controller */
 @Controller('companies')
@@ -61,12 +63,13 @@ export class CompaniesController {
    * @todo updateData should not be null
    */
   @Put(':id')
-  @UseGuards(AuthGuard('jwt'))
   @IfAllowed()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   async update(
     @Param('id') id: string,
     @Body() updateData: any,
   ): Promise<Company> {
+    throw new GatewayTimeoutException();
     return this.service.update(id, updateData);
   }
 }
