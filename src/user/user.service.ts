@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { BaseException } from '../core/custom-exceptions';
-import { LoginData } from '../auth/auth.dto';
+import { LoginData, RegisterData } from '../auth/auth.dto';
 import { BaseService } from '../core/base.service';
 
 @Injectable()
@@ -20,13 +20,14 @@ export class UsersService extends BaseService<User> {
    * Create user
    * @override Overides BaseServiceMethod for more specific for user.
    */
-  async create({ email, password }: LoginData): Promise<User> {
-    const userExist = await this.findOne({ email });
+  async create({ email, password, name }: RegisterData): Promise<User> {
+    const userExist = await this.repository.findOne({ email });
     if (userExist) throw new BaseException({ message: 'User exist' });
 
     const user = new User();
     user.email = email;
     user.password = password;
+    user.name = name;
     user.generateSecureToken();
     return this.repository.save(user);
   }

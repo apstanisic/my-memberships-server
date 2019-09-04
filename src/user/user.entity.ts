@@ -1,5 +1,5 @@
 import { Entity, Column, OneToMany } from 'typeorm';
-import { Length } from 'class-validator';
+import { Length, IsOptional } from 'class-validator';
 import { Field } from 'type-graphql';
 import { Subscription } from '../subscription/subscription.entity';
 import { BaseUser } from '../core/entities/base-user.entity';
@@ -27,6 +27,7 @@ export class User extends BaseUser {
   /** Users phone number. It's not required */
   @Column({ nullable: true })
   @Field({ nullable: true })
+  @IsOptional()
   @Length(5, 50)
   phoneNumber?: string;
 }

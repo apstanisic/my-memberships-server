@@ -24,12 +24,13 @@ import {
   PaginationResponse,
 } from './pagination/pagination.types';
 import { DefaultEntity } from './entities/default.entity';
+import { HasId } from './interfaces';
 
 /**
  * T is custom service, E is entity
  */
 @UseInterceptors(ClassSerializerInterceptor)
-export class BaseController<T extends BaseService<E>, E> {
+export class BaseController<T extends BaseService<E>, E extends HasId> {
   constructor(private readonly service: T) {
     throw new NotImplementedException(
       'Problem with passing params and metadata',
@@ -38,11 +39,11 @@ export class BaseController<T extends BaseService<E>, E> {
 
   /* Get data, filtered and paginated */
   @Get()
-  find({ filter: query, pgParams: pagination }
-    @Query(OrmQueryPipe) query: OrmQuery,
-    @GetPagination() pagination: PaginationOptions,
+  find(
+    @Query() filter: Record<string, any>,
+    @GetPagination() pg: PaginationOptions,
   ): PaginationResponse<E> {
-    return this.service.paginate(query, pagination);
+    return this.service.paginate({ filter, pg });
   }
 
   /* Get data by id */

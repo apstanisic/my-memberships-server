@@ -28,7 +28,7 @@ export class CompaniesController {
 
   /** Get companies, filtered and paginated */
   @Get()
-  get(@Query() filter: any, @GetPagination() pg: PaginationOptions) {
+  find(@Query() filter: any, @GetPagination() pg: PaginationOptions) {
     return this.service.paginate({ filter, pg });
   }
 

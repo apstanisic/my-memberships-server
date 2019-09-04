@@ -1,11 +1,11 @@
 import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
-import { IsEmail, Length, IsString } from 'class-validator';
+import { IsEmail, Length, IsString, IsIn, IsNotEmpty } from 'class-validator';
 import { Field } from 'type-graphql';
 import { Location } from './location.dto';
 import { User } from '../user/user.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { DefaultEntity } from '../core/entities/default.entity';
-import { CompanyCategory } from './categories.list';
+import { CompanyCategory, companiesCategories } from './categories.list';
 
 @Entity('companies')
 export class Company extends DefaultEntity {
@@ -32,9 +32,14 @@ export class Company extends DefaultEntity {
   @Field(type => [Subscription])
   subscriptions: Subscription[];
 
-  /** What type of business is this company */
+  /**
+   * What type of business is this company
+   * Must cloned because of readonly
+   * @todo Find fix
+   */
   @Column()
   @Field(type => String)
+  @IsIn([...companiesCategories])
   category: CompanyCategory;
 
   /** Description of company, it's prices */
@@ -47,6 +52,7 @@ export class Company extends DefaultEntity {
   /** Company's main phone numbers */
   @Column({ type: 'simple-array' })
   @Field(type => [String])
+  @IsNotEmpty()
   @IsString({ each: true })
   @Length(8, 30, { each: true })
   phoneNumbers: string[];
@@ -54,6 +60,7 @@ export class Company extends DefaultEntity {
   /** Company's main emails */
   @Column({ type: 'simple-array' })
   @Field(type => [String])
+  @IsNotEmpty()
   @IsEmail({}, { each: true })
   emails: string[];
 
@@ -62,7 +69,7 @@ export class Company extends DefaultEntity {
    * @todo Refactor this
    * Maybe move Location to defferent table
    */
-  @Column({ type: 'simple-json' })
+  @Column({ type: 'simple-json', nullable: true })
   @Field(type => [Location])
   locations: Location[];
 }

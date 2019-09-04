@@ -5,12 +5,16 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Index,
-  getConnection,
 } from 'typeorm';
 import { Field, ID } from 'type-graphql';
-import { Exclude, classToClass } from 'class-transformer';
+import {
+  Exclude,
+  plainToClassFromExist,
+  classToPlain,
+  classToClass,
+} from 'class-transformer';
+import { BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { BaseException } from '../custom-exceptions';
 
 /**
  * All entities should extend this class
@@ -37,7 +41,18 @@ export abstract class DefaultEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async validate() {
-    const error = await validate(this);
-    if (error.length > 0) throw new BaseException({ error });
+    let errors = await validate(this);
+
+    errors = errors.map(({ target, ...other }) => {
+      const clonedThis = classToClass(this);
+      const classTarget = plainToClassFromExist(clonedThis, target);
+      const safeTarget = classToPlain(classTarget);
+
+      return { ...other, target: safeTarget };
+    });
+
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
   }
 }
