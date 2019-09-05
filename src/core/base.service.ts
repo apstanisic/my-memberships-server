@@ -1,4 +1,9 @@
-import { Repository, DeepPartial } from 'typeorm';
+import {
+  Repository,
+  DeepPartial,
+  FindOneOptions,
+  FindManyOptions,
+} from 'typeorm';
 import {
   NotFoundException,
   Logger,
@@ -12,12 +17,8 @@ import { OrmWhere } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
 
-/** Params that can be provided to pagination */
-interface PgMethodParams<T = any> {
-  filter?: OrmWhere<T>;
-  pg?: PaginationParams;
-  parse?: boolean;
-}
+type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
+type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 
 /**
  * Base service that implements some basic crud methods
@@ -44,15 +45,22 @@ export abstract class BaseService<T extends WithId = any> {
    * @example Left is passed value, right is parsed
    *  ({ price__lt: 5 } => { price: LessThan(5) })
    */
-  async findOne(filter: OrmWhere<T>, parse = false): Promise<T> {
+  async findOne(
+    filter: OrmWhere<T>,
+    options: FindOneParams<T> = {},
+    parse = false,
+  ): Promise<T> {
     let entity: T | undefined;
+
     try {
       entity = await this.repository.findOne({
+        ...options,
         where: parse ? parseQuery(filter) : filter,
       });
     } catch (error) {
       throw this.internalError(error);
     }
+
     return this.throwifNotFound(entity);
   }
 
@@ -81,10 +89,26 @@ export abstract class BaseService<T extends WithId = any> {
   /**
    * Find entities that match criteria with pagination.
    * Pagination has it's own error handling. Don't handle errors twice
+   * You can pass where query in options object or as a second param
    */
-  async paginate(options: PaginationParams<T>): PgResult<T> {
+  async paginate(
+    options: PaginationParams<T>,
+    where?: OrmWhere<T>,
+  ): PgResult<T> {
     const { repository } = this;
-    return paginate({ options, repository });
+    const combinedOptions = { ...options };
+    if (where) {
+      if (
+        typeof combinedOptions.where === 'object' &&
+        typeof where === 'object'
+      ) {
+        combinedOptions.where = { ...combinedOptions.where, ...where };
+      } else {
+        combinedOptions.where = where;
+      }
+    }
+
+    return paginate({ repository, options: combinedOptions });
   }
 
   /* Create new entity */
@@ -117,6 +141,21 @@ export abstract class BaseService<T extends WithId = any> {
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();
+    }
+  }
+
+  async count(
+    filter: OrmWhere<T>,
+    options: FindManyParams<T> = {},
+    parse = false,
+  ): Promise<number> {
+    try {
+      return this.repository.count({
+        ...options,
+        where: parse ? parseQuery(filter) : filter,
+      });
+    } catch (error) {
+      throw this.internalError(error);
     }
   }
 

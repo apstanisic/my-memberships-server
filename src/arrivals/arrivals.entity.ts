@@ -16,6 +16,7 @@ export class Arrival extends BaseEntity {
   @Field(type => Subscription)
   subscription: Subscription;
 
+  /** Subscription that was used for this arrival */
   @Column()
   subscriptionId: string;
 
@@ -26,11 +27,12 @@ export class Arrival extends BaseEntity {
   location: Location;
 
   /** Get only Id from location */
-  @RelationId((arrival: Arrival) => arrival.location)
+  // @RelationId((arrival: Arrival) => arrival.location)
+  @Column()
   locationId: string;
 
   /** When did person arrive */
-  @Column({ update: false })
+  @Column({ update: false, default: new Date() })
   @Field()
   arrivedAt: Date;
 
@@ -51,7 +53,7 @@ export class Arrival extends BaseEntity {
   @Column({ nullable: true, type: 'double precision', update: false })
   long?: number;
 
-  get timeSpent() {
+  get timeSpent(): number {
     if (!this.arrivedAt || !this.leftAt) return 0;
     return moment(this.leftAt).diff(this.arrivedAt, 'minutes');
   }

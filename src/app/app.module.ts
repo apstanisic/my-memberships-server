@@ -10,11 +10,13 @@ import { CompanyModule } from '../company/company.module';
 import { UserModule } from '../user/user.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { AccessControlModule } from '../access-control/access-control.module';
+import { LocationsModule } from '../locations/locations.module';
+import { ArrivalsModule } from '../arrivals/arrivals.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    // First make good rest then convert to graphql
+    // First make good REST then add graphql
     // GraphQLModule.forRoot({
     //   autoSchemaFile: 'schema.graphql',
     //   context: ({ req }) => ({ req }),
@@ -24,8 +26,10 @@ import { AccessControlModule } from '../access-control/access-control.module';
     AccessControlModule,
     MailModule,
     UserModule,
+    LocationsModule,
     CompanyModule,
     SubscriptionModule,
+    ArrivalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

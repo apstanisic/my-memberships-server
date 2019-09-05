@@ -10,6 +10,7 @@ import {
   Delete,
   ForbiddenException,
   InternalServerErrorException,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './get-user.decorator';
@@ -18,6 +19,7 @@ import { UpdatePasswordData, LoginData } from '../auth/auth.dto';
 import { UsersService } from './user.service';
 import { removeEmptyItems } from '../core/helpers';
 import { UpdateUserInfo } from './update-user.dto';
+import { ValidUUID } from '../core/uuid.pipe';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -72,5 +74,10 @@ export class UserController {
     } catch (error) {
       throw new InternalServerErrorException();
     }
+  }
+
+  @Get('user/:id')
+  GetUser(@Param('id', ValidUUID) user: string) {
+    return this.usersService.findById(user);
   }
 }

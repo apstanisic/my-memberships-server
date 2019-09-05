@@ -8,8 +8,8 @@ const passwordHash = bcrypt.hashSync('password', 12);
 export function generateUser() {
   const user = new User();
   user.id = Faker.random.uuid();
-  user.email = Faker.internet.email();
-  user.password = passwordHash;
+  user.email = Faker.internet.email().toLowerCase();
+  user._password = passwordHash;
   user.name = Faker.name.firstName();
   user.phoneNumber = Faker.phone.phoneNumber();
   user.avatar = 'https://i.pravatar.cc/920';

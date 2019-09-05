@@ -1,5 +1,18 @@
-import { Column, Entity, ManyToOne, RelationId, OneToMany } from 'typeorm';
-import { IsEmail, IsString, IsOptional, Length } from 'class-validator';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  RelationId,
+  OneToMany,
+  IsNull,
+} from 'typeorm';
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  Length,
+  IsNumber,
+} from 'class-validator';
 import { Company } from '../company/company.entity';
 import { Arrival } from '../arrivals/arrivals.entity';
 import { BaseEntity } from '../core/entities/base.entity';
@@ -14,15 +27,18 @@ export class Location extends BaseEntity {
   company: Company;
 
   /** Id of company that is owner of this location */
-  @RelationId((location: Location) => location.company)
+  // @RelationId((location: Location) => location.company)
+  @Column()
   companyId: string;
 
+  /** Arrivals at this location */
   @OneToMany(type => Arrival, arrival => arrival.location)
   arrivals: Arrival[];
 
   /** This location address */
   @Column()
   @IsString()
+  @Length(5, 200)
   address: string;
 
   /** Time this location is open */
@@ -44,9 +60,13 @@ export class Location extends BaseEntity {
 
   /** Location latitude */
   @Column({ type: 'double precision', nullable: true })
-  lat: number;
+  @IsOptional()
+  @IsNumber()
+  lat?: number;
 
   /** Location longitude */
   @Column({ type: 'double precision', nullable: true })
-  long: number;
+  @IsOptional()
+  @IsNumber()
+  long?: number;
 }

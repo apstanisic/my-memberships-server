@@ -9,9 +9,10 @@ export class ArrivalsMigration1567668491975 implements MigrationInterface {
     const companies: Company[] = await queryRunner.manager.find(Company, {
       relations: ['subscriptions', 'locations'],
     });
+
     generateArrival(companies);
 
-    for (let i = 0; i < 2000; i += 1) {
+    for (let i = 0; i < 500; i += 1) {
       arrivals.push(generateArrival(companies));
     }
     await queryRunner.manager.save(arrivals);

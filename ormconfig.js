@@ -31,8 +31,10 @@ if (process.env.NODE_ENV === 'production') {
   config.synchronize = true;
   config.logging = 'all';
   config.migrations = ['db/migrations/*{.ts,.js}'];
-  config.entities = ['src/**/*.entity{.ts,.js}'];
-  // config.entities = getMetadataArgsStorage().tables.map(tbl => tbl.target);
+  // This is for migration
+  // config.entities = ['src/**/*.entity{.ts,.js}'];
+  // This is for webpack
+  config.entities = getMetadataArgsStorage().tables.map(tbl => tbl.target);
   // config.migrationsRun = true;
 }
 
