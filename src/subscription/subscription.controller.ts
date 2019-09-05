@@ -12,10 +12,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  PaginationOptions,
-  PaginationResponse,
-} from '../core/pagination/pagination.types';
+import { PgResult } from '../core/pagination/pagination.types';
+import { PaginationParams } from '../core/pagination/pagination-options';
 import { User } from '../user/user.entity';
 import { OrmQueryPipe, OrmQuery } from '../core/typeorm/orm-query.pipe';
 import { GetPagination } from '../core/pagination/pagination.decorator';
@@ -35,11 +33,8 @@ export class SubscriptionController {
 
   /* Get ads, filtered and paginated */
   @Get()
-  get(
-    @Query(OrmQueryPipe) filter: OrmQuery,
-    @GetPagination() pg: PaginationOptions,
-  ): PaginationResponse<Subscription> {
-    return this.service.paginate({ filter, pg });
+  get(@GetPagination() pg: PaginationParams): PgResult<Subscription> {
+    return this.service.paginate(pg);
   }
 
   @Get('many/:ids')

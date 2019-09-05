@@ -2,7 +2,7 @@ import { ManyToOne, Entity, Column } from 'typeorm';
 import { Field } from 'type-graphql';
 import { User } from '../user/user.entity';
 import { RoleName } from './roles.list';
-import { DefaultEntity } from '../core/entities/default.entity';
+import { BaseEntity } from '../core/entities/base.entity';
 
 /**
  * To add admin for company f32 to user
@@ -15,7 +15,7 @@ import { DefaultEntity } from '../core/entities/default.entity';
  * repo.save(role);
  */
 @Entity()
-export class Role extends DefaultEntity {
+export class Role extends BaseEntity {
   /** User that have this role */
   @ManyToOne(type => User, user => user.roles)
   @Field(type => User)

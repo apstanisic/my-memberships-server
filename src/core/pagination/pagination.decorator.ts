@@ -1,24 +1,15 @@
 /* eslint-disable dot-notation */
 import { createParamDecorator } from '@nestjs/common';
-import {
-  limitField,
-  cursorField,
-  orderByField,
-} from './pagination-query-fields';
-import { PaginationOptions } from './pagination.types';
+import { PaginationParams } from './pagination-options';
 
 /**
  * Convert query to pagination request object
  * @param query Query that user passed from request
  */
-function convert(query: Record<string, any>, url?: string): PaginationOptions {
-  return {
-    query,
-    limit: query[limitField],
-    order: query[orderByField],
-    cursor: query[cursorField],
-    currentUrl: url,
-  };
+function convert(query: Record<string, any>, url?: string): PaginationParams {
+  const options = new PaginationParams(query);
+  options.currentUrl = url;
+  return options;
 }
 
 /**
@@ -27,7 +18,7 @@ function convert(query: Record<string, any>, url?: string): PaginationOptions {
  *  @Query(PgParams)
  */
 export const GetPagination = createParamDecorator(
-  (data, req): PaginationOptions => {
+  (data, req): PaginationParams => {
     const { query, originalUrl } = req;
     return convert(query, originalUrl);
   },

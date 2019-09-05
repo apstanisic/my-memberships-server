@@ -1,26 +1,30 @@
 import { Repository } from 'typeorm';
-import { PaginationResponse, PaginationOptions } from './pagination.types';
-import { Paginator } from './paginator';
-import { HasId } from '../interfaces';
+import { PgResult } from './pagination.types';
+import { PaginationParams } from './pagination-options';
+import { Paginator } from './_paginator';
+import { WithId } from '../interfaces';
+import parseQuery from '../typeorm/parse-to-orm-query';
 import { OrmWhere } from '../types';
 
-interface PaginateProps<T extends HasId> {
+interface HelperParams<T> {
   repository: Repository<T>;
-  filter: OrmWhere<T>;
-  options: PaginationOptions;
+  options: PaginationParams<T>;
+  where?: OrmWhere<T>;
 }
 /**
  * Simmple helper function for Paginator class
  * @param repository TypeOrm repository to be used to fetch data
- * @param criteria query that needs to be have
- * @param options that tell pagination what to get
+ * @param options that tell pagination what to get, and provides filter
  */
-export async function paginate<T extends HasId>({
+export async function paginate<T extends WithId>({
   repository,
-  filter,
+  where,
   options,
-}: PaginateProps<T>): PaginationResponse<T> {
-  const pag = new Paginator(repository);
-  await pag.setOptions(options);
-  return pag.execute(filter);
+}: HelperParams<T>): PgResult<T> {
+  const paginator = new Paginator(repository);
+  await paginator.setOptions(options);
+  if (where) {
+    return paginator.execute(parseQuery(where));
+  }
+  return paginator.execute();
 }

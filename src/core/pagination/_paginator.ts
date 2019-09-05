@@ -1,15 +1,12 @@
 import { Repository, FindManyOptions } from 'typeorm';
-import { plainToClass } from 'class-transformer';
-import { Validator, validate } from 'class-validator';
-import { Base64 } from 'js-base64';
+import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
-import { PaginationResponse, _PaginationResult } from './pagination.types';
-import { DefaultEntity } from '../entities/default.entity';
-import { PaginationParamsDto } from './pagination-params.dto';
-import { ParseCursor } from './parse-cursor';
-import { GenerateCursor } from './generate-cursor';
-import { HasId } from '../interfaces';
+import { ParseCursor } from './_parse-cursor';
+import { GenerateCursor } from './_generate-cursor';
+import { WithId } from '../interfaces';
 import { OrmWhere } from '../types';
+import { PgResult, PaginatorResponse } from './pagination.types';
+import { PaginationParams } from './pagination-options';
 
 /**
  * Format is: uuid;columnName;columnValue;type
@@ -26,7 +23,7 @@ import { OrmWhere } from '../types';
  *  },
  *  take: this.limit
  */
-export class Paginator<T extends HasId> {
+export class Paginator<T extends WithId> {
   /** Repository that fetches entities */
   private repo: Repository<T>;
 
@@ -41,6 +38,9 @@ export class Paginator<T extends HasId> {
   /** Cursor provided from request. If null that means that it's first page */
   private cursor?: string;
 
+  /** All relations that repo should fetch */
+  private relations: string[] = [];
+
   /** Query from request. If filter is not provided, use this */
   private requestQuery: OrmWhere<T>;
 
@@ -49,24 +49,19 @@ export class Paginator<T extends HasId> {
   }
 
   /** Validate and set order, limit and cursor */
-  async setOptions(paramsDto: PaginationParamsDto) {
-    const params = plainToClass(PaginationParamsDto, paramsDto);
-
+  async setOptions(params: PaginationParams) {
     const errors = await validate(params);
-    if (errors.length > 0) {
-      throw new BadRequestException(
-        'Pagination params invalid',
-        JSON.stringify(errors),
-      );
-    }
+    if (errors.length > 0) throw new BadRequestException(errors);
+
     this.limit = params.limit || this.limit;
     this.order = params.order || 'DESC';
     this.cursor = params.cursor;
-    this.requestQuery = params.query;
+    this.requestQuery = params.where;
+    this.relations = params.relations;
   }
 
   /* Execute query */
-  async execute(filter?: OrmWhere<T>, useQuery = true): PaginationResponse<T> {
+  async execute(filter?: OrmWhere<T>, useQuery = true): PgResult<T> {
     let cursorQuery;
     if (this.cursor) {
       cursorQuery = new ParseCursor(this.cursor).query;
@@ -84,6 +79,7 @@ export class Paginator<T extends HasId> {
       where: { ...whereQuery, ...cursorQuery },
       order: { [this.orderColumn]: this.order },
       take: this.limit + 1,
+      relations: this.relations,
     } as FindManyOptions<T>);
 
     return this.parseResponse(result);
@@ -91,7 +87,7 @@ export class Paginator<T extends HasId> {
 
   /** Result will contain one item more to check if there's next page */
   private parseResponse(result: T[]) {
-    const response = new _PaginationResult<T>();
+    const response = new PaginatorResponse<T>();
     const isLastPage = this.limit >= result.length;
 
     let next;
