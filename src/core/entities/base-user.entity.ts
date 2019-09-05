@@ -1,29 +1,35 @@
 import { Column, Index } from 'typeorm';
-import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import * as uuid from 'uuid';
 import { Field } from 'type-graphql';
-import { DefaultEntity } from './default.entity';
+import {
+  IsEmail,
+  IsString,
+  Length,
+  IsOptional,
+  MaxLength,
+} from 'class-validator';
+import { BaseEntity } from './base.entity';
 import { IUser } from './user.interface';
 
 /**
  * This should be general user that can be extracted in seperate module.
  * There should be another entity User that contains app specific properties.
  */
-export abstract class BaseUser extends DefaultEntity implements IUser {
+export abstract class BaseUser extends BaseEntity implements IUser {
   /** User Email, has to be unique and to be valid email */
   @Column()
   @Index({ unique: true })
   @Field()
-  @Length(8, 200)
+  @MaxLength(200)
   @IsEmail()
   email: string;
 
   /** Users password */
   @Column({ name: 'password' })
   @IsString()
-  @Length(6, 220)
+  @Length(6, 200)
   @Exclude()
   _password: string;
 
@@ -56,6 +62,7 @@ export abstract class BaseUser extends DefaultEntity implements IUser {
   @Exclude()
   tokenCreatedAt?: Date;
 
+  /** Set new password and hash it automatically */
   set password(newPassword: string) {
     this._password = bcrypt.hashSync(newPassword);
   }
@@ -66,24 +73,20 @@ export abstract class BaseUser extends DefaultEntity implements IUser {
   }
 
   /** Generate secure token to be used for password reset... */
-  generateSecureToken() {
+  generateSecureToken(): string {
     this.secureToken = uuid();
     this.tokenCreatedAt = new Date();
     return this.secureToken;
   }
 
   /** Call this method after token is used */
-  disableSecureToken() {
+  disableSecureToken(): void {
     this.secureToken = undefined;
     this.tokenCreatedAt = undefined;
   }
 
-  /**
-   *
-   * Check if provided token is valid
-   * User's token and createdAt date must be not null
-   */
-  compareToken(token: string) {
+  /** Check if provided token is valid */
+  compareToken(token: string): boolean {
     if (!this.secureToken) return false;
     if (!this.tokenCreatedAt) return false;
     if (this.secureToken !== token) return false;

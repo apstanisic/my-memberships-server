@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64';
 import { BadRequestException } from '@nestjs/common';
-import { HasId } from '../interfaces';
+import { WithId } from '../interfaces';
 
 /**
  * Generate cursor from entity and column name
@@ -10,7 +10,7 @@ import { HasId } from '../interfaces';
  *  some-uuid;createdAt;540918254
  *
  */
-export class GenerateCursor<T extends HasId = any> {
+export class GenerateCursor<T extends WithId = any> {
   /** Generated cursor */
   cursor: string;
 

@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
   Logger,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, classToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
 import { UsersService } from '../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
@@ -26,35 +26,22 @@ export class AuthController {
     private readonly mailService: MailService,
   ) {}
 
-  private logger = new Logger();
-
   /* Try to login user */
   @Post('login')
   async login(@Body() { email, password }: LoginData): Promise<SignInResponse> {
-    return this.authService.attemptSignIn(email, password);
+    return this.authService.tryToLogin(email, password);
   }
 
-  /* Register new user */
+  /** Register new user */
+  /** @todo Add sending mail */
   @Post('register')
   async register(@Body() data: RegisterData) {
     try {
       const user = await this.usersService.create(data);
-      const jwtToken = await this.authService.createJwt(data.email);
+      const token = this.authService.createJwt(data.email);
 
-      // const templateData = {
-      //   url: this.mailService.getDomainUrl(),
-      //   email: user.email,
-      //   token: user.secureToken,
-      // };
-
-      // const res = await this.mailService.sendConfirmationEmail({
-      //   templateData,
-      //   to: user.email,
-      // });
-
-      // this.logger.log(res);
-
-      return plainToClass(SignInResponse, { token: jwtToken, user });
+      // For some reason user is not transformed without class to class
+      return { token, user: classToClass(user) };
     } catch (error) {
       throw new BadRequestException(error);
     }

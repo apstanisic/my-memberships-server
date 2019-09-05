@@ -1,4 +1,4 @@
-import { Repository, DeepPartial, BaseEntity, FindConditions } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import {
   NotFoundException,
   Logger,
@@ -6,26 +6,23 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import parseQuery from './typeorm/parse-to-orm-query';
-import {
-  PaginationResponse,
-  PaginationOptions,
-} from './pagination/pagination.types';
 import { paginate } from './pagination/paginate.helper';
-import { HasId } from './interfaces';
-import { InternalError } from './custom-exceptions';
+import { WithId } from './interfaces';
 import { OrmWhere } from './types';
+import { PgResult } from './pagination/pagination.types';
+import { PaginationParams } from './pagination/pagination-options';
 
 /** Params that can be provided to pagination */
 interface PgMethodParams<T = any> {
   filter?: OrmWhere<T>;
-  pg?: PaginationOptions;
+  pg?: PaginationParams;
   parse?: boolean;
 }
 
 /**
  * Base service that implements some basic crud methods
  */
-export abstract class BaseService<T extends HasId = any> {
+export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
   private logger = new Logger();
@@ -81,25 +78,19 @@ export abstract class BaseService<T extends HasId = any> {
     }
   }
 
-  /** Find entities that match criteria with pagination */
-  async paginate({
-    filter,
-    pg: pgParams = {},
-    parse = true,
-  }: PgMethodParams): PaginationResponse<T> {
-    // Pagination has it's own error handling
-    // No need to handle errors 2 times
-    return paginate({
-      filter: parse ? parseQuery(filter) : filter,
-      options: pgParams,
-      repository: this.repository,
-    });
+  /**
+   * Find entities that match criteria with pagination.
+   * Pagination has it's own error handling. Don't handle errors twice
+   */
+  async paginate(options: PaginationParams): PgResult<T> {
+    const { repository } = this;
+    return paginate({ options, repository });
   }
 
   /* Create new entity */
   async create(entity: DeepPartial<T>): Promise<T> {
     try {
-      const createdEntity = await this.repository.create(entity);
+      const createdEntity = this.repository.create(entity);
       const savedEntity = await this.repository.save(createdEntity);
       return savedEntity;
     } catch (error) {

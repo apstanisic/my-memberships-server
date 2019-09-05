@@ -33,5 +33,5 @@ export class UpdatePasswordData {
 export class SignInResponse {
   token: string;
 
-  user: Partial<User>;
+  user: User;
 }

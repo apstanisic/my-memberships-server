@@ -10,10 +10,9 @@ import {
   Body,
   Delete,
   Put,
-  GatewayTimeoutException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationOptions } from '../core/pagination/pagination.types';
+import { PaginationParams } from '../core/pagination/pagination-options';
 import { Company } from './company.entity';
 import { User } from '../user/user.entity';
 import { CompanyService } from './company.service';
@@ -34,8 +33,8 @@ export class CompaniesController {
 
   /** Get companies, filtered and paginated */
   @Get()
-  find(@Query() filter: any, @GetPagination() pg: PaginationOptions) {
-    return this.service.paginate({ filter, pg });
+  find(@GetPagination() params: PaginationParams) {
+    return this.service.paginate(params);
   }
 
   /** Get company by id */

@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import * as moment from 'moment';
 import { Field, Float } from 'type-graphql';
-import { DefaultEntity } from '../core/entities/default.entity';
+import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
 
 /**
@@ -24,7 +24,7 @@ class Location {
 }
 
 @Entity('arrivals')
-export class Arrival extends DefaultEntity {
+export class Arrival extends BaseEntity {
   @ManyToOne(type => Subscription)
   @Field(type => Subscription)
   subscription: Subscription;

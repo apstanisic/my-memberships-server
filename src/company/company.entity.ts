@@ -4,11 +4,11 @@ import { Field } from 'type-graphql';
 import { Location } from './location.dto';
 import { User } from '../user/user.entity';
 import { Subscription } from '../subscription/subscription.entity';
-import { DefaultEntity } from '../core/entities/default.entity';
+import { BaseEntity } from '../core/entities/base.entity';
 import { CompanyCategory, companiesCategories } from './categories.list';
 
 @Entity('companies')
-export class Company extends DefaultEntity {
+export class Company extends BaseEntity {
   /** Company name */
   @Column()
   @Index()

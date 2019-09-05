@@ -3,12 +3,17 @@ import { BadRequestException } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { FindOperator, Raw } from 'typeorm';
 import { escape as e } from 'sqlstring';
-import { HasId } from '../interfaces';
+import { WithId } from '../interfaces';
 import { InternalError } from '../custom-exceptions';
 
 /** Parse cursor to proper where query part */
-export class ParseCursor<T extends HasId = any> {
-  /** Part of TypeOrm query used for pagination */
+export class ParseCursor<T extends WithId = any> {
+  /**
+   * Part of TypeOrm query used for pagination
+   * When this class parses cursor it will generate this query
+   * to be used in TypeOrm repo to paginate data in combination with user
+   * fillters. This should be passed last so it is not overwritten
+   *  */
   query: { [key: string]: FindOperator<any> };
 
   /** Validate values */
@@ -71,7 +76,7 @@ export class ParseCursor<T extends HasId = any> {
     };
   }
 
-  /** Parse value to TypeOrm query item */
+  /** Parse value to correct type */
   private convertValueToCorrectType(type?: string) {
     // If column name ends with At assume it's a date and convert
     let converted;

@@ -3,7 +3,7 @@ import { Subscription } from './subscription.entity';
 import { User } from '../user/user.entity';
 import { SubscriptionService } from './subscription.service';
 import { Company } from '../company/company.entity';
-import { PaginationResponse } from '../core/pagination/pagination.types';
+import { PgResult } from '../core/pagination/pagination.types';
 
 /**
  * Resolves subscriptions
@@ -27,9 +27,7 @@ export class UserSubscriptionResolver {
   constructor(private readonly userService: SubscriptionService) {}
 
   @ResolveProperty('subscriptions', type => [Subscription])
-  getUsersSubscriptions(
-    @Parent() user: User,
-  ): PaginationResponse<Subscription> {
+  getUsersSubscriptions(@Parent() user: User): PgResult<Subscription> {
     return this.userService.getUsersSubscriptions(user);
   }
 }

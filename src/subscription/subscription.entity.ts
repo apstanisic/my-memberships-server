@@ -4,12 +4,12 @@ import { Column, Entity, ManyToOne, Index } from 'typeorm';
 import * as moment from 'moment';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
-import { DefaultEntity } from '../core/entities/default.entity';
+import { BaseEntity } from '../core/entities/base.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { IsBetween } from '../core/is-between';
 
 @Entity('subscriptions')
-export class Subscription extends DefaultEntity {
+export class Subscription extends BaseEntity {
   /* Company where subscription is valid */
   @ManyToOne(type => Company, company => company.subscriptions)
   @Field(type => Company)

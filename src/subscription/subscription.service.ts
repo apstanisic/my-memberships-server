@@ -4,10 +4,8 @@ import { Repository } from 'typeorm';
 import { Subscription } from './subscription.entity';
 import { Company } from '../company/company.entity';
 import { User } from '../user/user.entity';
-import {
-  PaginationResponse,
-  PaginationOptions,
-} from '../core/pagination/pagination.types';
+import { PgResult } from '../core/pagination/pagination.types';
+import { PaginationParams } from '../core/pagination/pagination-options';
 import { paginate } from '../core/pagination/paginate.helper';
 import { BaseService } from '../core/base.service';
 
@@ -22,11 +20,10 @@ export class SubscriptionService extends BaseService<Subscription> {
   /* Get paginated subscriptions for provided user */
   async getUsersSubscriptions(
     user: User,
-    options: PaginationOptions = {},
-  ): PaginationResponse<Subscription> {
+    options: PaginationParams,
+  ): PgResult<Subscription> {
     return paginate({
-      options,
-      filter: { user },
+      options: { ...options, where: { user } },
       repository: this.repository,
     });
   }
@@ -34,11 +31,10 @@ export class SubscriptionService extends BaseService<Subscription> {
   /** Get paginated subscriptions for provided company */
   async getCompaniesSubscriptions(
     company: Company,
-    options: PaginationOptions = {},
-  ): PaginationResponse<Subscription> {
+    options: PaginationParams,
+  ): PgResult<Subscription> {
     return paginate({
-      options,
-      filter: { company },
+      options: { ...options, where: { company } },
       repository: this.repository,
     });
   }

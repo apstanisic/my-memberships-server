@@ -22,7 +22,7 @@ export class UsersService extends BaseService<User> {
    */
   async create({ email, password, name }: RegisterData): Promise<User> {
     const userExist = await this.repository.findOne({ email });
-    if (userExist) throw new BaseException({ message: 'User exist' });
+    if (userExist) throw new BadRequestException('User exists');
 
     const user = new User();
     user.email = email;
