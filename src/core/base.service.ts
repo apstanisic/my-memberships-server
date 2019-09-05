@@ -82,7 +82,7 @@ export abstract class BaseService<T extends WithId = any> {
    * Find entities that match criteria with pagination.
    * Pagination has it's own error handling. Don't handle errors twice
    */
-  async paginate(options: PaginationParams): PgResult<T> {
+  async paginate(options: PaginationParams<T>): PgResult<T> {
     const { repository } = this;
     return paginate({ options, repository });
   }

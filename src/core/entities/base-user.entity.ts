@@ -3,13 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
 import * as uuid from 'uuid';
 import { Field } from 'type-graphql';
-import {
-  IsEmail,
-  IsString,
-  Length,
-  IsOptional,
-  MaxLength,
-} from 'class-validator';
+import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
 import { BaseEntity } from './base.entity';
 import { IUser } from './user.interface';
 
@@ -22,7 +16,6 @@ export abstract class BaseUser extends BaseEntity implements IUser {
   @Column()
   @Index({ unique: true })
   @Field()
-  @MaxLength(200)
   @IsEmail()
   email: string;
 

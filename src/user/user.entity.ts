@@ -1,5 +1,6 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Length, IsOptional } from 'class-validator';
+import { Exclude } from 'class-transformer';
 import { Field } from 'type-graphql';
 import { Subscription } from '../subscription/subscription.entity';
 import { BaseUser } from '../core/entities/base-user.entity';
@@ -12,6 +13,7 @@ export class User extends BaseUser {
   /** All roles user have */
   @OneToMany(type => Role, role => role.user, { eager: true })
   @Field(type => [Role])
+  @Exclude()
   roles: Role[];
 
   /* Every subscription user have or had in the past */

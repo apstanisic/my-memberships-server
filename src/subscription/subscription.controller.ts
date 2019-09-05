@@ -3,7 +3,6 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Get,
-  Query,
   Param,
   Post,
   UseGuards,
