@@ -33,7 +33,8 @@
     "object-curly-newline": "off", // Stupid rule
     "consistent-return": "off", // Have ts, no need for this
     "implicit-arrow-linebreak": "off", // causes problems
-    "no-dupe-class-members": "off" // ts method overload
+    "no-dupe-class-members": "off", // ts method overload
+    "no-console": "off" // It just makes it harder to debug
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

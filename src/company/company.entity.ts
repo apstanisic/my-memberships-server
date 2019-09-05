@@ -1,11 +1,18 @@
-import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  Index,
+  RelationId,
+} from 'typeorm';
 import { IsEmail, Length, IsString, IsIn, IsNotEmpty } from 'class-validator';
 import { Field } from 'type-graphql';
-import { Location } from './location.dto';
 import { User } from '../user/user.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { CompanyCategory, companiesCategories } from './categories.list';
+import { Location } from '../locations/location.entity';
 
 @Entity('companies')
 export class Company extends BaseEntity {
@@ -23,7 +30,7 @@ export class Company extends BaseEntity {
   owner: User;
 
   /** Owner id */
-  @Column()
+  @RelationId((company: Company) => company.owner)
   @Field()
   ownerId: string;
 
@@ -31,6 +38,10 @@ export class Company extends BaseEntity {
   @OneToMany(type => Subscription, subscription => subscription.company)
   @Field(type => [Subscription])
   subscriptions: Subscription[];
+
+  // Get only subscriptions ids.
+  // @RelationId((company: Company) => company.subscriptions)
+  // subscriptionIds: string[];
 
   /**
    * What type of business is this company

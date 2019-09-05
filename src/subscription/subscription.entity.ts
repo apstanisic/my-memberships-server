@@ -1,6 +1,6 @@
 import { IsDate } from 'class-validator';
 import { Field, Int } from 'type-graphql';
-import { Column, Entity, ManyToOne, Index } from 'typeorm';
+import { Column, Entity, ManyToOne, Index, RelationId } from 'typeorm';
 import * as moment from 'moment';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
@@ -16,7 +16,8 @@ export class Subscription extends BaseEntity {
   company: Company;
 
   /** Company id  */
-  @Column()
+  // @Column()
+  @RelationId((sub: Subscription) => sub.company)
   @Field()
   companyId: string;
 
@@ -26,7 +27,8 @@ export class Subscription extends BaseEntity {
   owner: User;
 
   /** Subscription owner id  */
-  @Column()
+  // @Column()
+  @RelationId((sub: Subscription) => sub.owner)
   @Field()
   ownerId: string;
 
@@ -36,7 +38,7 @@ export class Subscription extends BaseEntity {
   @IsDate()
   startsAt: Date;
 
-  /* Date to which subscription is valid */
+  /* Date to which subscription is valid. Has index couse it's offten sorted */
   @Column()
   @Index()
   @Field()

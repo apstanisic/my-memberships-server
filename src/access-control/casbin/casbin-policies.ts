@@ -17,5 +17,8 @@ p, owner, /companies/:id/*, write
 p, admin, /companies/:id/subscription/*, read
 p, admin, /companies/:id/subscription/*, write
 
+p, admin, /companies/:id/locations/*, read
+p, admin, /companies/:id/locations/*, write
+
 p, user, /user/:id/subscription/*, read
 `;

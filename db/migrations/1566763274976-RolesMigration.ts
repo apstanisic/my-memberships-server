@@ -6,12 +6,14 @@ import { generateRole } from '../../src/access-control/role.factory';
 
 export class RolesMigration1566763274976 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
-    let roles: Role[];
-
+    const roles: Role[] = [];
     const users: User[] = await queryRunner.manager.find(User);
-
     const companies: Company[] = await queryRunner.manager.find(Company);
-    generateRole(users, companies);
+
+    for (let i = 0; i < 1000; i += 1) {
+      roles.push(generateRole(users, companies));
+    }
+    await queryRunner.manager.save(roles);
   }
 
   public async down(queryRunner: QueryRunner): Promise<any> {

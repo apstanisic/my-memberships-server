@@ -1,18 +1,8 @@
 import * as Faker from 'faker';
 import { Company } from './company.entity';
-import { Weekdays } from './location.dto';
 import { User } from '../user/user.entity';
-import { companiesCategories, CompanyCategory } from './categories.list';
-
-const workhours = {
-  monday: '09:00-21:00',
-  tuesday: '09:00-21:00',
-  wednesday: '09:00-21:00',
-  thursday: '09:00-21:00',
-  friday: '09:00-21:00',
-  saturday: '09:00-18:00',
-  sunday: '09:00-15:00',
-};
+import { companiesCategories } from './categories.list';
+import { generateLocation } from '../locations/location.factory';
 
 export function generateCompany(users: User[]) {
   const company = new Company();
@@ -21,16 +11,7 @@ export function generateCompany(users: User[]) {
   company.phoneNumbers = [Faker.phone.phoneNumber()];
   company.description = Faker.lorem.paragraph(4);
   company.category = Faker.random.arrayElement(companiesCategories as any);
-  company.locations = [
-    {
-      lat: Number(Faker.address.latitude()),
-      long: Number(Faker.address.longitude()),
-      address: Faker.address.streetAddress(),
-      email: Faker.internet.email(),
-      phoneNumber: Faker.phone.phoneNumber(),
-      workingHours: workhours,
-    },
-  ];
+  company.locations = Array(4).map(() => generateLocation([company]));
   company.owner = Faker.random.arrayElement(users);
 
   return company;

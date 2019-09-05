@@ -22,15 +22,15 @@ export class SubscriptionResolver {
 /**
  * Resolves subscriptions when parent is user
  */
-@Resolver((of: any) => User)
-export class UserSubscriptionResolver {
-  constructor(private readonly userService: SubscriptionService) {}
+// @Resolver((of: any) => User)
+// export class UserSubscriptionResolver {
+//   constructor(private readonly userService: SubscriptionService) {}
 
-  @ResolveProperty('subscriptions', type => [Subscription])
-  getUsersSubscriptions(@Parent() user: User): PgResult<Subscription> {
-    return this.userService.getUsersSubscriptions(user);
-  }
-}
+//   @ResolveProperty('subscriptions', type => [Subscription])
+//   getUsersSubscriptions(@Parent() user: User): PgResult<Subscription> {
+//     return this.userService.getUsersSubscriptions(user);
+//   }
+// }
 
 /**
  * Resolves subscriptions when parent is company

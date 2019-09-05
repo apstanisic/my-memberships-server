@@ -17,15 +17,15 @@ export class CompanyResolver {
   constructor(private readonly companyService: CompanyService) {}
 
   /* Returns paginated companies */
-  @Query(returns => [Company], { name: 'companies' })
-  async getCompanies(
-    @Args({ name: 'filter', nullable: true, type: () => String })
-      filter?: string,
-      @Args({ name: 'page', nullable: true, type: () => Int }) page: number = 1,
-  ): Promise<Company[]> {
-    return this.companyService.find(filter);
-    // return this.companyService.paginate(filter, page)
-  }
+  // @Query(returns => [Company], { name: 'companies' })
+  // async getCompanies(
+  //   @Args({ name: 'filter', nullable: true, type: () => String })
+  //   filter?: string,
+  //   @Args({ name: 'page', nullable: true, type: () => Int }) page: number = 1,
+  // ): Promise<Company[]> {
+  //   return this.companyService.find(filter);
+  //   // return this.companyService.paginate(filter, page)
+  // }
 
   /* Returns company by id */
   @Query(returns => Company, { name: 'company' })
