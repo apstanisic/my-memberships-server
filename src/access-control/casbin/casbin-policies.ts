@@ -9,6 +9,9 @@ p, app_owner, /*, write
 p, app_admin, /companies/*, read
 p, app_admin, /companies/*, write
 
+p, app_admin, /users/*, read
+p, app_admin, /users/*, write
+
 p, owner, /companies/:id, read
 p, owner, /companies/:id, write
 p, owner, /companies/:id/*, read
@@ -20,5 +23,5 @@ p, admin, /companies/:id/subscription/*, write
 p, admin, /companies/:id/locations/*, read
 p, admin, /companies/:id/locations/*, write
 
-p, user, /user/:id/subscription/*, read
+p, user, /users/:id/*, read
 `;

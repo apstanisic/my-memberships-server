@@ -18,7 +18,7 @@ export function generateLocation(companies: Company[]) {
   location.lat = Number(Faker.address.latitude());
   location.long = Number(Faker.address.longitude());
   location.address = Faker.address.streetAddress();
-  location.email = Faker.internet.email();
+  location.email = Faker.internet.email().toLowerCase();
   location.phoneNumber = Faker.phone.phoneNumber();
   location.workingHours = workhours;
   location.company = Faker.random.arrayElement(companies);

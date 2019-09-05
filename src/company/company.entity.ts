@@ -30,7 +30,8 @@ export class Company extends BaseEntity {
   owner: User;
 
   /** Owner id */
-  @RelationId((company: Company) => company.owner)
+  // @RelationId((company: Company) => company.owner)
+  @Column()
   @Field()
   ownerId: string;
 
@@ -80,7 +81,7 @@ export class Company extends BaseEntity {
    * @todo Refactor this
    * Maybe move Location to defferent table
    */
-  @Column({ type: 'simple-json', nullable: true })
+  @OneToMany(type => Location, location => location.company)
   @Field(type => [Location])
   locations: Location[];
 }

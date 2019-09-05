@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, RelationId } from 'typeorm';
 import { Length, IsOptional } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { Field } from 'type-graphql';
@@ -20,6 +20,10 @@ export class User extends BaseUser {
   @OneToMany(type => Subscription, subscription => subscription.owner)
   @Field(type => [Subscription])
   subscriptions: Subscription[];
+
+  /** Only subscription ids */
+  @RelationId((user: User) => user.subscriptions)
+  subscriptionIds: string[];
 
   /** Companies owned by this user */
   @OneToMany(type => Company, company => company.owner)

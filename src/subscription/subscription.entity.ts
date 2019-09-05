@@ -17,7 +17,8 @@ export class Subscription extends BaseEntity {
 
   /** Company id  */
   // @Column()
-  @RelationId((sub: Subscription) => sub.company)
+  // @RelationId((sub: Subscription) => sub.company)
+  @Column()
   @Field()
   companyId: string;
 
@@ -27,8 +28,8 @@ export class Subscription extends BaseEntity {
   owner: User;
 
   /** Subscription owner id  */
-  // @Column()
-  @RelationId((sub: Subscription) => sub.owner)
+  // @RelationId((sub: Subscription) => sub.owner)
+  @Column()
   @Field()
   ownerId: string;
 

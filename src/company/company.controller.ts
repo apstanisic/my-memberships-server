@@ -10,6 +10,7 @@ import {
   Body,
   Delete,
   Put,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationParams } from '../core/pagination/pagination-options';
