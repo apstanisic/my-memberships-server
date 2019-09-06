@@ -22,6 +22,7 @@ export class UsersService extends BaseService<User> {
   /**
    * Create user and gives him basic roles.
    * @override Overides BaseServiceMethod for more specific for user.
+   * @todo Delete should remove personal info for GDPR
    */
   async create({ email, password, name }: RegisterData): Promise<User> {
     const userExist = await this.repository.findOne({ email });
@@ -54,13 +55,4 @@ export class UsersService extends BaseService<User> {
     }
     return user;
   }
-
-  // async removePersonalInfo(userOrId: User | string): Promise<User> {
-  //   const user = await this.convertToEntity(userOrId);
-  //   user.name = 'Deleted';
-  //   user.email = 'deleted@example.com';
-  //   user.phoneNumber = undefined;
-  //   user.avatar = undefined;
-  //   return user;
-  // }
 }

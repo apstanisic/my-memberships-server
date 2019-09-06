@@ -1,5 +1,9 @@
 import {
-  IsOptional, IsEmail, IsString, MinLength,
+  IsOptional,
+  IsEmail,
+  IsString,
+  MinLength,
+  Length,
 } from 'class-validator';
 
 /** Data that is provided when changing user info */
@@ -10,16 +14,16 @@ export class UpdateUserInfo {
 
   @IsOptional()
   @IsString()
-  @MinLength(2)
+  @Length(2, 50)
   name?: string;
 
   @IsOptional()
   @IsString()
-  @MinLength(8)
+  @Length(8, 50)
   phoneNumber?: string;
 
   @IsOptional()
   @IsString()
-  @MinLength(10)
+  @Length(10, 500)
   avatar?: string;
 }

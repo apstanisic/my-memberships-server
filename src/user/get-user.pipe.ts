@@ -26,7 +26,6 @@ export class GetUserPipe implements PipeTransform<string> {
       user = await this.usersService.findOne(value);
     } else if (validator.isEmail(value)) {
       user = await this.usersService.findOne({ email: value });
-      if (!user) throw new NotFoundException();
     } else {
       throw new BadRequestException();
     }
