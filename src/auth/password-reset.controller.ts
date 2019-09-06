@@ -15,7 +15,6 @@ import { LoginData } from './auth.dto';
 import { UsersService } from '../user/user.service';
 import { ValidateEmailPipe } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
-import { GetUserByEmailPipe } from '../user/get-user-by-email.pipe';
 import { GetUserPipe } from '../user/get-user.pipe';
 
 /** Controller for password reseting */
@@ -34,8 +33,6 @@ export class PasswordResetController {
   ) {
     // Don't throw error, just say that you sent mail, if user doesn't exist
     const user = await this.usersService.findOne({ email });
-    if (!user) return { message: 'Password reset email is sent. ' };
-
     const token = user.generateSecureToken();
     await this.usersService.update(user);
 

@@ -3,7 +3,7 @@
     "es6": true,
     "node": true
   },
-  "extends": ["airbnb-base"],
+  "extends": ["airbnb-base", "prettier"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -20,21 +20,21 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "prettier/prettier": ["error"],
     "import/prefer-default-export": "off", // NestJs prefers
     "no-unused-vars": "off", // Sometimes import is used only for typedef
     "no-useless-constructor": "off", // Can be used for DI
     "no-empty-function": "off", // Can be used for DI
-    "class-methods-use-this": "off", // Stupid rule. Not every method needs this
+    "class-methods-use-this": "off", // Not every method needs this.
     "arrow-parens": "off", // Code is more concise
     "max-classes-per-file": "off", // Many dto classes are simply small
     "no-underscore-dangle": "off", // Allow for _private field in typeorm entity
     "object-curly-newline": "off", // Stupid rule
     "consistent-return": "off", // Have ts, no need for this
     "implicit-arrow-linebreak": "off", // causes problems
-    "no-dupe-class-members": "off", // ts method overload
-    "no-console": "off" // It just makes it harder to debug
+    "no-console": "warn" // It just makes it harder to debug
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

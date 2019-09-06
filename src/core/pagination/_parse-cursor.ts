@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { BadRequestException } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { FindOperator, Raw } from 'typeorm';
@@ -34,7 +33,8 @@ export class ParseCursor<T extends WithId = any> {
    * It will use column from columnName property
    */
   constructor(private cursor: string, private order: 'ASC' | 'DESC' = 'DESC') {
-    const decodedCursor = Base64.decode(this.cursor);
+    // Converts base64 to normal text
+    const decodedCursor = Buffer.from(this.cursor).toString('ascii');
     // Split cursor so we can get id, column and value, and maybe type
     const [id, columnName, columnValue, type] = decodedCursor.split(';');
     if (this.validator.isEmpty(columnValue)) throw new BadRequestException();

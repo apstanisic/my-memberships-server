@@ -79,5 +79,7 @@ export function hasForbiddenKey(
   obj: Record<string, any>,
   key: string,
 ): boolean {
-  return Object.keys(obj).every((objectKey) => objectKey.toLowerCase().includes(key.toLowerCase()));
+  return Object.keys(obj).every(objectKey =>
+    objectKey.toLowerCase().includes(key.toLowerCase()),
+  );
 }

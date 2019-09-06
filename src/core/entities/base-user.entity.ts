@@ -1,9 +1,9 @@
 import { Column, Index } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import * as uuid from 'uuid';
 import { Field } from 'type-graphql';
 import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
+import { random } from 'faker';
 import { BaseEntity } from './base.entity';
 import { IUser } from './user.interface';
 
@@ -67,7 +67,7 @@ export abstract class BaseUser extends BaseEntity implements IUser {
 
   /** Generate secure token to be used for password reset... */
   generateSecureToken(): string {
-    this.secureToken = uuid();
+    this.secureToken = random.uuid();
     this.tokenCreatedAt = new Date();
     return this.secureToken;
   }
