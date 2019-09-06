@@ -16,6 +16,7 @@ import { UsersService } from '../user/user.service';
 import { ValidateEmailPipe } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
 import { GetUserByEmailPipe } from '../user/get-user-by-email.pipe';
+import { GetUserPipe } from '../user/get-user.pipe';
 
 /** Controller for password reseting */
 @Controller('auth')
@@ -55,7 +56,7 @@ export class PasswordResetController {
   /** Reset user password */
   @Post('reset-password/:email/:token')
   async resetPassword(
-    @Param('email', GetUserByEmailPipe) user: User,
+    @Param('email', GetUserPipe) user: User,
     @Param('token') token: string,
     @Body() data: LoginData,
   ): Promise<User> {

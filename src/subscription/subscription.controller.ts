@@ -9,13 +9,12 @@ import {
   Body,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PgResult } from '../core/pagination/pagination.types';
 import { PaginationParams } from '../core/pagination/pagination-options';
-import { User } from '../user/user.entity';
 import { GetPagination } from '../core/pagination/pagination.decorator';
-import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from './subscription.entity';
@@ -26,6 +25,7 @@ import {
 import { ValidUUID } from '../core/uuid.pipe';
 import { PermissionsGuard } from '../access-control/permissions.guard';
 import { UUID } from '../core/types';
+import { ManyUUID } from '../core/many-uuid.pipe';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')
@@ -34,8 +34,8 @@ export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
   @IfAllowed('read')
-  @Get('many/:ids')
-  findByIds(@Param('ids') ids: string[]): Promise<Subscription[]> {
+  @Get('many')
+  findByIds(@Query('ids', ManyUUID) ids: UUID[]): Promise<Subscription[]> {
     return this.service.findByIds(ids);
   }
 

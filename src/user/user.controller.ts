@@ -33,9 +33,7 @@ export class UserController {
     const { email, oldPassword, newPassword } = data;
 
     const user = await this.usersService.findForLogin(email, oldPassword);
-    if (!user) throw new HttpException('Error updating', 500);
     user.password = newPassword;
-    // await user.setPassword(newPassword);
     return this.usersService.update(user, user);
   }
 
@@ -43,11 +41,10 @@ export class UserController {
   @Put()
   @UseGuards(AuthGuard('jwt'))
   async updateUserInfo(
-    @Body() userInfo: UpdateUserInfo,
+    @Body() updateData: UpdateUserInfo,
     @GetUser() user: User,
   ): Promise<User> {
-    const newData = removeEmptyItems(userInfo);
-    return this.usersService.update(user, newData);
+    return this.usersService.update(user, updateData);
   }
 
   /* Get user info */

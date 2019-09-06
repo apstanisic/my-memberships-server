@@ -37,7 +37,7 @@ export abstract class BaseUser extends BaseEntity implements IUser {
   @Column({ nullable: true, type: 'text' })
   @Field({ nullable: true })
   @IsOptional()
-  @Length(4, 600)
+  @Length(10, 500)
   avatar?: string;
 
   /** Did user confirm his account */
