@@ -4,9 +4,9 @@ import {
   IsString,
   Length,
   IsEmail,
-  IsNotEmpty,
   IsInstance,
   ValidateNested,
+  IsDefined,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { Workhours } from './workhours';
@@ -14,6 +14,7 @@ import { Workhours } from './workhours';
 class LocationDto {
   /** This location address */
   @IsString()
+  @Length(4, 200)
   address: string;
 
   /** Time this location is open */
@@ -49,8 +50,11 @@ class LocationDto {
 
 export class CreateLocationDto extends LocationDto {
   /** This location address */
-  @IsNotEmpty()
+  @IsDefined()
   address: string;
 }
 
-export class UpdateLocationDto extends LocationDto {}
+export class UpdateLocationDto extends LocationDto {
+  @IsOptional()
+  address: string;
+}

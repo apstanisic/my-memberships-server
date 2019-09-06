@@ -6,7 +6,6 @@ import { Validator } from 'class-validator';
  * Pipe to get page for pagination
  * @example
  *   method(@Param('id', ValidUUID) id: string) {}
- * @todo Check if this works
  */
 @Injectable()
 export class ValidUUID implements PipeTransform<string, string> {
@@ -14,7 +13,7 @@ export class ValidUUID implements PipeTransform<string, string> {
 
   transform(value: string): string {
     if (!this.validator.isUUID(value)) {
-      throw new BadRequestException();
+      throw new BadRequestException('Invalid ID.');
     }
     return value;
   }

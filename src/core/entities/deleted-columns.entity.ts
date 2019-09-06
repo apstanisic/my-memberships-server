@@ -16,11 +16,11 @@ export class DeletedColumns {
 
   /** User that deleted this entity */
   @ManyToOne(type => User, { nullable: true })
-  @Field({ nullable: true })
-  by?: string;
+  @Field(type => User, { nullable: true })
+  by?: User;
 
   /* Why was entity deleted */
   @Column({ nullable: true })
   @Field()
-  reason: string;
+  reason?: string;
 }

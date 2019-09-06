@@ -39,7 +39,7 @@ export class BaseController<T extends BaseService<E>, E extends WithId> {
   /* Get data by id */
   @Get(':id')
   findById(@Param('id') id: string): Promise<E> {
-    return this.service.findById(id);
+    return this.service.findOne(id);
   }
 
   /* Create new data */

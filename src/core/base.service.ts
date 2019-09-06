@@ -16,6 +16,8 @@ import { WithId } from './interfaces';
 import { OrmWhere } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
+import { SoftDelete } from './entities/soft-delete.interface';
+import { User } from '../user/user.entity';
 
 type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
@@ -27,17 +29,6 @@ export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
   private logger = new Logger();
-
-  /* Find entity by id */
-  async findById(id: string): Promise<T> {
-    let entity: T | undefined;
-    try {
-      entity = await this.repository.findOne(id);
-    } catch (error) {
-      throw this.internalError(error);
-    }
-    return this.throwifNotFound(entity);
-  }
 
   /**
    * Find companies that match criteria
@@ -51,12 +42,18 @@ export abstract class BaseService<T extends WithId = any> {
     parse = false,
   ): Promise<T> {
     let entity: T | undefined;
+    let where;
+
+    if (parse) {
+      where = parseQuery(filter);
+    } else if (typeof filter === 'string' || typeof filter === 'number') {
+      where = { id: filter };
+    } else {
+      where = filter;
+    }
 
     try {
-      entity = await this.repository.findOne({
-        ...options,
-        where: parse ? parseQuery(filter) : filter,
-      });
+      entity = await this.repository.findOne({ ...options, where });
     } catch (error) {
       throw this.internalError(error);
     }
@@ -122,10 +119,15 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
-  /* Remove entity */
-  async delete(entityOrId: T | string): Promise<T> {
+  /** Remove entity */
+  async delete(entityOrId: T | string, userForsoftDelete?: User): Promise<T> {
     try {
       const entity = await this.convertToEntity(entityOrId);
+      if (this.canSoftDelete(entity) && userForsoftDelete) {
+        entity.deleted.at = new Date();
+        entity.deleted.by = userForsoftDelete;
+        return this.update(entity);
+      }
       return this.repository.remove(entity);
     } catch (error) {
       throw this.internalError(error);
@@ -164,7 +166,7 @@ export abstract class BaseService<T extends WithId = any> {
    * if provided string it will try to find in db.
    * If not found throw an exception
    */
-  private async convertToEntity(entityOrId: T | string) {
+  protected async convertToEntity(entityOrId: T | string) {
     let entity: T | undefined;
     if (typeof entityOrId === 'string') {
       entity = await this.repository.findOne(entityOrId);
@@ -176,13 +178,18 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Throw exception if entity is undefined. Simple helper function */
-  private throwifNotFound(entity: T | undefined) {
+  protected throwifNotFound(entity: T | undefined) {
     if (!entity) throw new NotFoundException();
     return entity;
   }
 
-  private internalError(error: any): never {
+  protected internalError(error: any): never {
     this.logger.error(error);
     throw new InternalServerErrorException();
+  }
+
+  /** Check if entity can be soft deleted */
+  private canSoftDelete(entity: Record<string, any>): entity is SoftDelete {
+    return typeof entity === 'object' && typeof entity.deleted === 'object';
   }
 }

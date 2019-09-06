@@ -14,3 +14,12 @@ export function generateRole(users: User[], companies: Company[] = []) {
 
   return role;
 }
+
+export function generateUserRole(user: User) {
+  const role = new Role();
+  role.user = user;
+  role.name = availableRoles['1'];
+  role.domain = user.id;
+
+  return role;
+}

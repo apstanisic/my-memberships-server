@@ -27,7 +27,6 @@ export class Location extends BaseEntity {
   company: Company;
 
   /** Id of company that is owner of this location */
-  // @RelationId((location: Location) => location.company)
   @Column()
   companyId: string;
 

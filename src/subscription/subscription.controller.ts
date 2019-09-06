@@ -14,73 +14,68 @@ import { AuthGuard } from '@nestjs/passport';
 import { PgResult } from '../core/pagination/pagination.types';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { User } from '../user/user.entity';
-import { OrmQueryPipe, OrmQuery } from '../core/typeorm/orm-query.pipe';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from './subscription.entity';
 import {
-  CreateSubscriptionData,
-  UpdateSubscriptionData,
+  CreateSubscriptionDto,
+  UpdateSubscriptionDto,
 } from './subscription.dto';
+import { ValidUUID } from '../core/uuid.pipe';
+import { PermissionsGuard } from '../access-control/permissions.guard';
+import { UUID } from '../core/types';
 
-@Controller('subscriptions')
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
+@Controller('companies/:companyId/subscriptions')
 @UseInterceptors(ClassSerializerInterceptor)
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
-  /* Get ads, filtered and paginated */
-  @Get()
-  get(@GetPagination() pg: PaginationParams): PgResult<Subscription> {
-    return this.service.paginate(pg);
-  }
-
+  @IfAllowed('read')
   @Get('many/:ids')
   findByIds(@Param('ids') ids: string[]): Promise<Subscription[]> {
     return this.service.findByIds(ids);
   }
 
-  /* Get subscription by id */
-  @Get(':id')
-  findById(@Param('id') id: string): Promise<Subscription> {
-    return this.service.findById(id);
+  /* Get ads, filtered and paginated */
+  @IfAllowed('read')
+  @Get('')
+  get(@GetPagination() pg: PaginationParams): PgResult<Subscription> {
+    return this.service.paginate(pg);
   }
 
-  /** Create new subscription
-   * @todo Must be specific
-   */
+  /* Get subscription by id */
+  @IfAllowed('read')
+  @Get(':id')
+  findById(@Param('id', ValidUUID) id: string): Promise<Subscription> {
+    return this.service.findOne(id);
+  }
+
+  /** Create new subscription */
+  @IfAllowed()
   @Post()
-  @UseGuards(AuthGuard('jwt'))
   async create(
-    @Body() { companyId, ...subscription }: CreateSubscriptionData,
-    @GetUser() user: User,
+    @Body() subscription: CreateSubscriptionDto,
+    @Param('companyId') companyId: UUID,
   ): Promise<Subscription> {
-    return this.service.create({
-      ...subscription,
-      companyId,
-      owner: user,
-    });
+    return this.service.create({ ...subscription, companyId });
   }
 
   /* Remove subscription */
-  @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
   @IfAllowed()
+  @Delete(':id')
   remove(@Param('id') id: string): Promise<Subscription> {
     return this.service.delete(id);
   }
 
-  /**
-   * Update subscription
-   * @todo updateData should not be null
-   */
-  @Put(':id')
-  @UseGuards(AuthGuard('jwt'))
+  /** Update subscription */
   @IfAllowed()
+  @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateData: UpdateSubscriptionData,
+    @Body() updateData: UpdateSubscriptionDto,
   ): Promise<Subscription> {
     return this.service.update(id, updateData);
   }
