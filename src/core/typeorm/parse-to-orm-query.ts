@@ -19,8 +19,7 @@ import { OrmWhere } from '../types';
  * First part is property name, second part is comparison key
  * If no key is provided it will assume equal
  */
-type OrmQuery<T = any> = Record<string, FindOperator<T>>;
-export default function parseQuery<T = any>(
+export function parseQuery<T = any>(
   query: Record<string, any> | string | null | undefined,
 ): OrmWhere<T> {
   // Query might be stringified json, or null. Convert to object first.

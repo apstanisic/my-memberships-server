@@ -10,7 +10,8 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import parseQuery from './typeorm/parse-to-orm-query';
+import { Validator } from 'class-validator';
+import { parseQuery } from './typeorm/parse-to-orm-query';
 import { paginate } from './pagination/paginate.helper';
 import { WithId } from './interfaces';
 import { OrmWhere } from './types';
@@ -22,13 +23,15 @@ import { User } from '../user/user.entity';
 type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 
-/**
- * Base service that implements some basic crud methods
- */
+/** Base service that implements some basic crud methods */
 export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
+  /** Logger */
   private logger = new Logger();
+
+  /** Validator */
+  private validator = new Validator();
 
   /**
    * Find companies that match criteria
@@ -39,15 +42,19 @@ export abstract class BaseService<T extends WithId = any> {
   async findOne(
     filter: OrmWhere<T>,
     options: FindOneParams<T> = {},
-    parse = false,
+    parse = true,
   ): Promise<T> {
     let entity: T | undefined;
     let where;
 
-    if (parse) {
-      where = parseQuery(filter);
-    } else if (typeof filter === 'string' || typeof filter === 'number') {
+    // If UUID or number, then search by id
+    if (typeof filter === 'string' && this.validator.isUUID(filter)) {
       where = { id: filter };
+    } else if (this.validator.isNumber(filter)) {
+      where = { id: filter };
+    } else if (parse) {
+      // Should value be parsed to TypeOrm query
+      where = parseQuery(filter);
     } else {
       where = filter;
     }
@@ -55,17 +62,17 @@ export abstract class BaseService<T extends WithId = any> {
     try {
       entity = await this.repository.findOne({ ...options, where });
     } catch (error) {
-      throw this.internalError(error);
+      throw this.throwInternalError(error);
     }
 
-    return this.throwifNotFound(entity);
+    return this.throwIfNotFound(entity);
   }
 
   findByIds(ids: string[]): Promise<T[]> {
     try {
       return this.repository.findByIds(ids);
     } catch (error) {
-      throw this.internalError(error);
+      throw this.throwInternalError(error);
     }
   }
 
@@ -79,7 +86,7 @@ export abstract class BaseService<T extends WithId = any> {
         where: parse ? parseQuery(filter) : filter,
       });
     } catch (error) {
-      throw this.internalError(error);
+      throw this.throwInternalError(error);
     }
   }
 
@@ -94,15 +101,13 @@ export abstract class BaseService<T extends WithId = any> {
   ): PgResult<T> {
     const { repository } = this;
     const combinedOptions = { ...options };
-    if (where) {
-      if (
-        typeof combinedOptions.where === 'object' &&
-        typeof where === 'object'
-      ) {
-        combinedOptions.where = { ...combinedOptions.where, ...where };
-      } else {
-        combinedOptions.where = where;
-      }
+    if (
+      typeof combinedOptions.where === 'object' &&
+      typeof where === 'object'
+    ) {
+      combinedOptions.where = { ...combinedOptions.where, ...where };
+    } else {
+      combinedOptions.where = where;
     }
 
     return paginate({ repository, options: combinedOptions });
@@ -119,21 +124,6 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
-  /** Remove entity */
-  async delete(entityOrId: T | string, userForsoftDelete?: User): Promise<T> {
-    try {
-      const entity = await this.convertToEntity(entityOrId);
-      if (this.canSoftDelete(entity) && userForsoftDelete) {
-        entity.deleted.at = new Date();
-        entity.deleted.by = userForsoftDelete;
-        return this.update(entity);
-      }
-      return this.repository.remove(entity);
-    } catch (error) {
-      throw this.internalError(error);
-    }
-  }
-
   /** Update entity */
   async update(entityOrId: T | string, data: DeepPartial<T> = {}): Promise<T> {
     const entity = await this.convertToEntity(entityOrId);
@@ -146,10 +136,26 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
+  /** Remove entity */
+  async delete(entityOrId: T | string, userForsoftDelete?: User): Promise<T> {
+    try {
+      const entity = await this.convertToEntity(entityOrId);
+      if (this.canSoftDelete(entity) && userForsoftDelete) {
+        entity.deleted.at = new Date();
+        entity.deleted.by = userForsoftDelete;
+        return this.update(entity);
+      }
+      return this.repository.remove(entity);
+    } catch (error) {
+      throw this.throwInternalError(error);
+    }
+  }
+
+  /** Count result of a query */
   async count(
     filter: OrmWhere<T>,
     options: FindManyParams<T> = {},
-    parse = false,
+    parse = true,
   ): Promise<number> {
     try {
       return this.repository.count({
@@ -157,20 +163,20 @@ export abstract class BaseService<T extends WithId = any> {
         where: parse ? parseQuery(filter) : filter,
       });
     } catch (error) {
-      throw this.internalError(error);
+      throw this.throwInternalError(error);
     }
   }
 
   /**
    * If provided entity return that entity,
-   * if provided string it will try to find in db.
-   * If not found throw an exception
+   * if provided string it will assume it's Id andtry to find in db.
+   * If not found throw an exception.
    */
   protected async convertToEntity(entityOrId: T | string) {
     let entity: T | undefined;
     if (typeof entityOrId === 'string') {
       entity = await this.repository.findOne(entityOrId);
-      entity = this.throwifNotFound(entity);
+      entity = this.throwIfNotFound(entity);
     } else {
       entity = entityOrId;
     }
@@ -178,12 +184,12 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Throw exception if entity is undefined. Simple helper function */
-  protected throwifNotFound(entity: T | undefined) {
+  protected throwIfNotFound(entity: T | undefined) {
     if (!entity) throw new NotFoundException();
     return entity;
   }
 
-  protected internalError(error: any): never {
+  protected throwInternalError(error: any): never {
     this.logger.error(error);
     throw new InternalServerErrorException();
   }

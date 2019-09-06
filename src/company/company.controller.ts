@@ -10,8 +10,8 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { DeepPartial } from 'typeorm';
+import { AuthGuard } from '@nestjs/passport';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { Company } from './company.entity';
 import { User } from '../user/user.entity';

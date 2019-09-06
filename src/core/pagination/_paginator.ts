@@ -7,6 +7,7 @@ import { WithId } from '../interfaces';
 import { OrmWhere } from '../types';
 import { PgResult, PaginatorResponse } from './pagination.types';
 import { PaginationParams } from './pagination-options';
+import { parseQuery } from '../typeorm/parse-to-orm-query';
 
 /**
  * Format is: uuid;columnName;columnValue;type
@@ -44,6 +45,9 @@ export class Paginator<T extends WithId> {
   /** Query from request. If filter is not provided, use this */
   private requestQuery: OrmWhere<T>;
 
+  /** Should paginator parse query to TypeOrm format */
+  private shouldParseQuery?: boolean = false;
+
   constructor(repo: Repository<T>) {
     this.repo = repo;
   }
@@ -58,6 +62,7 @@ export class Paginator<T extends WithId> {
     this.cursor = params.cursor;
     this.requestQuery = params.where;
     this.relations = params.relations;
+    this.shouldParseQuery = params.shouldParse;
   }
 
   /* Execute query */
@@ -75,8 +80,12 @@ export class Paginator<T extends WithId> {
       throw new BadRequestException('Filter is string');
     }
 
+    const where = this.shouldParseQuery
+      ? parseQuery({ ...whereQuery, ...cursorQuery })
+      : { ...whereQuery, ...cursorQuery };
+
     const result = await this.repo.find({
-      where: { ...whereQuery, ...cursorQuery },
+      where,
       order: { [this.orderColumn]: this.order },
       take: this.limit + 1,
       relations: this.relations,

@@ -1,68 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import * as mailgun from 'mailgun-js';
+import { Injectable, NotImplementedException } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
 import { ConfigService } from '../config/config.service';
 
-interface MailData extends mailgun.messages.SendData {
-  [key: string]: any;
-}
-
-/**
- * @todo This should be more generic
- */
+/** Simple mail service */
 @Injectable()
 export class MailService {
-  private mg: mailgun.Mailgun;
-
-  private data: MailData;
+  private transporter: nodemailer.Transporter;
 
   constructor(private readonly configService: ConfigService) {
-    this.mg = mailgun({
-      apiKey: configService.get('MAILGUN_ACTIVE_API_KEY'),
-      domain: configService.get('MAILGUN_DOMAIN'),
-    });
-    this.data = {
-      from: configService.get('MAILGUN_SENDER'),
-      to: 'test@nadjiauto.com',
-      subject: 'Service Email',
-    };
+    if (configService.get('NODE_ENV') !== 'production') {
+      nodemailer.createTestAccount().then(testAccount => {
+        this.transporter = nodemailer.createTransport({
+          host: 'smtp.ethereal.email',
+          port: 587,
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: testAccount.user, // generated ethereal user
+            pass: testAccount.pass, // generated ethereal password
+          },
+        });
+      });
+    } else {
+      this.transporter = nodemailer.createTransport({
+        host: this.configService.get('EMAIL_HOST'),
+        port: Number(this.configService.get('EMAIL_PORT')),
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: this.configService.get('EMAIL_USER'),
+          pass: this.configService.get('EMAIL_PASSWORD'),
+        },
+      });
+    }
   }
 
-  /* It will get all passed object keys, and replace detault object with it */
-  send(data: MailData) {
-    const mergedData = { ...this.data };
-    Object.keys(data).forEach((prop) => {
-      mergedData[prop] = data[prop];
-    });
-    return this.mg.messages().send(mergedData);
+  send(data: nodemailer.SendMailOptions) {
+    this.transporter.sendMail(data);
   }
 
-  /*
-  URL for callback. In production use nadjiauto.com, in test give url of the
-  React instance
-  */
-  getDomainUrl() {
-    const url = process.env.NODE_ENV === 'production'
-      ? 'https://www.nadjiauto.com'
-      : 'http://localhost:3000';
-    return url;
+  sendConfirmationEmail() {
+    throw new NotImplementedException();
   }
 
-  sendConfirmationEmail({ templateData, to }: SendData) {
-    return this.send({
-      to,
-      'h:X-Mailgun-Variables': templateData,
-      template: 'confirm_email',
-      subject: 'Potvrda naloga',
-    });
-  }
-
-  sendResetPasswordEmail({ to, templateData }: SendData) {
-    return this.send({
-      to,
-      'h:X-Mailgun-Variables': templateData,
-      subject: 'Nadji auto - Resetovanje sifre',
-      template: 'password_recovery',
-    });
+  sendResetPasswordEmail() {
+    throw new NotImplementedException();
   }
 }
 

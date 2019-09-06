@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { BadRequestException } from '@nestjs/common';
 import { WithId } from '../interfaces';
 
@@ -16,7 +15,10 @@ export class GenerateCursor<T extends WithId = any> {
 
   constructor(private entity: T, private column: string = 'createdAt') {
     const value = this.getColumnValueFromEntity();
-    this.cursor = Base64.encode(`${this.entity.id};${this.column};${value}`);
+    // Converts normal text to base64
+    this.cursor = Buffer.from(
+      `${this.entity.id};${this.column};${value}`,
+    ).toString('base64');
   }
 
   /** Get value from entity from provided column. Throw error if null value */

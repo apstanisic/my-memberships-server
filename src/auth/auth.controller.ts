@@ -8,14 +8,12 @@ import {
   Param,
   Put,
   UnauthorizedException,
-  Logger,
 } from '@nestjs/common';
 import { plainToClass, classToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
 import { UsersService } from '../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
 import { User } from '../user/user.entity';
-import { MailService } from '../mail/mail.service';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,10 +21,9 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-    private readonly mailService: MailService,
   ) {}
 
-  /* Try to login user */
+  /** Attempt to login user */
   @Post('login')
   async login(@Body() { email, password }: LoginData): Promise<SignInResponse> {
     return this.authService.tryToLogin(email, password);
