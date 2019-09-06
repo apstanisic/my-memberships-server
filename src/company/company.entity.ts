@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  OneToMany,
-  Index,
-  RelationId,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
 import { IsEmail, Length, IsString, IsIn, IsNotEmpty } from 'class-validator';
 import { Field } from 'type-graphql';
 import { User } from '../user/user.entity';
@@ -13,9 +6,15 @@ import { Subscription } from '../subscription/subscription.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { CompanyCategory, companiesCategories } from './categories.list';
 import { Location } from '../locations/location.entity';
+import { DeletedColumns } from '../core/entities/deleted-columns.entity';
+import { SoftDelete } from '../core/entities/soft-delete.interface';
 
+/**
+ * Company can be deleted only if there is no more
+ * valid subscriptions
+ */
 @Entity('companies')
-export class Company extends BaseEntity {
+export class Company extends BaseEntity implements SoftDelete {
   /** Company name */
   @Column()
   @Index()
@@ -40,15 +39,7 @@ export class Company extends BaseEntity {
   @Field(type => [Subscription])
   subscriptions: Subscription[];
 
-  // Get only subscriptions ids.
-  // @RelationId((company: Company) => company.subscriptions)
-  // subscriptionIds: string[];
-
-  /**
-   * What type of business is this company
-   * Must cloned because of readonly
-   * @todo Find fix
-   */
+  /** What type of business is this company. Must cloned because of readonly */
   @Column()
   @Field(type => String)
   @IsIn([...companiesCategories])
@@ -76,12 +67,16 @@ export class Company extends BaseEntity {
   @IsEmail({}, { each: true })
   emails: string[];
 
+  @Column(type => DeletedColumns)
+  @Field(type => DeletedColumns)
+  deleted: DeletedColumns;
+
   /**
    * All gyms location
-   * @todo Refactor this
-   * Maybe move Location to defferent table
    */
-  @OneToMany(type => Location, location => location.company)
+  @OneToMany(type => Location, location => location.company, {
+    onDelete: 'CASCADE',
+  })
   @Field(type => [Location])
   locations: Location[];
 }

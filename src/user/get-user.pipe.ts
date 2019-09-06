@@ -23,7 +23,7 @@ export class GetUserPipe implements PipeTransform<string> {
     let user: User | undefined;
 
     if (validator.isUUID(value)) {
-      user = await this.usersService.findById(value);
+      user = await this.usersService.findOne(value);
     } else if (validator.isEmail(value)) {
       user = await this.usersService.findOne({ email: value });
       if (!user) throw new NotFoundException();

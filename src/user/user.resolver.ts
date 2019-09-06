@@ -9,8 +9,8 @@ import { UsersService } from './user.service';
 export class UserResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query((returns) => User, { name: 'user' })
+  @Query(returns => User, { name: 'user' })
   async getUser(@Args('id') id: string) {
-    return this.usersService.findById(id);
+    return this.usersService.findOne(id);
   }
 }

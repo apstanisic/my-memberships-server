@@ -50,4 +50,11 @@ export abstract class BaseEntity {
       throw new BadRequestException(errors);
     }
   }
+
+  // metadata() {
+  //   return {
+  //     canBeSoftDeleted: true,
+  //     canBeHardDeleted: true,
+  //   };
+  // }
 }

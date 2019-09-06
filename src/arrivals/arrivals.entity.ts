@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import * as moment from 'moment';
-import { Field, Float } from 'type-graphql';
+import { Field } from 'type-graphql';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { Location } from '../locations/location.entity';
@@ -21,15 +21,16 @@ export class Arrival extends BaseEntity {
   subscriptionId: string;
 
   /** At which location did arrival happen */
-  // @Column(type => Location)
-  @ManyToOne(type => Location, location => location.arrivals)
+  @ManyToOne(type => Location, location => location.arrivals, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @Field(type => Location)
-  location: Location;
+  location?: Location;
 
   /** Get only Id from location */
-  // @RelationId((arrival: Arrival) => arrival.location)
-  @Column()
-  locationId: string;
+  @Column({ nullable: true })
+  locationId?: string;
 
   /** When did person arrive */
   @Column({ update: false, default: new Date() })

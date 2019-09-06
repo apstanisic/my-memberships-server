@@ -6,10 +6,12 @@ import { Subscription } from '../subscription/subscription.entity';
 import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../company/company.entity';
 import { Role } from '../access-control/roles.entity';
+import { DeletedColumns } from '../core/entities/deleted-columns.entity';
+import { SoftDelete } from '../core/entities/soft-delete.interface';
 
 /** User Entity */
 @Entity('users')
-export class User extends BaseUser {
+export class User extends BaseUser implements SoftDelete {
   /** All roles user have */
   @OneToMany(type => Role, role => role.user, { eager: true })
   @Field(type => [Role])
@@ -36,4 +38,7 @@ export class User extends BaseUser {
   @IsOptional()
   @Length(5, 50)
   phoneNumber?: string;
+
+  @Column(type => DeletedColumns)
+  deleted: DeletedColumns;
 }

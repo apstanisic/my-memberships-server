@@ -1,23 +1,22 @@
 import { IsDate } from 'class-validator';
 import { Field, Int } from 'type-graphql';
-import { Column, Entity, ManyToOne, Index, RelationId } from 'typeorm';
+import { Column, Entity, ManyToOne, Index } from 'typeorm';
 import * as moment from 'moment';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
+import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
 
 @Entity('subscriptions')
-export class Subscription extends BaseEntity {
+export class Subscription extends BaseEntity implements SoftDelete {
   /* Company where subscription is valid */
   @ManyToOne(type => Company, company => company.subscriptions)
   @Field(type => Company)
   company: Company;
 
   /** Company id  */
-  // @Column()
-  // @RelationId((sub: Subscription) => sub.company)
   @Column()
   @Field()
   companyId: string;
@@ -28,7 +27,6 @@ export class Subscription extends BaseEntity {
   owner: User;
 
   /** Subscription owner id  */
-  // @RelationId((sub: Subscription) => sub.owner)
   @Column()
   @Field()
   ownerId: string;
@@ -55,7 +53,8 @@ export class Subscription extends BaseEntity {
 
   /**
    * How much time can user use this subscription
-   * (enter an gym, attend pilates...)
+   * (enter an gym, attend pilates...).
+   * If null it's unlimided.
    */
   @Column({ nullable: true })
   @Field(type => Int, { nullable: true })
@@ -73,6 +72,7 @@ export class Subscription extends BaseEntity {
 
   /** Check if subscription is still valid */
   isValid() {
+    if (this.deleted.at) return false;
     if (moment(this.expiresAt).isBefore(moment.now())) return false;
     if (this.allowedUses && this.allowedUses <= this.usedAmount) return false;
     return true;

@@ -76,8 +76,8 @@ export class UserController {
     }
   }
 
-  @Get('user/:id')
-  GetUser(@Param('id', ValidUUID) user: string) {
-    return this.usersService.findById(user);
+  @Get('users/:id')
+  GetUser(@Param('id', ValidUUID) id: string) {
+    return this.usersService.findOne(id);
   }
 }
