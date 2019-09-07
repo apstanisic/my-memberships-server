@@ -20,9 +20,10 @@ e = some(where (p.eft == allow))
 # validDomain(r.dom, r.obj) checks if provided domain is contained in object path
 # validDomain('domen-id', '/domeni/domen-id') returns true;
 # keyMatch2(r.obj, p.obj) checks if object path is compatible with policies path
-# r.act == p.act just check if user can preform action on object
+# regexMatch(r.act, p.act) just check if user can preform action on object
+# regexMatch(read, (read)|(post))
 [matchers]
-m = r.sub == p.sub && validDomain(r.dom, r.obj) && keyMatch2(r.obj, p.obj) && r.act == p.act
+m = r.sub == p.sub && validDomain(r.dom, r.obj) && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)
 `;
 
 const casbinModel = newModel();
