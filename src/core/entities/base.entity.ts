@@ -9,7 +9,6 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Index,
-  Column,
 } from 'typeorm';
 
 /**
@@ -25,16 +24,17 @@ export abstract class BaseEntity {
   id: string;
 
   /** Date when entity was last updated */
-  @UpdateDateColumn({ type: 'timestamptz' })
-  @Exclude()
-  updatedAt: Date;
+  @UpdateDateColumn({ precision: 0 })
+  // @Column({ nullable: true })
+  // @Exclude()
+  updatedAt: number;
 
   /** Date when entity was created. It has index for cursor pagination */
-  @CreateDateColumn({ type: 'timestamptz' })
+  @CreateDateColumn({ precision: 0 })
   @Index()
   @Field()
-  @Exclude()
-  createdAt: Date;
+  // @Exclude()
+  createdAt: number;
 
   /** All entities will be auto validated before inserting or updating. */
   @BeforeInsert()

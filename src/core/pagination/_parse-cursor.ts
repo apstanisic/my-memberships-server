@@ -34,10 +34,12 @@ export class ParseCursor<T extends WithId = any> {
    */
   constructor(private cursor: string, private order: 'ASC' | 'DESC' = 'DESC') {
     // Converts base64 to normal text
-    const decodedCursor = Buffer.from(this.cursor).toString('ascii');
+    const decodedCursor = Buffer.from(this.cursor, 'base64').toString('ascii');
     // Split cursor so we can get id, column and value, and maybe type
     const [id, columnName, columnValue, type] = decodedCursor.split(';');
-    if (this.validator.isEmpty(columnValue)) throw new BadRequestException();
+    if (this.validator.isEmpty(columnValue)) {
+      throw new BadRequestException('Invalid column');
+    }
 
     this.id = id;
     this.columnName = columnName;
@@ -45,6 +47,7 @@ export class ParseCursor<T extends WithId = any> {
 
     this.convertValueToCorrectType(type);
     this.query = this.toTypeOrmQuery();
+
     // this.query = this.parsedValue;
   }
 
@@ -69,9 +72,10 @@ export class ParseCursor<T extends WithId = any> {
     return {
       [this.columnName]: Raw(alias => {
         if (!alias) throw new InternalError('Column name empty');
-        return `( ${valueIsDiff(alias)} OR ( ${valueIsEqual(
+        const query = `( ${valueIsDiff(alias)} OR ( ${valueIsEqual(
           alias,
-        )} AND id ${sign} ${e(this.id)}) )`;
+        )} AND id ${sign}= ${e(this.id)}) )`;
+        return query;
       }),
     };
   }

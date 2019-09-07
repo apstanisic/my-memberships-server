@@ -8,6 +8,7 @@ import { OrmWhere } from '../types';
 import { PgResult, PaginatorResponse } from './pagination.types';
 import { PaginationParams } from './pagination-options';
 import { parseQuery } from '../typeorm/parse-to-orm-query';
+import { convertToObject } from '../helpers';
 
 /**
  * Format is: uuid;columnName;columnValue;type
@@ -29,7 +30,7 @@ export class Paginator<T extends WithId> {
   private repo: Repository<T>;
 
   /* How much entities to return */
-  private limit: number = 24;
+  private limit: number = 4;
 
   private order: 'ASC' | 'DESC' = 'DESC';
 
@@ -57,7 +58,7 @@ export class Paginator<T extends WithId> {
     const errors = await validate(params);
     if (errors.length > 0) throw new BadRequestException(errors);
 
-    this.limit = params.limit || this.limit;
+    this.limit = Number(params.limit) || this.limit;
     this.order = params.order || 'DESC';
     this.cursor = params.cursor;
     this.requestQuery = params.where;
@@ -73,6 +74,7 @@ export class Paginator<T extends WithId> {
     } else {
       cursorQuery = {};
     }
+
     // If filter is not provided,
     // and user didn't forbid to use query, use query
     const whereQuery = filter && useQuery ? filter : this.requestQuery;
@@ -80,13 +82,14 @@ export class Paginator<T extends WithId> {
       throw new BadRequestException('Filter is string');
     }
 
-    const where = this.shouldParseQuery
-      ? parseQuery({ ...whereQuery, ...cursorQuery })
-      : { ...whereQuery, ...cursorQuery };
+    let where = this.shouldParseQuery
+      ? parseQuery(whereQuery)
+      : convertToObject(whereQuery);
+    where = { ...where, ...cursorQuery };
 
     const result = await this.repo.find({
       where,
-      order: { [this.orderColumn]: this.order },
+      order: { [this.orderColumn]: this.order, id: this.order },
       take: this.limit + 1,
       relations: this.relations,
     } as FindManyOptions<T>);
@@ -106,15 +109,26 @@ export class Paginator<T extends WithId> {
       const nextEntity = result.pop() as T;
       next = new GenerateCursor(nextEntity, this.orderColumn).cursor;
       /* Generate last cursor for this page */
-      endsAt = new GenerateCursor(result[result.length - 1]).cursor;
+      endsAt = new GenerateCursor(result[result.length - 1], this.orderColumn)
+        .cursor;
     }
+
     /* retur response */
     response.pagination = {
       isLastPage,
+      nextFF: next
+        ? Buffer.from(next as string, 'base64').toString('ascii')
+        : null,
+      endsAtFF: endsAt
+        ? Buffer.from(endsAt as string, 'base64').toString('ascii')
+        : null,
+      startsAtFF: this.cursor
+        ? Buffer.from(this.cursor as string, 'base64').toString('ascii')
+        : null,
       next,
       endsAt,
-      amount: result.length,
       startsAt: this.cursor,
+      amount: result.length,
     };
     response.data = result;
     return response;
