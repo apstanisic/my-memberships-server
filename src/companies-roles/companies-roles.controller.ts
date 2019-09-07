@@ -19,16 +19,27 @@ import { PaginationParams } from '../core/pagination/pagination-options';
 import { ValidRole } from '../access-control/valid-role.pipe';
 import { RoleName } from '../access-control/roles.list';
 import {
-  CompanyRoleDto,
   CreateCompanyRoleDto,
   UpdateCompanyRoleDto,
 } from './companies-roles.dto';
 
+/**
+ * Every method is check for proper permissions.
+ * @method find Filter and paginate roles that belongs to given company.
+ * @method findRoleById Find role by id.
+ * @method findUsersRoles Finds all roles given user has in company.
+ * That is usually one role.
+ * @method findAllWhoHaveGivenRole Find users that have that role in company.
+ * @method addNewRole Create new role for this company.
+ * @method changeRole Change role.
+ * @method deleteRole Delete role.
+ */
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/roles')
 export class CompaniesRolesController {
   constructor(private readonly rolesService: RoleService) {}
 
+  /** Get roles for this company */
   @IfAllowed('read')
   @Get('')
   find(
@@ -38,6 +49,7 @@ export class CompaniesRolesController {
     return this.rolesService.paginate(pg, { domain: companyId });
   }
 
+  /** Get all roles this user have in company */
   @IfAllowed('read')
   @Get('users/:userId')
   findUsersRoles(
@@ -47,34 +59,56 @@ export class CompaniesRolesController {
     return this.rolesService.find({ userId, domain: companyId });
   }
 
+  /** Get all users that have given role in this company */
   @IfAllowed('read')
-  @Get(':roleName')
+  @Get('name/:roleName')
   findAllWhoHaveGivenRole(
     @Param('roleName', ValidRole) roleName: RoleName,
     @Param('companyId', ValidUUID) companyId: UUID,
+    @GetPagination() pg: PaginationParams,
   ) {
-    return this.rolesService.find({ domain: companyId, name: roleName });
+    return this.rolesService.paginate(pg, {
+      domain: companyId,
+      name: roleName,
+    });
   }
 
+  /** Get role by id */
+  @IfAllowed('read')
+  @Get(':roleId')
+  findRoleById(
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @Param('roleId', ValidUUID) roleId: UUID,
+  ) {
+    return this.rolesService.findOne({ id: roleId, domain: companyId });
+  }
+
+  /** Create new role */
   @IfAllowed()
   @Post('')
   addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Body() data: CreateCompanyRoleDto,
   ) {
-    this.rolesService.create({ ...data, ...{ domain: companyId } });
+    return this.rolesService.create({ ...data, ...{ domain: companyId } });
   }
 
+  /** Change role */
   @IfAllowed()
   @Put(':roleId')
-  changeRole(
+  async changeRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
     @Body() data: UpdateCompanyRoleDto,
   ) {
-    return this.rolesService.update(roleId, data);
+    const role = await this.rolesService.findOne({
+      domain: companyId,
+      id: roleId,
+    });
+    return this.rolesService.update(role, data);
   }
 
+  /** Delete role by Id that belongs to this company */
   @IfAllowed()
   @Delete(':roleId')
   async deleteRole(
@@ -85,6 +119,6 @@ export class CompaniesRolesController {
       id: roleId,
       domain: companyId,
     });
-    this.rolesService.delete(role);
+    return this.rolesService.delete(role);
   }
 }

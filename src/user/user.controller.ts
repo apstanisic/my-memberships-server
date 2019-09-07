@@ -19,7 +19,6 @@ import { UpdateUserInfo } from './update-user.dto';
 import { ValidUUID } from '../core/uuid.pipe';
 
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -26,6 +26,7 @@ export class CreateCompanyRoleDto extends CompanyRoleDto {
   description?: string;
 }
 
+/** All fields are optional */
 export class UpdateCompanyRoleDto extends CompanyRoleDto {
   @IsOptional()
   userId?: string;

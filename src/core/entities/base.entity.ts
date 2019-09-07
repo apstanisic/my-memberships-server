@@ -9,6 +9,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Index,
+  Column,
 } from 'typeorm';
 
 /**
@@ -50,6 +51,10 @@ export abstract class BaseEntity {
       throw new BadRequestException(errors);
     }
   }
+
+  // // For Access Control
+  // @Column({ type: 'simple-array' })
+  // acPath: string[];
 
   // metadata() {
   //   return {

@@ -5,8 +5,6 @@ import {
   Param,
   ForbiddenException,
   BadRequestException,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import * as moment from 'moment';
 import { classToClass } from 'class-transformer';
@@ -20,7 +18,6 @@ import { InternalError } from '../core/custom-exceptions';
 
 /** Controller for password reseting */
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 export class PasswordResetController {
   constructor(
     private readonly usersService: UsersService,

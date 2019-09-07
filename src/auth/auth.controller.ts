@@ -3,8 +3,6 @@ import {
   Body,
   Post,
   BadRequestException,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   Param,
   Put,
   UnauthorizedException,
@@ -15,10 +13,8 @@ import { UsersService } from '../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
 import { User } from '../user/user.entity';
 import { MailService } from '../mail/mail.service';
-import { InternalError } from '../core/custom-exceptions';
 
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
