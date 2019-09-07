@@ -28,10 +28,10 @@ export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
   /** Logger */
-  private logger = new Logger();
+  protected logger = new Logger();
 
   /** Validator */
-  private validator = new Validator();
+  protected validator = new Validator();
 
   /**
    * Find companies that match criteria

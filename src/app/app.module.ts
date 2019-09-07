@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '../config/config.module';
 import { AppController } from './app.controller';
@@ -12,6 +11,7 @@ import { SubscriptionModule } from '../subscription/subscription.module';
 import { AccessControlModule } from '../access-control/access-control.module';
 import { LocationsModule } from '../locations/locations.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
+import { CompaniesRolesModule } from '../companies-roles/companies-roles.module';
 
 @Module({
   imports: [
@@ -30,6 +30,7 @@ import { ArrivalsModule } from '../arrivals/arrivals.module';
     CompanyModule,
     SubscriptionModule,
     ArrivalsModule,
+    CompaniesRolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

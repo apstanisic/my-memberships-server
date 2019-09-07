@@ -16,6 +16,7 @@ import { UsersService } from '../user/user.service';
 import { ValidateEmailPipe } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
 import { GetUserPipe } from '../user/get-user.pipe';
+import { InternalError } from '../core/custom-exceptions';
 
 /** Controller for password reseting */
 @Controller('auth')
@@ -30,24 +31,27 @@ export class PasswordResetController {
   @Post('forgot-password/:email')
   async sendPasswordRecoveryMail(
     @Param('email', ValidateEmailPipe) email: string,
-  ) {
+  ): Promise<{ message: string }> {
     // Don't throw error, just say that you sent mail, if user doesn't exist
-    const user = await this.usersService.findOne({ email });
-    const token = user.generateSecureToken();
-    await this.usersService.update(user);
+    const successMessage = { message: 'Password reset email is sent. ' };
+    let user;
+    let token;
+    try {
+      user = await this.usersService.findOne({ email });
+      token = user.generateSecureToken();
+      user = await this.usersService.update(user);
+    } catch (error) {
+      return successMessage;
+    }
 
-    const templateData = {
-      token,
-      email: user.email,
-      url: this.mailService.getDomainUrl(),
-    };
-
-    await this.mailService.sendResetPasswordEmail({
-      templateData,
+    await this.mailService.send({
       to: user.email,
+      subject: 'Password recovery - My Subscriptions',
+      text: `Here is your token ${token}`,
+      html: `<h1>Password Recovery Test: ${token}</h1>`,
     });
 
-    return { message: 'Password reset email is sent. ' };
+    return successMessage;
   }
 
   /** Reset user password */
