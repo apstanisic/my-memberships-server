@@ -14,6 +14,8 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
 import { User } from '../user/user.entity';
+import { MailService } from '../mail/mail.service';
+import { InternalError } from '../core/custom-exceptions';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -21,6 +23,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly mailService: MailService,
   ) {}
 
   /** Attempt to login user */
@@ -33,15 +36,18 @@ export class AuthController {
   /** @todo Add sending mail */
   @Post('register')
   async register(@Body() data: RegisterData) {
-    try {
-      const user = await this.usersService.create(data);
-      const token = this.authService.createJwt(data.email);
+    const user = await this.usersService.create(data);
+    const token = this.authService.createJwt(data.email);
 
-      // For some reason user is not transformed without class to class
-      return { token, user: classToClass(user) };
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
+    await this.mailService.send({
+      to: user.email,
+      subject: 'Confirm account - My Subscriptions',
+      text: 'Please confirm your email address',
+      html: '<h1>Here is same html</h1>',
+    });
+
+    // For some reason user is not transformed without class to class
+    return { token, user: classToClass(user) };
   }
 
   /* Confirm user account */

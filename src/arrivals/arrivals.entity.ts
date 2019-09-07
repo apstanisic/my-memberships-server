@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import * as moment from 'moment';
 import { Field } from 'type-graphql';
+import { Expose } from 'class-transformer';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { Location } from '../locations/location.entity';
@@ -54,8 +55,10 @@ export class Arrival extends BaseEntity {
   @Column({ nullable: true, type: 'double precision', update: false })
   long?: number;
 
-  get timeSpent(): number {
-    if (!this.arrivedAt || !this.leftAt) return 0;
+  /** Get time spent in minutes */
+  @Expose()
+  get timeSpent(): number | undefined {
+    if (!this.arrivedAt || !this.leftAt) return;
     return moment(this.leftAt).diff(this.arrivedAt, 'minutes');
   }
 }

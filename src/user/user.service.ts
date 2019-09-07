@@ -9,6 +9,7 @@ import { User } from './user.entity';
 import { RegisterData } from '../auth/auth.dto';
 import { BaseService } from '../core/base.service';
 import { Role } from '../access-control/roles.entity';
+import { InternalError } from '../core/custom-exceptions';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -28,21 +29,25 @@ export class UsersService extends BaseService<User> {
     const userExist = await this.repository.findOne({ email });
     if (userExist) throw new BadRequestException('User exists');
 
-    const user = new User();
-    user.email = email;
-    user.password = password;
-    user.name = name;
-    user.generateSecureToken();
-    const savedUser = await this.repository.save(user);
+    try {
+      const user = new User();
+      user.email = email;
+      user.password = password;
+      user.name = name;
+      user.generateSecureToken();
+      const savedUser = await this.repository.save(user);
 
-    const defaultRole = new Role();
-    defaultRole.domain = savedUser.id;
-    defaultRole.name = 'user';
-    defaultRole.user = savedUser;
-    const savedRole = await this.roleRepository.save(defaultRole);
+      const defaultRole = new Role();
+      defaultRole.domain = savedUser.id;
+      defaultRole.name = 'user';
+      defaultRole.user = savedUser;
+      await this.roleRepository.save(defaultRole);
 
-    savedUser.roles.push(savedRole);
-    return savedUser;
+      return savedUser;
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalError();
+    }
   }
 
   /** Find user for login with provided email and password */

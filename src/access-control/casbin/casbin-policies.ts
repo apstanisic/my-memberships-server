@@ -23,5 +23,7 @@ p, admin, /companies/:id/subscription/*, write
 p, admin, /companies/:id/locations/*, read
 p, admin, /companies/:id/locations/*, write
 
+p, admin, /companies/:id/roles*, read
+
 p, user, /users/:id/*, read
 `;

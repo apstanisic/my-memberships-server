@@ -1,7 +1,5 @@
 import {
   Controller,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   Get,
   Param,
   Post,
@@ -29,7 +27,6 @@ import { ManyUUID } from '../core/many-uuid.pipe';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')
-@UseInterceptors(ClassSerializerInterceptor)
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
@@ -39,17 +36,17 @@ export class SubscriptionController {
     return this.service.findByIds(ids);
   }
 
-  /* Get ads, filtered and paginated */
+  /** Get subscriptions, filtered and paginated */
   @IfAllowed('read')
   @Get('')
   get(@GetPagination() pg: PaginationParams): PgResult<Subscription> {
     return this.service.paginate(pg);
   }
 
-  /* Get subscription by id */
+  /** Get subscription by id */
   @IfAllowed('read')
   @Get(':id')
-  findById(@Param('id', ValidUUID) id: string): Promise<Subscription> {
+  findById(@Param('id', ValidUUID) id: UUID): Promise<Subscription> {
     return this.service.findOne(id);
   }
 
@@ -58,15 +55,15 @@ export class SubscriptionController {
   @Post()
   async create(
     @Body() subscription: CreateSubscriptionDto,
-    @Param('companyId') companyId: UUID,
+    @Param('companyId', ValidUUID) companyId: UUID,
   ): Promise<Subscription> {
     return this.service.create({ ...subscription, companyId });
   }
 
-  /* Remove subscription */
+  /** Remove subscription */
   @IfAllowed()
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<Subscription> {
+  remove(@Param('id', ValidUUID) id: UUID): Promise<Subscription> {
     return this.service.delete(id);
   }
 
@@ -74,7 +71,7 @@ export class SubscriptionController {
   @IfAllowed()
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ValidUUID) id: UUID,
     @Body() updateData: UpdateSubscriptionDto,
   ): Promise<Subscription> {
     return this.service.update(id, updateData);
