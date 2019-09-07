@@ -23,18 +23,20 @@ export abstract class BaseEntity {
   @Field(type => ID)
   id: string;
 
-  /** Date when entity was last updated */
-  @UpdateDateColumn({ precision: 0 })
-  // @Column({ nullable: true })
-  // @Exclude()
-  updatedAt: number;
+  /**
+   * Date when entity was last updated.
+   * 3 point precision, keep track of miliseconds.
+   * Don't need more.
+   */
+  @UpdateDateColumn({ precision: 3 })
+  @Exclude()
+  updatedAt: Date;
 
   /** Date when entity was created. It has index for cursor pagination */
-  @CreateDateColumn({ precision: 0 })
+  @CreateDateColumn({ precision: 3 })
   @Index()
   @Field()
-  // @Exclude()
-  createdAt: number;
+  createdAt: Date;
 
   /** All entities will be auto validated before inserting or updating. */
   @BeforeInsert()

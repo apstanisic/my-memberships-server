@@ -32,13 +32,13 @@ export class Subscription extends BaseEntity implements SoftDelete {
   ownerId: string;
 
   /* Date from which subscription is valid */
-  @Column({ precision: 0 })
+  @Column({ precision: 3 })
   @Field()
   @IsDate()
   startsAt: Date;
 
   /* Date to which subscription is valid. Has index couse it's offten sorted */
-  @Column({ precision: 0 })
+  @Column({ precision: 3 })
   @Index()
   @Field()
   @IsDate()
