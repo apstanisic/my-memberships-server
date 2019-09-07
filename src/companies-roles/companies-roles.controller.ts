@@ -18,10 +18,7 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { ValidRole } from '../access-control/valid-role.pipe';
 import { RoleName } from '../access-control/roles.list';
-import {
-  CreateCompanyRoleDto,
-  UpdateCompanyRoleDto,
-} from './companies-roles.dto';
+import { CreateRoleDto, UpdateRoleDto } from '../access-control/roles.dto';
 
 /**
  * Every method is check for proper permissions.
@@ -88,7 +85,7 @@ export class CompaniesRolesController {
   @Post('')
   addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
-    @Body() data: CreateCompanyRoleDto,
+    @Body() data: CreateRoleDto,
   ) {
     return this.rolesService.create({ ...data, ...{ domain: companyId } });
   }
@@ -99,7 +96,7 @@ export class CompaniesRolesController {
   async changeRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
-    @Body() data: UpdateCompanyRoleDto,
+    @Body() data: UpdateRoleDto,
   ) {
     const role = await this.rolesService.findOne({
       domain: companyId,
@@ -115,10 +112,6 @@ export class CompaniesRolesController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
   ) {
-    const role = await this.rolesService.findOne({
-      id: roleId,
-      domain: companyId,
-    });
-    return this.rolesService.delete(role);
+    return this.rolesService.removeRole({ id: roleId, domain: companyId });
   }
 }

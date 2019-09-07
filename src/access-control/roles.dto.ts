@@ -1,9 +1,9 @@
 import { IsUUID, IsString, IsIn, IsOptional } from 'class-validator';
-import { RoleName, availableRoles } from '../access-control/roles.list';
+import { RoleName, availableRoles } from './roles.list';
 import { UUID } from '../core/types';
 
 /** Domain is provided trough url param. */
-export class CompanyRoleDto {
+export class RoleDto {
   @IsString()
   @IsUUID()
   userId?: string;
@@ -18,7 +18,7 @@ export class CompanyRoleDto {
 }
 
 /** Some fields that are nullable at parent class here aren't */
-export class CreateCompanyRoleDto extends CompanyRoleDto {
+export class CreateRoleDto extends RoleDto {
   userId: string;
 
   name: RoleName;
@@ -27,7 +27,7 @@ export class CreateCompanyRoleDto extends CompanyRoleDto {
 }
 
 /** All fields are optional */
-export class UpdateCompanyRoleDto extends CompanyRoleDto {
+export class UpdateRoleDto extends RoleDto {
   @IsOptional()
   userId?: string;
 
@@ -35,5 +35,16 @@ export class UpdateCompanyRoleDto extends CompanyRoleDto {
   name?: RoleName;
 
   @IsOptional()
-  description: string;
+  description?: string;
+}
+
+/** To delete role you need everything for creationg, plus domain to delete */
+export class DeleteRoleDto extends UpdateRoleDto {
+  @IsString()
+  @IsUUID()
+  domain: string;
+
+  @IsString()
+  @IsUUID()
+  id: string;
 }

@@ -3,27 +3,25 @@
  * If this was a file it would have .csv extension
  */
 export const casbinPolicies = `
-p, app_owner, /*, read
+p, app_owner, /*,  (read)|(write)read
 p, app_owner, /*, write
 
-p, app_admin, /companies/*, read
-p, app_admin, /companies/*, write
+p, app_admin, /companies/*,  (read)|(write)
 
-p, app_admin, /users/*, read
-p, app_admin, /users/*, write
+p, app_admin, /users/*,  (read)|(write)
 
-p, owner, /companies/:id, read
-p, owner, /companies/:id, write
-p, owner, /companies/:id/*, read
-p, owner, /companies/:id/*, write
+p, owner, /companies/:id,  (read)|(write)
+p, owner, /companies/:id/*, (read)|(write)
 
-p, admin, /companies/:id/subscription/*, read
-p, admin, /companies/:id/subscription/*, write
+p, admin, /companies/:id/subscription, (read)|(write)
+p, admin, /companies/:id/subscription/*, (read)|(write)
 
-p, admin, /companies/:id/locations/*, read
-p, admin, /companies/:id/locations/*, write
+p, admin, /companies/:id/locations, (read)|(write)
+p, admin, /companies/:id/locations/*, (read)|(write)
 
-p, admin, /companies/:id/roles*, read
+p, admin, /companies/:id/roles, read
+p, admin, /companies/:id/roles/*, read
 
 p, user, /users/:id/*, read
+p, user, /users/:id, read
 `;
