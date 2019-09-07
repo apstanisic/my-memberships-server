@@ -11,6 +11,7 @@ export class PaginatorResponse<T = any> {
     endsAt?: string;
     next?: string;
     previous?: string;
+    [key: string]: any;
   };
 
   /** Retrived data */

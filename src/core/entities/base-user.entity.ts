@@ -51,7 +51,7 @@ export abstract class BaseUser extends BaseEntity implements IUser {
   secureToken?: string;
 
   /** Time when secureToken was created. Server decides token duration */
-  @Column({ nullable: true })
+  @Column({ nullable: true, precision: 0 })
   @Exclude()
   tokenCreatedAt?: Date;
 

@@ -17,7 +17,10 @@ export async function paginate<T extends WithId>({
   repository,
   options,
 }: Params<T>): PgResult<T> {
+  console.log(1);
   const paginator = new Paginator(repository);
+  console.log(2);
   await paginator.setOptions(options);
+  console.log(3);
   return paginator.execute();
 }

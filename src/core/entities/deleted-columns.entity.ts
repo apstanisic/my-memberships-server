@@ -10,7 +10,7 @@ import { User } from '../../user/user.entity';
  */
 export class DeletedColumns {
   /** When was entity deleted. */
-  @Column({ nullable: true, type: 'date' })
+  @Column({ nullable: true, type: 'timestamp', precision: 0 })
   @Field({ nullable: true })
   at?: Date;
 

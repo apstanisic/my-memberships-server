@@ -34,12 +34,12 @@ export class Arrival extends BaseEntity {
   locationId?: string;
 
   /** When did person arrive */
-  @Column({ update: false, default: new Date() })
+  @Column({ update: false, default: new Date(), precision: 0 })
   @Field()
   arrivedAt: Date;
 
   /** When did person leave. It's nullable, if person does not checkout */
-  @Column({ nullable: true })
+  @Column({ nullable: true, precision: 0 })
   @Field({ nullable: true })
   leftAt?: Date;
 

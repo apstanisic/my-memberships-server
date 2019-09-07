@@ -10,7 +10,7 @@
     "build": "rimraf dist && tsc",
     "start": "ts-node  dist/main.js",
     "dev": "nodemon",
-    "debug": "nodemon --config nodemon-debug.json",
+    "debug": "node --inspect-brk dist/server.js",
     "sync-schema": "ts-node ./node_modules/.bin/typeorm schema:sync",
     "test-data": "ts-node ./node_modules/.bin/typeorm migration:run",
     "typeorm": "ts-node ./node_modules/.bin/typeorm",
