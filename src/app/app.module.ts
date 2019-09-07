@@ -16,11 +16,6 @@ import { CompaniesRolesModule } from '../companies-roles/companies-roles.module'
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    // First make good REST then add graphql
-    // GraphQLModule.forRoot({
-    //   autoSchemaFile: 'schema.graphql',
-    //   context: ({ req }) => ({ req }),
-    // }),
     ConfigModule,
     AuthModule,
     AccessControlModule,

@@ -25,7 +25,6 @@ import { UpdateCompanyDto } from './company.dto';
 
 /** Companies Controller */
 @Controller('companies')
-@UseInterceptors(ClassSerializerInterceptor)
 export class CompaniesController {
   constructor(
     private readonly service: CompanyService,
