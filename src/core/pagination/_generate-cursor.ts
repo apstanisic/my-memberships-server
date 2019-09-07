@@ -16,7 +16,6 @@ export class GenerateCursor<T extends WithId = any> {
   constructor(private entity: T, private column: string = 'createdAt') {
     const value = this.getColumnValueFromEntity();
     // Converts normal text to base64
-    // Raw cursor
     this.cursor = Buffer.from(
       `${this.entity.id};${this.column};${value}`,
       'ascii',
