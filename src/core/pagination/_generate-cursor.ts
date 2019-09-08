@@ -14,6 +14,7 @@ export class GenerateCursor<T extends WithId = any> {
   cursor: string;
 
   constructor(private entity: T, private column: string = 'createdAt') {
+    if (this.entity.id === undefined) throw new BadRequestException('No id');
     const value = this.getColumnValueFromEntity();
     // Converts normal text to base64
     this.cursor = Buffer.from(

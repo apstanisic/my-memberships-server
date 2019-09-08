@@ -6,12 +6,11 @@ import {
   Between,
   Equal,
   Like,
-  FindOperator,
   In,
 } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 import { convertToObject } from '../helpers';
-import { OrmWhere, ParsedOrmWhere } from '../types';
+import { ParsedOrmWhere } from '../types';
 
 /**
  * Parse query to TypeOrm valid query
