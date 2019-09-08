@@ -1,13 +1,17 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { Company } from './company.entity';
 import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
+import { RoleService } from '../access-control/role.service';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
-  constructor(@InjectRepository(Company) repository: Repository<Company>) {
+  constructor(
+    @InjectRepository(Company) repository: Repository<Company>,
+    private readonly roleService: RoleService,
+  ) {
     super(repository);
   }
 
@@ -26,5 +30,23 @@ export class CompanyService extends BaseService<Company> {
     }
     // return this.repository.remove(company);
     return super.delete(company, user);
+  }
+
+  /**
+   * Creates new company and owner role.
+   * We can do create(entity, owner) cause of TS limitations.
+   * More info: https://stackoverflow.com/questions/33542359
+   */
+  async createCompany(
+    entity: DeepPartial<Company>,
+    owner: User,
+  ): Promise<Company> {
+    const company = await this.create({ ...entity, owner });
+    await this.roleService.create({
+      user: owner,
+      name: 'owner',
+      domain: company.id,
+    });
+    return company;
   }
 }
