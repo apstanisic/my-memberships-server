@@ -38,8 +38,8 @@ export class CompaniesController {
   }
 
   /** Create company */
-  @Post()
   @UseGuards(AuthGuard('jwt'))
+  @Post()
   async create(
     @Body() data: DeepPartial<Company>,
     @GetUser() user: User,
@@ -48,17 +48,17 @@ export class CompaniesController {
   }
 
   /** Remove company */
-  @Delete(':id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @IfAllowed()
+  @Delete(':id')
   remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
     return this.service.delete(id, user);
   }
 
   /** Update company */
-  @Put(':id')
   @IfAllowed()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateData: UpdateCompanyDto,

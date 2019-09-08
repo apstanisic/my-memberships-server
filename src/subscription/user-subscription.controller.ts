@@ -8,6 +8,7 @@ import { Subscription } from './subscription.entity';
 import { ValidUUID } from '../core/uuid.pipe';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../access-control/permissions.guard';
+import { UUID } from '../core/types';
 
 /** Controller in charge for getting user subscriptions */
 @Controller('users/:userId/subscriptions')
@@ -19,7 +20,7 @@ export class UserSubscriptionController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get()
   get(
-    @Param('userId', ValidUUID) ownerId: string,
+    @Param('userId', ValidUUID) ownerId: UUID,
     @GetPagination() pg: PaginationParams,
   ): PgResult<Subscription> {
     return this.service.paginate(pg, { ownerId });
@@ -30,7 +31,7 @@ export class UserSubscriptionController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get(':id')
   findById(
-    @Param('userId') ownerId: string,
+    @Param('userId', ValidUUID) ownerId: UUID,
     @Param('id') id: string,
   ): Promise<Subscription> {
     return this.service.findOne({ id, ownerId });

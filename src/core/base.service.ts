@@ -24,7 +24,12 @@ import { User } from '../user/user.entity';
 type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 
-/** Base service that implements some basic crud methods */
+/**
+ * Base service that implements some basic crud methods.
+ * Services are in change of throwing HTTP errors.
+ * There is no need for every controller to check if result
+ * is null, this service will automatically check for him.
+ */
 export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
 
