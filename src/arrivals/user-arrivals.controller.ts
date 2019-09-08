@@ -14,6 +14,8 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
+import { Arrival } from './arrivals.entity';
+import { PgResult } from '../core/pagination/pagination.types';
 
 /**
  * Get arrivals for users requests.
@@ -28,37 +30,43 @@ import { User } from '../user/user.entity';
 export class UserArrivalsController {
   constructor(private readonly arrivalsService: ArrivalsService) {}
 
-  /**
-   * Get paginated arrivals for provided subscription.
-   * First check if subscription belongs to user.
-   */
+  /** Get paginated arrivals for provided subscription. */
   @Get('')
   async find(
     @Param('userId', ValidUUID) userId: string,
-    @Param('subscriptionId', ValidUUID) sid: string,
+    @Param('subscriptionId', ValidUUID) subscriptionId: string,
     @GetPagination() params: PaginationParams,
     @GetUser() user: User,
-  ) {
-    if (userId !== user.id || user.subscriptionIds.every(s => s !== sid)) {
-      throw new ForbiddenException();
-    }
-
-    return this.arrivalsService.paginate(params, { subscriptionId: sid });
+  ): PgResult<Arrival> {
+    this.validUser(user, userId, subscriptionId);
+    return this.arrivalsService.paginate(params, { subscriptionId });
   }
 
-  /**
-   */
+  /** Get arrival by it's id */
   @Get(':id')
   async findById(
     @Param('userId', ValidUUID) userId: string,
-    @Param('subscriptionId', ValidUUID) sid: string,
+    @Param('subscriptionId', ValidUUID) subscriptionId: string,
     @Param('id', ValidUUID) id: string,
     @GetUser() user: User,
-  ) {
-    if (userId !== user.id || user.subscriptionIds.every(s => s !== sid)) {
+  ): Promise<Arrival> {
+    this.validUser(user, userId, subscriptionId);
+    return this.arrivalsService.findOne({ id, subscriptionId });
+  }
+
+  /**
+   * Check if user has access to this subscription
+   *
+   * @param user Logged user
+   * @param uid User Id from request
+   * @param sid Subscription Id from request
+   */
+  private validUser(user: User, uid: string, sid: string): void {
+    if (
+      uid !== user.id ||
+      user.subscriptionIds.every(userSubId => userSubId !== sid)
+    ) {
       throw new ForbiddenException();
     }
-
-    return this.arrivalsService.findOne({ id, subscriptionId: sid });
   }
 }

@@ -100,11 +100,10 @@ export class CompaniesRolesController {
     @Param('roleId', ValidUUID) roleId: UUID,
     @Body() data: UpdateRoleDto,
   ) {
-    const role = await this.rolesService.findOne({
-      domain: companyId,
-      id: roleId,
-    });
-    return this.rolesService.update(role, data);
+    return this.rolesService.updateWhere(
+      { domain: companyId, id: roleId },
+      data,
+    );
   }
 
   /** Delete role by Id that belongs to this company */
