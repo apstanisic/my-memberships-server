@@ -29,7 +29,7 @@ export class Paginator<T extends WithId> {
   private repo: Repository<T>;
 
   /* How much entities to return */
-  private limit: number = 4;
+  private limit: number = 12;
 
   private order: 'ASC' | 'DESC' = 'DESC';
 
