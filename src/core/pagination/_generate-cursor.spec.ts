@@ -3,9 +3,10 @@ import { Validator } from 'class-validator';
 import { GenerateCursor } from './_generate-cursor';
 
 describe('Propertly generating pagination cursor', () => {
+  const uuid = Faker.random.uuid();
   const validator = new Validator();
+
   it('Should generate valid base64 cursor', () => {
-    const uuid = Faker.random.uuid();
     const entity = {
       id: uuid,
       createdAt: new Date(),
@@ -26,9 +27,8 @@ describe('Propertly generating pagination cursor', () => {
       createdAt: new Date(),
       uuid: Faker.random.uuid(),
     };
-    expect(() => {
-      const generator = new GenerateCursor(entity as any, 'createdAt');
-    }).toThrow();
+    expect(() => new GenerateCursor(entity as any, 'createdAt')).toThrow();
+    expect(() => new GenerateCursor({ id: undefined } as any)).toThrow();
   });
 
   it('Should throw if column not provided', () => {
@@ -37,5 +37,16 @@ describe('Propertly generating pagination cursor', () => {
     expect(() => {
       const generator = new GenerateCursor(entity, 'createdAt');
     }).toThrow();
+  });
+
+  it('Should use string without trying to convert to date', () => {
+    const { cursor } = new GenerateCursor({ id: uuid, price: 41 }, 'price');
+    expect(validator.isBase64(cursor)).toBe(true);
+  });
+
+  it('Should should throw if value undefined', () => {
+    expect(
+      () => new GenerateCursor({ id: uuid, price: undefined }, 'price'),
+    ).toThrow();
   });
 });

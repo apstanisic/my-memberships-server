@@ -16,14 +16,10 @@ export function removeEmptyItems(obj: Record<string, any>) {
   return validItems;
 }
 
-/** Make pause for provided miliseconds */
+/** Make pause for provided miliseconds. setTimeout never throws an error */
 export function wait(time: number) {
-  return new Promise((res, rej) => {
-    try {
-      setTimeout(res, time);
-    } catch (error) {
-      rej();
-    }
+  return new Promise(res => {
+    setTimeout(res, time);
   });
 }
 
