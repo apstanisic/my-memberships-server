@@ -8,6 +8,7 @@ import {
   Delete,
   Put,
   Query,
+  NotImplementedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PgResult } from '../core/pagination/pagination.types';
@@ -33,21 +34,28 @@ export class SubscriptionController {
   @IfAllowed('read')
   @Get('many')
   findByIds(@Query('ids', ManyUUID) ids: UUID[]): Promise<Subscription[]> {
+    throw new NotImplementedException();
     return this.service.findByIds(ids);
   }
 
   /** Get subscriptions, filtered and paginated */
   @IfAllowed('read')
   @Get('')
-  get(@GetPagination() pg: PaginationParams): PgResult<Subscription> {
-    return this.service.paginate(pg);
+  get(
+    @GetPagination() pg: PaginationParams,
+    @Param('companyId', ValidUUID) companyId: UUID,
+  ): PgResult<Subscription> {
+    return this.service.paginate(pg, { companyId });
   }
 
   /** Get subscription by id */
   @IfAllowed('read')
   @Get(':id')
-  findById(@Param('id', ValidUUID) id: UUID): Promise<Subscription> {
-    return this.service.findOne(id);
+  findById(
+    @Param('id', ValidUUID) id: UUID,
+    @Param('companyId', ValidUUID) companyId: UUID,
+  ): Promise<Subscription> {
+    return this.service.findOne({ id, companyId });
   }
 
   /** Create new subscription */
@@ -63,8 +71,11 @@ export class SubscriptionController {
   /** Remove subscription */
   @IfAllowed()
   @Delete(':id')
-  remove(@Param('id', ValidUUID) id: UUID): Promise<Subscription> {
-    return this.service.delete(id);
+  remove(
+    @Param('id', ValidUUID) id: UUID,
+    @Param('companyId', ValidUUID) companyId: UUID,
+  ): Promise<Subscription> {
+    return this.service.deleteWhere({ id, companyId });
   }
 
   /** Update subscription */
