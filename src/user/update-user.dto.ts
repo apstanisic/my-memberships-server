@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsEmail,
-  IsString,
-  MinLength,
-  Length,
-} from 'class-validator';
+import { IsOptional, IsEmail, IsString, Length } from 'class-validator';
 
 /** Data that is provided when changing user info */
 export class UpdateUserInfo {

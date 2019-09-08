@@ -14,7 +14,7 @@ export class RolesMigration1566763274976 implements MigrationInterface {
     const companies: Company[] = await queryRunner.manager.find(Company);
 
     for (let i = 0; i < 300; i += 1) {
-      roles.push(generateRole(users, companies));
+      roles.push(generateRole(users, companies.map(c => c.id)));
     }
     users.forEach(user => roles.push(generateUserRole(user)));
     await queryRunner.manager.save(roles);

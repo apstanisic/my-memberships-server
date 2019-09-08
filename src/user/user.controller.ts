@@ -4,8 +4,6 @@ import {
   UseGuards,
   Put,
   Body,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   Delete,
   ForbiddenException,
   Param,

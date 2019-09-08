@@ -10,6 +10,7 @@ import { ConfigModule } from '../config/config.module';
 import { MailModule } from '../mail/mail.module';
 import { UserModule } from '../user/user.module';
 
+/** Auth module depends on user module and mail module and config module */
 @Module({
   imports: [
     ConfigModule,
