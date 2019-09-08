@@ -137,6 +137,15 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
+  /** Update entity by providing where clause */
+  async updateWhere(
+    where: FindConditions<T>,
+    data: DeepPartial<T>,
+  ): Promise<T> {
+    const entity = await this.findOne({ where: parseQuery(where) });
+    return this.update(entity, data);
+  }
+
   /** Remove entity */
   async delete(entityOrId: T | string, userForsoftDelete?: User): Promise<T> {
     try {

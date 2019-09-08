@@ -16,6 +16,8 @@ import { LocationsService } from './locations.service';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../access-control/permissions.guard';
 import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
+import { Location } from './location.entity';
+import { PgResult } from '../core/pagination/pagination.types';
 
 /**
  * Controller for managing locations
@@ -30,7 +32,7 @@ export class LocationsController {
   find(
     @Param('companyId', ValidUUID) companyId: string,
     @GetPagination() params: PaginationParams,
-  ) {
+  ): PgResult<Location> {
     return this.locationsService.paginate(params, { companyId });
   }
 
@@ -39,7 +41,7 @@ export class LocationsController {
   findById(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('id', ValidUUID) id: string,
-  ) {
+  ): Promise<Location> {
     return this.locationsService.findOne({ id, companyId });
   }
 
@@ -50,7 +52,7 @@ export class LocationsController {
   async create(
     @Param('companyId', ValidUUID) companyId: string,
     @Body() location: CreateLocationDto,
-  ) {
+  ): Promise<Location> {
     return this.locationsService.create({ ...location, companyId });
   }
 
@@ -62,9 +64,8 @@ export class LocationsController {
     @Param('companyId', ValidUUID) companyId: string,
     @Param('id', ValidUUID) id: string,
     @Body() updateData: UpdateLocationDto,
-  ) {
-    const location = await this.locationsService.findOne({ id, companyId });
-    return this.locationsService.update(location, updateData);
+  ): Promise<Location> {
+    return this.locationsService.updateWhere({ id, companyId }, updateData);
   }
 
   /** Delete location */
@@ -74,8 +75,7 @@ export class LocationsController {
   async delete(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('id', ValidUUID) id: string,
-  ) {
-    const location = await this.locationsService.findOne({ id, companyId });
-    return this.locationsService.delete(location);
+  ): Promise<Location> {
+    return this.locationsService.deleteWhere({ id, companyId });
   }
 }

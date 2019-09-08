@@ -21,12 +21,8 @@ export class ArrivalsService extends BaseService<Arrival> {
     arrival.address = location.address;
     arrival.lat = location.lat;
     arrival.long = location.long;
-
-    if (typeof subscription === 'string') {
-      arrival.subscriptionId = subscription;
-    } else {
-      arrival.subscription = subscription;
-    }
+    arrival.subscriptionId =
+      typeof subscription === 'string' ? subscription : subscription.id;
     return this.create(arrival);
   }
 }

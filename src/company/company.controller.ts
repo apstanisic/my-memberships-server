@@ -1,7 +1,5 @@
 import {
   Controller,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   Get,
   Param,
   Post,
@@ -20,16 +18,12 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../access-control/permissions.guard';
-import { RoleService } from '../access-control/role.service';
 import { UpdateCompanyDto } from './company.dto';
 
 /** Companies Controller */
 @Controller('companies')
 export class CompaniesController {
-  constructor(
-    private readonly service: CompanyService,
-    private readonly roleService: RoleService,
-  ) {}
+  constructor(private readonly service: CompanyService) {}
 
   /** Get companies, filtered and paginated */
   @Get()
@@ -50,13 +44,7 @@ export class CompaniesController {
     @Body() data: DeepPartial<Company>,
     @GetUser() user: User,
   ): Promise<Company> {
-    const company = await this.service.create({ ...data, owner: user });
-    await this.roleService.addRole({
-      user,
-      roleName: 'owner',
-      domain: company,
-    });
-    return company;
+    return this.service.createCompany(data, user);
   }
 
   /** Remove company */

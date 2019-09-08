@@ -31,12 +31,12 @@ import { ManyUUID } from '../core/many-uuid.pipe';
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
-  @IfAllowed('read')
-  @Get('many')
-  findByIds(@Query('ids', ManyUUID) ids: UUID[]): Promise<Subscription[]> {
-    throw new NotImplementedException();
-    return this.service.findByIds(ids);
-  }
+  // @IfAllowed('read')
+  // @Get('many')
+  // findByIds(@Query('ids', ManyUUID) ids: UUID[]): Promise<Subscription[]> {
+  //   throw new NotImplementedException();
+  //   return this.service.findByIds(ids);
+  // }
 
   /** Get subscriptions, filtered and paginated */
   @IfAllowed('read')

@@ -7,11 +7,15 @@ import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { LocationsService } from '../locations/locations.service';
+import { PgResult } from '../core/pagination/pagination.types';
+import { Arrival } from './arrivals.entity';
+import { Location } from '../locations/location.entity';
 
 /**
  * Keep track of arrivals in subscriptions and locations.
  * There is no update on arrival. You can only come.
  * @method find Fitler and paginate arrivals.
+ * @method findById Find arrival by id.
  * @method newArrival Creates new arrival.
  * @method deleteArrival Delete arrival.
  */
@@ -33,8 +37,20 @@ export class CompanyArrivalsController {
     @Param('companyId', ValidUUID) companyId: string,
     @Param('locationId', ValidUUID) locationId: string,
     @GetPagination() params: PaginationParams,
-  ) {
-    return this.arrivalsService.paginate(params, { locationId });
+  ): PgResult<Arrival> {
+    const location = await this.validLocation(companyId, locationId);
+    return this.arrivalsService.paginate(params, { location });
+  }
+
+  @Get(':arrivalId')
+  @IfAllowed('read')
+  async findById(
+    @Param('companyId', ValidUUID) companyId: string,
+    @Param('locationId', ValidUUID) locationId: string,
+    @Param('arrivalId', ValidUUID) arrivalId: string,
+  ): Promise<Arrival> {
+    const location = await this.validLocation(companyId, locationId);
+    return this.arrivalsService.findOne({ id: arrivalId, location });
   }
 
   /** Add new arrival. */
@@ -44,11 +60,8 @@ export class CompanyArrivalsController {
     @Param('companyId', ValidUUID) companyId: string,
     @Param('locationId', ValidUUID) locationId: string,
     @Body('subscriptionId') subscriptionId: string,
-  ) {
-    const location = await this.locationService.findOne({
-      locationId,
-      companyId,
-    });
+  ): Promise<Arrival> {
+    const location = await this.validLocation(companyId, locationId);
     return this.arrivalsService.newArrival(location, subscriptionId);
   }
 
@@ -59,16 +72,19 @@ export class CompanyArrivalsController {
     @Param('cid', ValidUUID) companyId: string,
     @Param('lid', ValidUUID) locationId: string,
     @Param('aid', ValidUUID) arrivalId: string,
-  ) {
-    await this.locationService.findOne({
-      locationId,
-      companyId,
-    });
-    const arrival = await this.arrivalsService.findOne({
-      locationId,
-      id: arrivalId,
-    });
+  ): Promise<Arrival> {
+    await this.validLocation(companyId, locationId);
+    return this.arrivalsService.deleteWhere({ locationId, id: arrivalId });
+  }
 
-    return this.arrivalsService.delete(arrival);
+  /**
+   * Must be run for each method to check if location belongs to company
+   * FindOne throws an error if result is not found
+   */
+  private async validLocation(
+    companyId: string,
+    locationId: string,
+  ): Promise<Location> {
+    return this.locationService.findOne({ companyId, id: locationId });
   }
 }
