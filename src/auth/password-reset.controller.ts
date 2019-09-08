@@ -14,7 +14,6 @@ import { UsersService } from '../user/user.service';
 import { ValidateEmailPipe } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
 import { GetUserPipe } from '../user/get-user.pipe';
-import { InternalError } from '../core/custom-exceptions';
 
 /** Controller for password reseting */
 @Controller('auth')
