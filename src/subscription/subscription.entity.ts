@@ -8,6 +8,7 @@ import { BaseEntity } from '../core/entities/base.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
+import { Exclude } from 'class-transformer';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity implements SoftDelete {
@@ -68,6 +69,7 @@ export class Subscription extends BaseEntity implements SoftDelete {
   /** Standard deleted columns */
   @Column(type => DeletedColumns)
   @Field(type => DeletedColumns)
+  @Exclude()
   deleted: DeletedColumns;
 
   /** Check if subscription is still valid */
