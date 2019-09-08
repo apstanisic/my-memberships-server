@@ -11,7 +11,11 @@ import { Validator } from 'class-validator';
 export class ValidUUID implements PipeTransform<string, string> {
   private validator = new Validator();
 
-  transform(value: string): string {
+  transform(value?: any): string {
+    if (!this.validator.isString(value)) {
+      throw new BadRequestException('Invalid type.');
+    }
+
     if (!this.validator.isUUID(value)) {
       throw new BadRequestException('Invalid ID.');
     }

@@ -11,7 +11,7 @@ type PlanName =
   | 'pro'
   | 'enterprise';
 
-@Entity()
+// @Entity()
 export class PricingPlan extends BaseEntity {
   @Column()
   @IsPositive()

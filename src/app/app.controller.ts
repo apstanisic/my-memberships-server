@@ -1,13 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
 
-@Controller()
+@Controller('')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get('')
-  // @SetRoles(['admin', 'user'], 'hello')
-  getHome(): string {
-    return this.appService.homePage();
+  homePage() {
+    return 'My Subscriptions Home Page';
   }
 }

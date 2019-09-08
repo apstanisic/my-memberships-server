@@ -1,10 +1,4 @@
 /**
- * Check if property exist on objectj
- * @warning Don't use hasOwn property. Use has.call(obj, property)
- */
-export const has = Object.prototype.hasOwnProperty;
-
-/**
  * Removes properties that are null, undefined or empty string
  * @example
  * const from = { a: 'Hello', b: '', c: null, d: undefined };
@@ -34,15 +28,6 @@ export function wait(time: number) {
 }
 
 /**
- * Check if string is bcrypt hash. There can be passed any
- * value. Maybe it is null or undefined. Funcion will then return false
- */
-export function isBcryptHash(text: string | any) {
-  if (typeof text !== 'string') return false;
-  return text.startsWith('$2a$');
-}
-
-/**
  * Convert string, null or undefined to object
  * It will convert JSON string to object literal.
  * For nullable values will return empty object.
@@ -52,7 +37,14 @@ export function convertToObject<T = any>(
   query: Record<string, T> | string | null | undefined,
 ): Record<string, T> {
   if (query === null || query === undefined) return {};
-  if (typeof query === 'string') return JSON.parse(query);
+  if (typeof query === 'string') {
+    try {
+      const parsed = JSON.parse(query);
+      return Array.isArray(parsed) ? {} : parsed;
+    } catch (error) {
+      return {};
+    }
+  }
   return { ...query };
 }
 
@@ -79,7 +71,7 @@ export function hasForbiddenKey(
   obj: Record<string, any>,
   key: string,
 ): boolean {
-  return Object.keys(obj).every(objectKey =>
-    objectKey.toLowerCase().includes(key.toLowerCase()),
-  );
+  return Object.keys(obj).some(objectKey => {
+    return objectKey.toLowerCase().includes(key.toLowerCase());
+  });
 }
