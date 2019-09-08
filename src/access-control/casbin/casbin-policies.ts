@@ -4,10 +4,10 @@
  */
 export const casbinPolicies = `
 p, app_owner, /*,  (read)|(write)
-p, app_owner, /*, write
 
+p, app_admin, /companies,  (read)|(write)
 p, app_admin, /companies/*,  (read)|(write)
-
+p, app_admin, /users,  (read)|(write)
 p, app_admin, /users/*,  (read)|(write)
 
 p, owner, /companies/:id,  (read)|(write)

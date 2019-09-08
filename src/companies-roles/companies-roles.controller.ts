@@ -22,6 +22,8 @@ import { CreateRoleDto, UpdateRoleDto } from '../access-control/roles.dto';
 
 /**
  * Every method is check for proper permissions.
+ * This controller should not be in ac module cause it's app specific.
+ * AC module should be as modular as posible.
  * @method find Filter and paginate roles that belongs to given company.
  * @method findRoleById Find role by id.
  * @method findUsersRoles Finds all roles given user has in company.
@@ -112,6 +114,6 @@ export class CompaniesRolesController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
   ) {
-    return this.rolesService.removeRole({ id: roleId, domain: companyId });
+    return this.rolesService.deleteWhere({ id: roleId, domain: companyId });
   }
 }

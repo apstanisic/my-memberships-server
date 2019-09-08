@@ -1,6 +1,5 @@
 import { IsUUID, IsString, IsIn, IsOptional } from 'class-validator';
 import { RoleName, availableRoles } from './roles.list';
-import { UUID } from '../core/types';
 
 /** Domain is provided trough url param. */
 export class RoleDto {
@@ -36,15 +35,4 @@ export class UpdateRoleDto extends RoleDto {
 
   @IsOptional()
   description?: string;
-}
-
-/** To delete role you need everything for creationg, plus domain to delete */
-export class DeleteRoleDto extends UpdateRoleDto {
-  @IsString()
-  @IsUUID()
-  domain: string;
-
-  @IsString()
-  @IsUUID()
-  id: string;
 }

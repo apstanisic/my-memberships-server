@@ -3,6 +3,7 @@ import {
   DeepPartial,
   FindOneOptions,
   FindManyOptions,
+  FindConditions,
 } from 'typeorm';
 import {
   NotFoundException,
@@ -149,6 +150,17 @@ export abstract class BaseService<T extends WithId = any> {
     } catch (error) {
       throw this.throwInternalError(error);
     }
+  }
+
+  /** Delete first entity that match condition.
+   * Useful when need more validation.
+   * This will delete only if id match, but also parent match
+   * @example
+   *  where = {id: someId, parentId: someParentId}
+   */
+  async deleteWhere(where: FindConditions<T>): Promise<T> {
+    const entity = await this.findOne({ where: parseQuery(where) });
+    return this.delete(entity);
   }
 
   /** Count result of a query */

@@ -14,12 +14,8 @@ export class ValidRole implements PipeTransform<string, string> {
   transform(value: string): string {
     const roles = Array.from(availableRoles);
 
-    if (!this.validator.isString(value)) {
-      throw new BadRequestException('Invalid ID.');
-    }
-
-    if (!this.validator.isIn(value, roles)) {
-      throw new BadRequestException('Role does not exist.');
+    if (!this.validator.isString(value) || !this.validator.isIn(value, roles)) {
+      throw new BadRequestException('Role does not exist');
     }
 
     return value;

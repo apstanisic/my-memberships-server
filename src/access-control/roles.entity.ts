@@ -1,7 +1,8 @@
 import { ManyToOne, Entity, Column } from 'typeorm';
 import { Field } from 'type-graphql';
+import { IsIn, IsString, IsOptional, Length } from 'class-validator';
 import { User } from '../user/user.entity';
-import { RoleName } from './roles.list';
+import { RoleName, availableRoles } from './roles.list';
 import { BaseEntity } from '../core/entities/base.entity';
 
 /**
@@ -28,6 +29,8 @@ export class Role extends BaseEntity {
 
   /** Role name */
   @Column()
+  @IsString()
+  @IsIn([...availableRoles])
   @Field(type => String)
   name: RoleName;
 
@@ -36,7 +39,8 @@ export class Role extends BaseEntity {
    * In other domain can be city, or store. Domain limit the reach of user.
    * Keep domain as string so it can be portable and not app specific.
    */
-  @Column({ default: '*' })
+  @Column({ default: '/*' })
+  @IsString()
   @Field()
   domain: string;
 
@@ -46,5 +50,8 @@ export class Role extends BaseEntity {
    */
   @Column({ type: 'text', nullable: true })
   @Field(type => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  @Length(2, 2000)
   description?: string;
 }
