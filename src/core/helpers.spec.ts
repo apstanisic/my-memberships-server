@@ -11,7 +11,7 @@ jest.useFakeTimers();
 
 describe('Testing helpers', () => {
   // removeEmptyItems
-  it('Should remove empty items', () => {
+  it('Should remove empty items from object', () => {
     const obj = {
       a: 'Hello World',
       b: null,
@@ -32,7 +32,7 @@ describe('Testing helpers', () => {
   });
 
   // convertToObject
-  it('Should convert values to object', () => {
+  it('Should convert any to object', () => {
     expect(convertToObject(null)).toEqual({});
     expect(convertToObject(undefined)).toEqual({});
     expect(convertToObject('fdsa9')).toEqual({});
@@ -42,7 +42,7 @@ describe('Testing helpers', () => {
   });
 
   // castArray
-  it('Should cast values to array', () => {
+  it('Should cast value to array', () => {
     expect(castArray(1)).toEqual([1]);
     expect(castArray('str')).toEqual(['str']);
     expect(castArray({ prop: 2 })).toEqual([{ prop: 2 }]);
