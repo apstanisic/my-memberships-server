@@ -1,8 +1,5 @@
 version: '3'
 
-env_file:
-  - ./.env
-
 services:
   cache:
     image: redis:5-alpine
@@ -14,7 +11,7 @@ services:
 
   db:
     container_name: 'my_sub_pg'
-    image: postgres
+    image: postgres:11-alpine
     restart: unless-stopped
     ports:
       - 5432:5432

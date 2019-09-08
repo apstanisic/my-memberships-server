@@ -9,6 +9,7 @@ import {
   IsInt,
 } from 'class-validator';
 import { Field } from 'type-graphql';
+import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { BaseEntity } from '../core/entities/base.entity';
@@ -16,7 +17,6 @@ import { CompanyCategory, companiesCategories } from './categories.list';
 import { Location } from '../locations/location.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
-import { Exclude } from 'class-transformer';
 
 /**
  * Company can be deleted only if there is no more

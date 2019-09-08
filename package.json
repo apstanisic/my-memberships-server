@@ -28,6 +28,7 @@
     "casbin": "^3.0.4",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.0",
+    "cron": "^1.7.2",
     "dotenv": "^8.1.0",
     "faker": "^4.1.0",
     "global": "^4.4.0",

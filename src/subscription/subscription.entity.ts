@@ -2,13 +2,13 @@ import { IsDate } from 'class-validator';
 import { Field, Int } from 'type-graphql';
 import { Column, Entity, ManyToOne, Index } from 'typeorm';
 import * as moment from 'moment';
+import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
-import { Exclude } from 'class-transformer';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity implements SoftDelete {
