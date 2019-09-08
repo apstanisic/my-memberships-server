@@ -1,5 +1,13 @@
 import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
-import { IsEmail, Length, IsString, IsIn, IsNotEmpty } from 'class-validator';
+import {
+  IsEmail,
+  Length,
+  IsString,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsInt,
+} from 'class-validator';
 import { Field } from 'type-graphql';
 import { User } from '../user/user.entity';
 import { Subscription } from '../subscription/subscription.entity';
@@ -72,6 +80,13 @@ export class Company extends BaseEntity implements SoftDelete {
   @Field(type => DeletedColumns)
   @Exclude()
   deleted: DeletedColumns;
+
+  /** How many credit company have for buying stuff */
+  @Column({ default: 0, type: 'int' })
+  @IsOptional()
+  @IsInt()
+  @Exclude()
+  credit: number;
 
   /**
    * All gyms location
