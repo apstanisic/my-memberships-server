@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { PgResult } from './pagination.types';
 import { PaginationParams } from './pagination-options';
 import { Paginator } from './_paginator';
-import { WithId } from '../interfaces';
+import { WithId } from '../types';
 
 interface Params<T> {
   repository: Repository<T>;

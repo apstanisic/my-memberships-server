@@ -1,9 +1,11 @@
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { FindOperator, Raw } from 'typeorm';
 import { escape as e } from 'sqlstring';
-import { WithId } from '../interfaces';
-import { InternalError } from '../custom-exceptions';
+import { WithId } from '../types';
 
 /** Parse cursor to proper where query part */
 export class ParseCursor<T extends WithId = any> {
@@ -71,7 +73,9 @@ export class ParseCursor<T extends WithId = any> {
       `${column} = ${e(this.columnValue)}`;
     return {
       [this.columnName]: Raw(alias => {
-        if (!alias) throw new InternalError('Column name empty');
+        if (!alias) {
+          throw new InternalServerErrorException('Column name empty');
+        }
         const query = `( ${valueIsDiff(alias)} OR ( ${valueIsEqual(
           alias,
         )} AND id ${sign}= ${e(this.id)}) )`;

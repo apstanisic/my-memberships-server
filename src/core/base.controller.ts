@@ -17,7 +17,7 @@ import { BaseService } from './base.service';
 import { GetPagination } from './pagination/pagination.decorator';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
-import { WithId } from './interfaces';
+import { WithId } from './types';
 
 /**
  * T is custom service, E is entity

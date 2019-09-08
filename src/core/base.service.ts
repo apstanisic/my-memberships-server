@@ -14,8 +14,7 @@ import {
 import { Validator } from 'class-validator';
 import { parseQuery } from './typeorm/parse-to-orm-query';
 import { paginate } from './pagination/paginate.helper';
-import { WithId } from './interfaces';
-import { OrmWhere } from './types';
+import { OrmWhere, WithId } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
 import { SoftDelete } from './entities/soft-delete.interface';
