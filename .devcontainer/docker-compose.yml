@@ -5,6 +5,7 @@
 version: '3'
 
 services:
+  # Main Node app
   api:
     # Uncomment the next line to use a non-root user. On Linux, this will prevent
     # new files getting created as root, but you may need to update the USER_UID
@@ -23,7 +24,9 @@ services:
 
     links:
       - db
+      - cache
 
+  # Postgres database
   db:
     image: postgres
     restart: unless-stopped
@@ -36,6 +39,7 @@ services:
     volumes:
       - ../volumes/database:/var/lib/postgresql/data
 
+  # Redis for caching
   cache:
     image: redis:5-alpine
     restart: unless-stopped
