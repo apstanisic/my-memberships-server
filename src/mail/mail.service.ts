@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { Validator } from 'class-validator';
 import { ConfigService } from '../config/config.service';
 
 /**
@@ -16,7 +17,7 @@ export class MailService {
   private transporter: nodemailer.Transporter;
 
   /** Sender email address */
-  private sender: string = 'toby.leffler@ethereal.email';
+  private user: string = 'toby.leffler@ethereal.email';
 
   /** Sender password */
   private password: string = 'tXC6AxGXHYWBmXrtyq';
@@ -36,14 +37,29 @@ export class MailService {
   /** Logger */
   private logger = new Logger();
 
+  /** Validator */
+  private validator = new Validator();
+
   /** In production use values from configModule (.env file) */
   constructor(private readonly configService: ConfigService) {
     if (configService.get('NODE_ENV') === 'production') {
-      this.host = this.configService.get('EMAIL_HOST');
-      this.port = Number(this.configService.get('EMAIL_PORT'));
-      this.secure = false; // true for 465, false for other ports
-      this.sender = this.sender;
-      this.password = this.configService.get('EMAIL_PASSWORD');
+      const host = this.throwIfEmpty(this.configService.get('EMAIL_HOST'));
+      this.host = host;
+
+      const port = Number(
+        this.throwIfEmpty(this.configService.get('EMAIL_PORT')),
+      );
+      this.port = port;
+
+      const user = this.throwIfEmpty(this.configService.get('EMAIL_USER'));
+      this.user = user;
+
+      const password = this.throwIfEmpty(
+        this.configService.get('EMAIL_PASSWORD'),
+      );
+      this.password = password;
+
+      this.secure = Boolean(this.configService.get('EMAIL_SECURE')) || false; // true for 465, false for other ports
     }
     this.createTransport();
   }
@@ -66,15 +82,23 @@ export class MailService {
         port: this.port,
         secure: this.secure, // true for 465, false for other ports
         auth: {
-          user: this.sender,
+          user: this.user,
           pass: this.password,
         },
       },
-      { sender: this.sender },
+      { sender: this.user },
     );
     this.transporter
       .verify()
       .then(() => this.logger.log('Mail is working correctly.', 'MailModule'))
       .catch(e => this.logger.error('Mail is not working', e, 'MailModule'));
+  }
+
+  throwIfEmpty(value: any): string {
+    const { isEmpty } = this.validator;
+    if (isEmpty(value)) {
+      throw new InternalServerErrorException('Mail config invalid.');
+    }
+    return value;
   }
 }

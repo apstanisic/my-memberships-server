@@ -16,7 +16,11 @@ export class ConfigService {
     }
   }
 
-  get(key: string): string {
+  get(key: string): string | undefined {
     return this.envConfig[key];
+  }
+
+  getAll(): Record<string, string> {
+    return this.envConfig;
   }
 }
