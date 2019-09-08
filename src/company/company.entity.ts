@@ -8,6 +8,7 @@ import { CompanyCategory, companiesCategories } from './categories.list';
 import { Location } from '../locations/location.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
+import { Exclude } from 'class-transformer';
 
 /**
  * Company can be deleted only if there is no more
@@ -69,6 +70,7 @@ export class Company extends BaseEntity implements SoftDelete {
 
   @Column(type => DeletedColumns)
   @Field(type => DeletedColumns)
+  @Exclude()
   deleted: DeletedColumns;
 
   /**

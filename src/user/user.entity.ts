@@ -40,5 +40,6 @@ export class User extends BaseUser implements SoftDelete {
   phoneNumber?: string;
 
   @Column(type => DeletedColumns)
+  @Exclude()
   deleted: DeletedColumns;
 }
