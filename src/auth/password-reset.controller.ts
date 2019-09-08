@@ -11,7 +11,7 @@ import { classToClass } from 'class-transformer';
 import { User } from '../user/user.entity';
 import { LoginData } from './auth.dto';
 import { UsersService } from '../user/user.service';
-import { ValidateEmailPipe } from '../core/validate-email.pipe';
+import { ValidEmail } from '../core/validate-email.pipe';
 import { MailService } from '../mail/mail.service';
 import { GetUserPipe } from '../user/get-user.pipe';
 
@@ -26,7 +26,7 @@ export class PasswordResetController {
   /** Send email with reset instruction */
   @Post('forgot-password/:email')
   async sendPasswordRecoveryMail(
-    @Param('email', ValidateEmailPipe) email: string,
+    @Param('email', ValidEmail) email: string,
   ): Promise<{ message: string }> {
     // Don't throw error, just say that you sent mail, if user doesn't exist
     const successMessage = { message: 'Password reset email is sent. ' };
