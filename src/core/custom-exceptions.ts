@@ -19,5 +19,3 @@ export class BaseException {
     this.message = message;
   }
 }
-
-export class InternalError extends InternalServerErrorException {}

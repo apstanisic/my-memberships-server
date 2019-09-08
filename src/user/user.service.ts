@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,7 +10,6 @@ import { User } from './user.entity';
 import { RegisterData } from '../auth/auth.dto';
 import { BaseService } from '../core/base.service';
 import { Role } from '../access-control/roles.entity';
-import { InternalError } from '../core/custom-exceptions';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -46,7 +46,7 @@ export class UsersService extends BaseService<User> {
       return savedUser;
     } catch (error) {
       this.logger.error(error);
-      throw new InternalError();
+      throw new InternalServerErrorException();
     }
   }
 

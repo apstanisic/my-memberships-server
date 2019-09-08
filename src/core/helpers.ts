@@ -60,8 +60,8 @@ export function convertToObject<T = any>(
  * Accepts array or any other type.
  * If not array, make it a single item array.
  * Othervise return array,
- * Lodash have this method
- * @deprecated Use lodash built in method
+ * Lodash have this method. But I don't want whole
+ * lodash for 1 method.
  */
 export function castArray<T>(item: T | T[]): T[] {
   if (Array.isArray(item)) {

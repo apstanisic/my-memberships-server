@@ -1,7 +1,10 @@
-import { Injectable, NotImplementedException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '../config/config.service';
-import { InternalError } from '../core/custom-exceptions';
 
 /**
  * Simple mail service. Wrapper around nodemailer.
@@ -51,7 +54,7 @@ export class MailService {
       return this.transporter.sendMail(data);
     } catch (error) {
       this.logger.error(error);
-      throw new InternalError('Problem sending email.');
+      throw new InternalServerErrorException('Problem sending email.');
     }
   }
 

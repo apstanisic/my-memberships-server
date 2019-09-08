@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { WithId } from '../interfaces';
+import { WithId } from '../types';
 
 /**
  * Generate cursor from entity and column name
