@@ -8,10 +8,8 @@ import {
   Like,
   In,
 } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
 import { convertToObject } from '../helpers';
 import { ParsedOrmWhere } from '../types';
-import { type } from 'os';
 
 /**
  * Parse query to TypeOrm valid query

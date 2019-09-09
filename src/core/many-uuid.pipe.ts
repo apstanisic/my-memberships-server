@@ -12,7 +12,7 @@ import { UUID } from './types';
 export class ManyUUID implements PipeTransform<string, UUID[]> {
   private validator = new Validator();
 
-  transform(value: string): UUID[] {
+  transform(value: any): UUID[] {
     let ids;
     try {
       ids = JSON.parse(value);

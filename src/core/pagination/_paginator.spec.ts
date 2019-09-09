@@ -51,4 +51,8 @@ describe('Paginator', () => {
     const invalid = PaginationParams.fromRequest({ [orderByField]: 'CESC' });
     expect(paginator.setOptions(invalid)).resolves.toBeUndefined();
   });
+
+  it('should execute normaly if cursor not provided', () => {
+    expect(paginator.execute()).resolves.toBeTruthy();
+  });
 });

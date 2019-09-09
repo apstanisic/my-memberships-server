@@ -52,10 +52,8 @@ export abstract class BaseService<T extends WithId = any> {
     let entity: T | undefined;
     let where;
 
-    // If UUID or number, then search by id
-    if (typeof filter === 'string' && this.validator.isUUID(filter)) {
-      where = { id: filter };
-    } else if (this.validator.isNumber(filter)) {
+    // If string, then search by id
+    if (typeof filter === 'string') {
       where = { id: filter };
     } else if (parse) {
       // Should value be parsed to TypeOrm query
