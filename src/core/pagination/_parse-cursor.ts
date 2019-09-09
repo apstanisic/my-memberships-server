@@ -38,6 +38,7 @@ export class ParseCursor<T extends WithId = any> {
     // Converts base64 to normal text
     const decodedCursor = Buffer.from(this.cursor, 'base64').toString('ascii');
     // Split cursor so we can get id, column and value, and maybe type
+    // Type is not currently used.
     const [id, columnName, columnValue, type] = decodedCursor.split(';');
     if (this.validator.isEmpty(columnValue)) {
       throw new BadRequestException('Invalid column');
@@ -84,13 +85,14 @@ export class ParseCursor<T extends WithId = any> {
     };
   }
 
-  /** Parse value to correct type */
+  /** Parse value to correct type. Currently there should not be passed type */
   private convertValueToCorrectType(type?: string) {
     // If column name ends with At assume it's a date and convert
     let converted;
-    if (type === 'number') {
-      converted = Number(this.columnValue);
-    } else if (this.columnName.endsWith('At')) {
+    // if (type === 'number') {
+    //   converted = Number(this.columnValue);
+    // }  else
+    if (this.columnName.endsWith('At')) {
       // If number check if value is timestamp or iso time
       if (this.validator.isNumberString(this.columnValue)) {
         converted = new Date(Number(this.columnValue));

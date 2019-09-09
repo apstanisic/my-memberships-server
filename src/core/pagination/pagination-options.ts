@@ -13,29 +13,37 @@ import { OrmWhere } from '../types';
 import { limitField, orderByField, cursorField } from './pagination.types';
 import { parseNumber } from '../helpers';
 
-/** Params that user can provide */
+/** Params that user can provide. T is for OrmWhere */
 export class PaginationParams<T = any> {
-  /**
-   * Create new pagination options
-   * @param query Request query. Get from req.query in Express
+  /** Creates new pagination options. Factory method for this class.
+   * @param queryOrBody Request body or query. Must be object.
+   * Does not have to be from request, but it's keys are important
+   * when using this constructor
    */
-  constructor(query: Record<string, any> = {}) {
-    this.where = query;
+  static fromRequest<T>(
+    queryOrBody?: Record<string, any>,
+  ): PaginationParams<T> {
+    const params = new PaginationParams<T>();
+    if (typeof queryOrBody !== 'object') return params;
+    const query = { ...queryOrBody };
+
+    params.where = query;
 
     let order = query[orderByField];
 
     if (typeof order === 'string') {
       order = order.toUpperCase();
       if (order === 'ASC' || order === 'DESC') {
-        this.order = order;
+        params.order = order;
       }
     }
 
-    this.limit = parseNumber(query[limitField]);
+    params.limit = parseNumber(query[limitField]);
 
     if (typeof query[cursorField] === 'string') {
-      this.cursor = query[cursorField];
+      params.cursor = query[cursorField];
     }
+    return params;
   }
 
   @IsOptional()

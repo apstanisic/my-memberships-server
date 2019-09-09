@@ -4,7 +4,7 @@ import { limitField, orderByField, cursorField } from './pagination.types';
 describe('Pagination options', () => {
   it('does not accept value if params are not valid', () => {
     const randomString = 'some-random-string';
-    const params = new PaginationParams({
+    const params = PaginationParams.fromRequest({
       [limitField]: randomString,
       [orderByField]: randomString,
       [cursorField]: 5,
@@ -15,7 +15,7 @@ describe('Pagination options', () => {
     expect(params.cursor).toBeUndefined();
   });
   it('accept correct values', () => {
-    const params = new PaginationParams({
+    const params = PaginationParams.fromRequest({
       [limitField]: 10,
       [orderByField]: 'ASC',
       [cursorField]: 'some-string-value',

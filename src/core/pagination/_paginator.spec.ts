@@ -11,7 +11,6 @@ import {
 describe('Paginator', () => {
   let paginator: Paginator<any>;
   let mock: jest.Mock;
-  let repo;
   beforeEach(() => {
     mock = jest.fn(() => ['some-value']);
     paginator = new Paginator({ find: mock } as any);
@@ -39,16 +38,13 @@ describe('Paginator', () => {
     expect(result.data).toBe(mock.mock.results[0].value);
   });
 
-  /** @todo This test is invalid */
-  it('throws an error with invalid params', async () => {
-    paginator = new Paginator({ find: mock } as any);
-    const invalid1 = new PaginationParams({ [cursorField]: 'fsaffdsuh8fsad' });
-    // const invalid2 = new PaginationParams({ where: '9b0t34jb9t8j340b9' });
-    const invalid3 = new PaginationParams({ [orderByField]: 'CESC' });
-    // const invalid4 = new PaginationParams({ where: '9b0t34jb9t8j340b9' });
-
+  it('throws an error with invalid cursor', () => {
+    const invalid1 = PaginationParams.fromRequest({ [cursorField]: 'fsaffd' });
     expect(paginator.setOptions(invalid1)).rejects.toThrow();
-    // expect(paginator.setOptions(invalid2)).rejects.toThrow();
-    expect(paginator.setOptions(invalid3)).rejects.toThrow();
+  });
+
+  it('will throws an error with invalid params', async () => {
+    const invalid = PaginationParams.fromRequest({ [orderByField]: 'CESC' });
+    expect(paginator.setOptions(invalid)).resolves.toBeUndefined();
   });
 });
