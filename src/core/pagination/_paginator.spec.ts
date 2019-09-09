@@ -11,12 +11,13 @@ import {
 describe('Paginator', () => {
   let paginator: Paginator<any>;
   let mock: jest.Mock;
+
   beforeEach(() => {
     mock = jest.fn(() => ['some-value']);
     paginator = new Paginator({ find: mock } as any);
   });
 
-  it('executes with passed params', async () => {
+  it('executes with valid params', async () => {
     const params = new PaginationParams();
     params.shouldParse = false;
     params.currentUrl = '/hello/world';
@@ -30,10 +31,13 @@ describe('Paginator', () => {
     params.relations = ['user'];
     params.limit = 5;
     params.order = 'ASC';
+
     await paginator.setOptions(params);
     expect(mock.mock.calls.length).toBe(0);
+
     const result = await paginator.execute();
     expect(mock.mock.calls.length).toBe(1);
+
     expect(result).toBeInstanceOf(PaginatorResponse);
     expect(result.data).toBe(mock.mock.results[0].value);
   });
@@ -43,7 +47,7 @@ describe('Paginator', () => {
     expect(paginator.setOptions(invalid1)).rejects.toThrow();
   });
 
-  it('will throws an error with invalid params', async () => {
+  it('removes fields that do not match property type', async () => {
     const invalid = PaginationParams.fromRequest({ [orderByField]: 'CESC' });
     expect(paginator.setOptions(invalid)).resolves.toBeUndefined();
   });
