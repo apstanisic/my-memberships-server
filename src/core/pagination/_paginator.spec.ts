@@ -2,7 +2,11 @@ import * as Faker from 'faker';
 import { Paginator } from './_paginator';
 import { PaginationParams } from './pagination-options';
 import { GenerateCursor } from './_generate-cursor';
-import { PaginatorResponse } from './pagination.types';
+import {
+  PaginatorResponse,
+  cursorField,
+  orderByField,
+} from './pagination.types';
 
 describe('Paginator', () => {
   let paginator: Paginator<any>;
@@ -38,11 +42,13 @@ describe('Paginator', () => {
   /** @todo This test is invalid */
   it('throws an error with invalid params', async () => {
     paginator = new Paginator({ find: mock } as any);
-    const invalidOptions = new PaginationParams({
-      cursor: 'fsaffdsuh8fsad',
-      where: '9b0t34jb9t8j340b9',
-    });
+    const invalid1 = new PaginationParams({ [cursorField]: 'fsaffdsuh8fsad' });
+    // const invalid2 = new PaginationParams({ where: '9b0t34jb9t8j340b9' });
+    const invalid3 = new PaginationParams({ [orderByField]: 'CESC' });
+    // const invalid4 = new PaginationParams({ where: '9b0t34jb9t8j340b9' });
 
-    expect(await paginator.setOptions(invalidOptions)).toBeUndefined();
+    expect(paginator.setOptions(invalid1)).rejects.toThrow();
+    // expect(paginator.setOptions(invalid2)).rejects.toThrow();
+    expect(paginator.setOptions(invalid3)).rejects.toThrow();
   });
 });
