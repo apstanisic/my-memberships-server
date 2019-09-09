@@ -4,6 +4,7 @@ import {
   castArray,
   hasForbiddenKey,
   wait,
+  parseNumber,
 } from './helpers';
 
 // For testing wait
@@ -65,5 +66,14 @@ describe('Testing helpers', () => {
         key,
       ),
     ).toEqual(true);
+  });
+
+  // parseNumber
+  it('will return correct number', () => {
+    expect(parseNumber('fsda')).toBeUndefined();
+    expect(parseNumber('1.444')).toBe(1);
+    expect(parseNumber()).toBeUndefined();
+    expect(parseNumber(1)).toBe(1);
+    expect(parseNumber(1.8)).toBe(1);
   });
 });

@@ -71,3 +71,21 @@ export function hasForbiddenKey(
     return objectKey.toLowerCase().includes(key.toLowerCase());
   });
 }
+
+/**
+ * Parse given value to number. Will not throw an error, return undefined.
+ * Usefull for methods that need to have whole number.
+ * Will not return NaN, or float. Either int or undefined.
+ */
+export function parseNumber(value?: any): number | undefined {
+  if (typeof value === 'string') {
+    const parsedValue = parseInt(value, 10);
+    return Number.isNaN(parsedValue) ? undefined : parsedValue;
+  }
+  if (typeof value === 'number') {
+    return Math.floor(value);
+  }
+  return undefined;
+
+  // swit
+}

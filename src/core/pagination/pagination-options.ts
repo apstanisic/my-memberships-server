@@ -10,11 +10,8 @@ import {
 } from 'class-validator';
 import { IsBetween } from '../is-between';
 import { OrmWhere } from '../types';
-import {
-  limitField,
-  orderByField,
-  cursorField,
-} from './_pagination-query-fields';
+import { limitField, orderByField, cursorField } from './pagination.types';
+import { parseNumber } from '../helpers';
 
 /** Params that user can provide */
 export class PaginationParams<T = any> {
@@ -24,13 +21,24 @@ export class PaginationParams<T = any> {
    */
   constructor(query: Record<string, any> = {}) {
     this.where = query;
-    this.limit = query[limitField];
-    this.order = query[orderByField];
-    this.cursor = query[cursorField];
+
+    let order = query[orderByField];
+
+    if (typeof order === 'string') {
+      order = order.toUpperCase();
+      if (order === 'ASC' || order === 'DESC') {
+        this.order = order;
+      }
+    }
+
+    this.limit = parseNumber(query[limitField]);
+
+    if (typeof query[cursorField] === 'string') {
+      this.cursor = query[cursorField];
+    }
   }
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @IsBetween(1, 48)
   limit?: number;
