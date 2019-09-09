@@ -11,6 +11,7 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { convertToObject } from '../helpers';
 import { ParsedOrmWhere } from '../types';
+import { type } from 'os';
 
 /**
  * Parse query to TypeOrm valid query
@@ -49,27 +50,28 @@ export function parseQuery<T = any>(
       case 'gte':
         typeOrmQuery[name] = MoreThanOrEqual(value);
         break;
-      case 'in':
-        try {
-          const convertedArray = JSON.parse(value);
-          if (!Array.isArray(convertedArray)) throw new Error('Not array');
-          typeOrmQuery[name] = In(value);
-        } catch (error) {
-          throw new BadRequestException(`${name} is invalid. Value: ${value}`);
-        }
-        break;
       case 'lk':
         typeOrmQuery[name] = Like(`%${value}%`);
         break;
-      case 'btw':
-        if (Array.isArray(value) && value.length === 2) {
-          typeOrmQuery[name] = Between(value[0], value[1]);
-        }
+      case 'in':
+        try {
+          const arr = typeof value === 'string' ? JSON.parse(value) : value;
+          if (Array.isArray(arr)) {
+            typeOrmQuery[name] = In(value);
+          }
+        } catch (error) {}
         break;
-      case 'pg':
+      case 'btw':
+        try {
+          const btw = typeof value === 'string' ? JSON.parse(value) : value;
+
+          if (Array.isArray(btw) && btw.length === 2) {
+            typeOrmQuery[name] = Between(btw[0], btw[1]);
+          }
+        } catch (error) {}
         break;
       case 'man':
-        // Do nothing, handle manually
+        // Do nothing, handle manually. If not handled TypeOrm will assume Eq
         typeOrmQuery[`${name}__man`] = value;
         break;
       // If it isn't provided, assume equal
