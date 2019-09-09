@@ -1,24 +1,30 @@
 /* eslint-disable dot-notation */
-import { createParamDecorator } from '@nestjs/common';
+import { validate } from 'class-validator';
+import { createParamDecorator, BadRequestException } from '@nestjs/common';
 import { PaginationParams } from './pagination-options';
 
 /**
  * Convert query to pagination request object
- * @param query Query that user passed from request
+ * In most cases it will just ignore invalid values.
+ * but it will run validation just in case, for added security.
+ * @param query Query that user passed from request. We don't know type.
+ * It is object, but it's still better to check.
  */
-function convert(query: Record<string, any>, url?: string): PaginationParams {
+async function convert(query: any, url?: string): Promise<PaginationParams> {
   const options = PaginationParams.fromRequest(query);
   options.currentUrl = url;
+  const errors = await validate(options);
+  if (errors.length > 0) throw new BadRequestException();
   return options;
 }
 
 /**
- * Pagination decorator for express
+ * Pagination decorator for express.
  * @example
- *  @Query(PgParams)
+ *  someMethod(@GetPagination() pg: PaginationParams)
  */
 export const GetPagination = createParamDecorator(
-  (data, req): PaginationParams => {
+  async (data, req): Promise<PaginationParams> => {
     const { query, originalUrl } = req;
     return convert(query, originalUrl);
   },
@@ -26,5 +32,6 @@ export const GetPagination = createParamDecorator(
 
 /** Pagination decorator for Gql */
 export const GqlPagination = createParamDecorator(
-  (data, [root, args, ctx, info]) => convert(ctx.req.query),
+  (data, [root, args, ctx, info]): Promise<PaginationParams> =>
+    convert(ctx.req.query),
 );
