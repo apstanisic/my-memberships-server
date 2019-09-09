@@ -36,6 +36,6 @@ export function IsBetween(
 /** Helper function to keep decorator only as wrapper */
 function checkIsBetween(value: any, min: number, max: number) {
   if (typeof value !== 'number') return false;
-  if (value < min && value > max) return false;
+  if (value < min || value > max) return false;
   return true;
 }

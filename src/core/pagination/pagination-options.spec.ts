@@ -25,4 +25,9 @@ describe('Pagination options', () => {
     expect(params.order).toBe('ASC');
     expect(params.cursor).toBe('some-string-value');
   });
+
+  it('does not acceppt non object in fromRequest', () => {
+    const params = PaginationParams.fromRequest(5 as any);
+    expect(params.where).toBeUndefined();
+  });
 });
