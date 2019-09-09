@@ -20,3 +20,9 @@ export class PaginatorResponse<T = any> {
 
 /** Every db query is async, so response is always Promise of PgResult */
 export type PgResult<T> = Promise<PaginatorResponse<T>>;
+
+/** Fields that user can pass in query string */
+export const limitField = 'pg_limit';
+export const cursorField = 'pg_cursor';
+/** Values are 'ASC' or 'DESC' */
+export const orderByField = 'pg_order';

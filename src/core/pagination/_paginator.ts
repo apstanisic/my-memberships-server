@@ -46,7 +46,7 @@ export class Paginator<T extends WithId> {
   private requestQuery: OrmWhere<T>;
 
   /** Should paginator parse query to TypeOrm format */
-  private shouldParseQuery?: boolean = false;
+  private shouldParseQuery?: boolean = true;
 
   constructor(repo: Repository<T>) {
     this.repo = repo;
@@ -55,11 +55,17 @@ export class Paginator<T extends WithId> {
   /** Validate and set order, limit and cursor */
   async setOptions(params: PaginationParams) {
     const errors = await validate(params);
+    console.log(errors);
+
     if (errors.length > 0) throw new BadRequestException(errors);
 
-    this.limit = Number(params.limit) || this.limit;
+    this.limit = params.limit || this.limit;
     this.order = params.order || 'DESC';
+    console.log(params.cursor);
+
     this.cursor = params.cursor;
+    console.log(this.cursor);
+
     this.requestQuery = params.where;
     this.relations = params.relations;
     this.shouldParseQuery = params.shouldParse;
