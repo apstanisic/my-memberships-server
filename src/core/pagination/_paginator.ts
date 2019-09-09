@@ -116,15 +116,6 @@ export class Paginator<T extends WithId> {
     /* retur response */
     response.pagination = {
       isLastPage,
-      nextFF: next
-        ? Buffer.from(next as string, 'base64').toString('ascii')
-        : null,
-      endsAtFF: endsAt
-        ? Buffer.from(endsAt as string, 'base64').toString('ascii')
-        : null,
-      startsAtFF: this.cursor
-        ? Buffer.from(this.cursor as string, 'base64').toString('ascii')
-        : null,
       next,
       endsAt,
       startsAt: this.cursor,
@@ -134,3 +125,14 @@ export class Paginator<T extends WithId> {
     return response;
   }
 }
+
+// For testing, send non base64 cursor
+// nextFF: next
+//   ? Buffer.from(next as string, 'base64').toString('ascii')
+//   : null,
+// endsAtFF: endsAt
+//   ? Buffer.from(endsAt as string, 'base64').toString('ascii')
+//   : null,
+// startsAtFF: this.cursor
+//   ? Buffer.from(this.cursor as string, 'base64').toString('ascii')
+//   : null,

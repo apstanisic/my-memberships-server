@@ -7,7 +7,7 @@ import { PaginationParams } from './pagination-options';
  * @param query Query that user passed from request
  */
 function convert(query: Record<string, any>, url?: string): PaginationParams {
-  const options = new PaginationParams(query);
+  const options = PaginationParams.fromRequest(query);
   options.currentUrl = url;
   return options;
 }
