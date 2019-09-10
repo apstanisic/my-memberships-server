@@ -1,9 +1,14 @@
 import { ValidUUID } from './uuid.pipe';
 
 describe('Test UUID pipe', () => {
-  it('Should should see if value is UUID', () => {
-    const uuid = '6809500c-d21a-11e9-bb65-2a2ae2dbcce4';
-    const pipe = new ValidUUID();
+  const uuid = '6809500c-d21a-11e9-bb65-2a2ae2dbcce4';
+  let pipe: ValidUUID;
+
+  beforeEach(() => {
+    pipe = new ValidUUID();
+  });
+
+  it('throws on invalid values', () => {
     expect(() => pipe.transform()).toThrow();
     expect(() => pipe.transform(undefined)).toThrow();
     expect(() => pipe.transform(null)).toThrow();
@@ -14,6 +19,9 @@ describe('Test UUID pipe', () => {
     expect(() => pipe.transform({ uuid })).toThrow();
     expect(() => pipe.transform(['key'])).toThrow();
     expect(() => pipe.transform([uuid])).toThrow();
+  });
+
+  it('returns uuid on valid value', () => {
     expect(pipe.transform(uuid)).toBe(uuid);
   });
 });

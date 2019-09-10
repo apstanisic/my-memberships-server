@@ -32,7 +32,9 @@ export function wait(time: number) {
 export function convertToObject<T = any>(
   query: Record<string, T> | string | null | undefined,
 ): Record<string, T> {
+  if (typeof query === 'object') return { ...query };
   if (query === null || query === undefined) return {};
+
   if (typeof query === 'string') {
     try {
       const parsed = JSON.parse(query);
@@ -41,7 +43,7 @@ export function convertToObject<T = any>(
       return {};
     }
   }
-  return { ...query };
+  return {};
 }
 
 /**

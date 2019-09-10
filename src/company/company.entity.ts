@@ -17,6 +17,7 @@ import { CompanyCategory, companiesCategories } from './categories.list';
 import { Location } from '../locations/location.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
+import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 
 /**
  * Company can be deleted only if there is no more
@@ -88,9 +89,11 @@ export class Company extends BaseEntity implements SoftDelete {
   @Exclude()
   credit: number;
 
-  /**
-   * All gyms location
-   */
+  /** On which pricing plan is company */
+  @OneToMany(type => PricingPlan, plan => plan.company)
+  plans: PricingPlan[];
+
+  /** All company locations */
   @OneToMany(type => Location, location => location.company, {
     onDelete: 'CASCADE',
   })
