@@ -12,7 +12,7 @@ import { User } from './user.entity';
 export class GetUserPipe implements PipeTransform<string> {
   constructor(private readonly usersService: UsersService) {}
 
-  async transform(value: string): Promise<User | undefined> {
+  async transform(value: any): Promise<User> {
     const validator = new Validator();
     let user: User;
 

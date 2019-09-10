@@ -42,17 +42,17 @@ describe('Paginator', () => {
     expect(result.data).toBe(mock.mock.results[0].value);
   });
 
-  it('throws an error with invalid cursor', () => {
+  it('throws an error with invalid cursor', async () => {
     const invalid1 = PaginationParams.fromRequest({ [cursorField]: 'fsaffd' });
-    expect(paginator.setOptions(invalid1)).rejects.toThrow();
+    await expect(paginator.setOptions(invalid1)).rejects.toThrow();
   });
 
   it('removes fields that do not match property type', async () => {
     const invalid = PaginationParams.fromRequest({ [orderByField]: 'CESC' });
-    expect(paginator.setOptions(invalid)).resolves.toBeUndefined();
+    await expect(paginator.setOptions(invalid)).resolves.toBeUndefined();
   });
 
-  it('should execute normaly if cursor not provided', () => {
-    expect(paginator.execute()).resolves.toBeTruthy();
+  it('should execute normaly if cursor not provided', async () => {
+    await expect(paginator.execute()).resolves.toBeTruthy();
   });
 });

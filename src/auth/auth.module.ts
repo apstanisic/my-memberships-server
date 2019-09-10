@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, InternalServerErrorException, Logger } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -20,6 +20,10 @@ import { UserModule } from '../user/user.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService): JwtModuleOptions => {
         const secret = configService.get('JWT_SECRET');
+        if (!secret) {
+          new Logger().error('JWT_SECRET NOT DEFINED');
+          throw new InternalServerErrorException();
+        }
         return { secret, signOptions: { expiresIn: '10 days' } };
       },
     }),

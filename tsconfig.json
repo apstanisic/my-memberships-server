@@ -16,7 +16,6 @@
     "pretty": true,
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
-    "checkJs": true,
     "resolveJsonModule": true,
     "preserveConstEnums": true
   },

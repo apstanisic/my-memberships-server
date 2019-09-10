@@ -8,42 +8,54 @@ import {
 } from './helpers';
 
 // For testing wait
-jest.useFakeTimers();
 
-describe('Testing helpers', () => {
+describe('Helpers', () => {
   // removeEmptyItems
-  it('Should remove empty items from object', () => {
+  it('removes empty items from object', () => {
     const obj = {
       a: 'Hello World',
       b: null,
       c: undefined,
       d: '',
+      e: 5,
+      f: {},
     };
-    expect(removeEmptyItems(obj)).toEqual({ a: 'Hello World' });
+
+    expect(removeEmptyItems(obj)).toEqual({ a: 'Hello World', e: 5, f: {} });
   });
 
   // wait
-  it('Should wait spacified time', () => {
-    const startTime = new Date().getTime();
-    wait(200).then(() => {
-      expect(new Date().getTime() - 200).toBe(startTime);
-      expect(new Date().getTime() - 201).toBeLessThan(startTime);
-      expect(new Date().getTime() - 199).toBeGreaterThan(startTime);
-    });
+  it('waits spacified time', async () => {
+    jest.useFakeTimers();
+
+    const spy = jest.fn();
+
+    wait(50).then(spy);
+
+    jest.advanceTimersByTime(49);
+    // Jest limitation, must run this line
+    // https://stackoverflow.com/questions/52673682/
+    await Promise.resolve(); // let any pending callbacks in PromiseJobs run
+    expect(spy).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1);
+    await Promise.resolve(); // let any pending callbacks in PromiseJobs run
+    expect(spy).toHaveBeenCalled();
   });
 
   // convertToObject
-  it('Should convert any to object', () => {
+  it('converts any to object', () => {
     expect(convertToObject(null)).toEqual({});
     expect(convertToObject(undefined)).toEqual({});
     expect(convertToObject('fdsa9')).toEqual({});
     expect(convertToObject('[1,2,3,4]')).toEqual({});
     expect(convertToObject('{"a":5}')).toEqual({ a: 5 });
     expect(convertToObject({ a: 5 })).toEqual({ a: 5 });
+    expect(convertToObject(5 as any)).toEqual({});
   });
 
   // castArray
-  it('Should cast value to array', () => {
+  it('casts value to array', () => {
     expect(castArray(1)).toEqual([1]);
     expect(castArray('str')).toEqual(['str']);
     expect(castArray({ prop: 2 })).toEqual([{ prop: 2 }]);
@@ -51,28 +63,22 @@ describe('Testing helpers', () => {
   });
 
   // hasForbiddenKey
-  it('Should disallow forbidden key', () => {
+  it('disallows forbidden key', () => {
     const key = 'key';
 
     expect(hasForbiddenKey({ some: 'value' }, key)).toEqual(false);
     expect(hasForbiddenKey({ some: key }, key)).toEqual(false);
     expect(hasForbiddenKey({ some: { key } }, key)).toEqual(false);
-    expect(hasForbiddenKey({ some: 'value', [key]: 'value' }, key)).toEqual(
-      true,
-    );
-    expect(
-      hasForbiddenKey(
-        { some: 'value', [key]: 'value', [`${key}_ext`]: 123 },
-        key,
-      ),
-    ).toEqual(true);
+    expect(hasForbiddenKey({ [key]: 'value' }, key)).toEqual(true);
+    expect(hasForbiddenKey({ [`${key}_ext`]: 123 }, key)).toEqual(true);
+    expect(hasForbiddenKey({ [`pre_${key}`]: 123 }, key)).toEqual(true);
   });
 
   // parseNumber
-  it('will return correct number', () => {
+  it('returns correct number or undefined', () => {
+    expect(parseNumber()).toBeUndefined();
     expect(parseNumber('fsda')).toBeUndefined();
     expect(parseNumber('1.444')).toBe(1);
-    expect(parseNumber()).toBeUndefined();
     expect(parseNumber(1)).toBe(1);
     expect(parseNumber(1.8)).toBe(1);
   });
