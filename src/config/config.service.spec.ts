@@ -9,7 +9,7 @@ describe('ConfigService', () => {
   let service: ConfigService;
   const returnValue = { EXAMPLE: '1', TEST: 'string-test' };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     (readFileSync as jest.Mock).mockClear();
 
     const module: TestingModule = await Test.createTestingModule({
