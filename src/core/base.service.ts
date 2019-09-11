@@ -53,29 +53,24 @@ export abstract class BaseService<T extends WithId = any> {
     let where;
 
     // If string, then search by id
-    if (typeof filter === 'string') {
-      where = { id: filter };
-    } else if (parse) {
-      // Should value be parsed to TypeOrm query
-      where = parseQuery(filter);
-    } else {
-      where = filter;
-    }
+    where = typeof filter === 'string' ? { id: filter } : filter;
+    where = parse ? parseQuery(where) : where;
 
     try {
       entity = await this.repository.findOne({ ...options, where });
     } catch (error) {
-      throw this.throwInternalError(error);
+      throw this.internalError(error);
     }
 
     return this.throwIfNotFound(entity);
   }
 
-  findByIds(ids: string[]): Promise<T[]> {
+  async findByIds(ids: string[] | number[]): Promise<T[]> {
     try {
-      return this.repository.findByIds(ids);
+      // Don't return directly. Let service handle exception
+      return await this.repository.findByIds(ids);
     } catch (error) {
-      throw this.throwInternalError(error);
+      throw this.internalError(error);
     }
   }
 
@@ -83,13 +78,15 @@ export abstract class BaseService<T extends WithId = any> {
    * Find companies that match criteria
    * @param parse Should query be parsed to TypeOrm specific
    */
-  find(filter: OrmWhere<T> = {}, parse = true): Promise<T[]> {
+  async find(filter: OrmWhere<T> = {}, parse = true): Promise<T[]> {
     try {
-      return this.repository.find({
+      // Don't remove await. Let service handle exception.
+      const result = await this.repository.find({
         where: parse ? parseQuery(filter) : filter,
       });
+      return result;
     } catch (error) {
-      throw this.throwInternalError(error);
+      throw this.internalError(error);
     }
   }
 
@@ -159,7 +156,7 @@ export abstract class BaseService<T extends WithId = any> {
       }
       return this.repository.remove(entity);
     } catch (error) {
-      throw this.throwInternalError(error);
+      throw this.internalError(error);
     }
   }
 
@@ -186,7 +183,7 @@ export abstract class BaseService<T extends WithId = any> {
         where: parse ? parseQuery(filter) : filter,
       });
     } catch (error) {
-      throw this.throwInternalError(error);
+      throw this.internalError(error);
     }
   }
 
@@ -212,9 +209,9 @@ export abstract class BaseService<T extends WithId = any> {
     return entity;
   }
 
-  protected throwInternalError(error: any): never {
+  protected internalError(error: any): InternalServerErrorException {
     this.logger.error(error);
-    throw new InternalServerErrorException();
+    return new InternalServerErrorException();
   }
 
   /** Check if entity can be soft deleted */
