@@ -15,6 +15,7 @@ const userMock = jest.fn(() => ({
 
 describe('AuthService', () => {
   let authService: AuthService;
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
@@ -28,13 +29,13 @@ describe('AuthService', () => {
     userMock.mockClear();
   });
 
-  it('creates jwt', () => {
+  it('creates passed value to jwt.sign', () => {
     expect(authService.createJwt('test')).toEqual({ email: 'test' });
     expect(authService.createJwt('any-value')).toEqual({ email: 'any-value' });
   });
 
-  it('validates jwt', () => {
-    expect(
+  it('validates jwt', async () => {
+    await expect(
       authService.validateJwt({ email: 'valid@email.com' }),
     ).resolves.toBeInstanceOf(User);
   });
