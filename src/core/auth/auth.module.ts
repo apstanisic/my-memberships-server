@@ -6,12 +6,12 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { PasswordResetController } from './password-reset.controller';
 import { ConfigService } from '../config/config.service';
-import { MailModule } from '../mail/mail.module';
 import { UserModule } from '../../user/user.module';
 
 /** Auth module depends on user module and mail module and config module */
 @Module({
   imports: [
+    UserModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -24,8 +24,6 @@ import { UserModule } from '../../user/user.module';
         return { secret, signOptions: { expiresIn: '10 days' } };
       },
     }),
-    MailModule,
-    UserModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController, PasswordResetController],

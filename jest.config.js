@@ -4,5 +4,4 @@ module.exports = {
   rootDir: 'src',
   coverageDirectory: '../coverage',
   testRegex: '.spec.ts$',
-  // modulePathIgnorePatterns: ['<rootDir>/dist/'],
 };
