@@ -9,7 +9,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 import { IsBetween } from '../is-between';
-import { OrmWhere } from '../types';
+import { OrmWhere, Struct } from '../types';
 import { limitField, orderByField, cursorField } from './pagination.types';
 import { parseNumber } from '../helpers';
 
@@ -20,9 +20,7 @@ export class PaginationParams<T = any> {
    * Does not have to be from request, but it's keys are important
    * when using this constructor
    */
-  static fromRequest<T>(
-    queryOrBody?: Record<string, any>,
-  ): PaginationParams<T> {
+  static fromRequest<T>(queryOrBody?: Struct): PaginationParams<T> {
     const params = new PaginationParams<T>();
     if (typeof queryOrBody !== 'object') return params;
     const query = { ...queryOrBody };

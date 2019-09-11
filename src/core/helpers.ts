@@ -32,8 +32,8 @@ export function wait(time: number): Promise<void> {
  * Always returns new object
  */
 export function convertToObject<T = any>(
-  query: Record<string, T> | string | null | undefined,
-): Record<string, T> {
+  query: Struct<T> | string | null | undefined,
+): Struct<T> {
   if (typeof query === 'object') return { ...query };
   if (query === null || query === undefined) return {};
 
@@ -67,10 +67,7 @@ export function castArray<T>(item: T | T[]): T[] {
  * For example, object can't have field that contains password
  * Eg. 'password', 'password_lt', 'awesomepasswordfield'
  */
-export function hasForbiddenKey(
-  obj: Record<string, any>,
-  key: string,
-): boolean {
+export function hasForbiddenKey(obj: Struct, key: string): boolean {
   return Object.keys(obj).some(objectKey => {
     return objectKey.toLowerCase().includes(key.toLowerCase());
   });

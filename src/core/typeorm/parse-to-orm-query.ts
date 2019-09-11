@@ -9,7 +9,7 @@ import {
   In,
 } from 'typeorm';
 import { convertToObject } from '../helpers';
-import { ParsedOrmWhere } from '../types';
+import { ParsedOrmWhere, Struct } from '../types';
 
 /**
  * Parse query to TypeOrm valid query
@@ -18,7 +18,7 @@ import { ParsedOrmWhere } from '../types';
  * If no key is provided it will assume equal
  */
 export function parseQuery<T = any>(
-  query: Record<string, any> | string | null | undefined,
+  query: Struct | string | null | undefined,
 ): ParsedOrmWhere<T> {
   // Query might be stringified json, or null. Convert to object first.
   const queryObject = convertToObject(query);
