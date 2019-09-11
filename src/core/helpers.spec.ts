@@ -75,11 +75,15 @@ describe('Helpers', () => {
   });
 
   // parseNumber
-  it('returns correct number or undefined', () => {
-    expect(parseNumber()).toBeUndefined();
-    expect(parseNumber('fsda')).toBeUndefined();
+  it('returns correct number ', () => {
     expect(parseNumber('1.444')).toBe(1);
     expect(parseNumber(1)).toBe(1);
     expect(parseNumber(1.8)).toBe(1);
+  });
+
+  it('returns undefined for incorect value in parseNumber', () => {
+    expect(parseNumber()).toBeUndefined();
+    expect(parseNumber({ number: 1 })).toBeUndefined();
+    expect(parseNumber('fsda')).toBeUndefined();
   });
 });
