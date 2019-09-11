@@ -90,19 +90,24 @@ export class StorageService {
    * If all images sizes are 2019/05/22/qwer12.xs.jpeg,
    * @param prefix for them is 2019/05/22/qwer12.
    */
-  async deleteMany(prefix: string): Promise<unknown> {
+  async deleteMany(prefix: string): Promise<string[]> {
     return new Promise((res, rej) => {
-      const filenames: string[] = [];
-      const filesStream = this.client.listObjectsV2(this.bucket, prefix);
-      filesStream.on('data', filename => filenames.push(filename.name));
-      filesStream.on('error', rej);
-
-      filesStream.on('end', () => {
+      this.listFiles(prefix).then(filenames => {
         this.client.removeObjects(this.bucket, filenames, err => {
           if (err === null) res(filenames);
           if (err !== null) rej();
         });
       });
+    });
+  }
+
+  async listFiles(prefix: string): Promise<string[]> {
+    return new Promise((res, rej) => {
+      const filenames: string[] = [];
+      const filesStream = this.client.listObjectsV2(this.bucket, prefix);
+      filesStream.on('data', filename => filenames.push(filename.name));
+      filesStream.on('error', rej);
+      filesStream.on('end', () => res(filenames));
     });
   }
 }

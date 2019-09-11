@@ -1,33 +1,35 @@
 import { Stream } from 'stream';
 
-const removeMock = jest.fn();
-removeMock
-  .mockImplementationOnce((...params) => {
-    console.log('mock called');
+export const removeObject = jest.fn();
+removeObject
+  .mockImplementationOnce((...params) => params[2](null))
+  .mockImplementationOnce((...params) => params[2]('some-non-null-value'))
+  .mockImplementation((...params) => params[2](null));
 
-    params[2](null);
-  })
+export const removeObjects = jest.fn();
+removeObjects
+  .mockImplementationOnce((...params) => params[2](null))
   .mockImplementationOnce((...params) => params[2]('some-non-null-value'))
   .mockImplementation((...params) => params[2](null));
 
 export const Client = jest.fn(() => ({
-  putObject(...params: any[]) {
-    const cb = params[params.length - 1] as (e?: any) => void;
-  },
+  putObject: jest.fn(),
 
-  listObjectsV2(bucket: string, prefix: string) {
-    const stream = new Stream();
-    Array(5).forEach(i => {
-      stream.emit('data', 'file-name');
-    });
-    stream.emit('end');
-  },
+  listObjectsV2: jest
+    .fn()
+    .mockImplementation((bucket: string, prefix: string) => {
+      const stream = new Stream();
+      Array(5).forEach(i => {
+        stream.emit('data', 'file-name');
+      });
+      stream.emit('end');
+    }),
 
-  removeObject: removeMock,
+  removeObject,
 
-  removeObjects: removeMock,
+  removeObjects,
 }));
 
-export default {
-  Client,
-};
+// export default {
+//   Client,
+// };
