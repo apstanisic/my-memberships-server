@@ -1,6 +1,12 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { classToClass } from 'class-transformer';
+import { Validator } from 'class-validator';
 import { UsersService } from '../user/user.service';
 import { JwtPayload } from './jwt.strategy';
 import { SignInResponse } from './auth.dto';
@@ -10,6 +16,8 @@ import { User } from '../user/user.entity';
 export class AuthService {
   /** Service logger */
   private logger = new Logger();
+
+  private validator = new Validator();
 
   constructor(
     private readonly usersService: UsersService,
@@ -28,11 +36,8 @@ export class AuthService {
     try {
       return this.usersService.findOne({ email });
     } catch (error) {
-      this.logger.error(
-        'There was an error with validation jwt. This should not ever happen.',
-        error,
-      );
-      throw new BadRequestException();
+      this.logger.error('There was an error with validation jwt.', error);
+      throw new ForbiddenException();
     }
   }
 
