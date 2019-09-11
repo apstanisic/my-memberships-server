@@ -4,7 +4,7 @@ import { User } from '../user/user.entity';
 import { companiesCategories } from './categories.list';
 import { generateLocation } from '../locations/location.factory';
 
-export function generateCompany(users: User[]) {
+export function generateCompany(users: User[]): Company {
   const company = new Company();
   company.emails = [Faker.internet.email().toLowerCase()];
   company.name = Faker.company.companyName();

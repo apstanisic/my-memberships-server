@@ -15,9 +15,9 @@ describe('StorageService', () => {
         StorageService,
         {
           provide: ConfigService,
-          useFactory: () => {
+          useFactory: (): any => {
             return {
-              get(key: string) {
+              get(key: string): string {
                 return key;
               },
             };

@@ -1,10 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import {
-  Injectable,
-  Logger,
-  ForbiddenException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { classToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { UsersService } from '../user/user.service';
@@ -25,7 +20,7 @@ export class AuthService {
   ) {}
 
   /** Try to sign in user */
-  async tryToLogin(email: string, password: string): Promise<SignInResponse> {
+  async attemptLogin(email: string, password: string): Promise<SignInResponse> {
     const user = await this.usersService.findForLogin(email, password);
     const token = this.createJwt(user.email);
     return { token, user: classToClass(user) };

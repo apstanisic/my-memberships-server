@@ -53,7 +53,7 @@ export class Paginator<T extends WithId> {
   }
 
   /** Validate and set order, limit and cursor */
-  async setOptions(params: PaginationParams) {
+  async setOptions(params: PaginationParams): Promise<void> {
     const errors = await validate(params);
 
     if (errors.length > 0) throw new BadRequestException(errors);
@@ -98,7 +98,7 @@ export class Paginator<T extends WithId> {
   }
 
   /** Result will contain one item more to check if there's next page */
-  private parseResponse(result: T[]) {
+  private parseResponse(result: T[]): PaginatorResponse {
     const response = new PaginatorResponse<T>();
     const isLastPage = this.limit >= result.length;
 

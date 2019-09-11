@@ -195,7 +195,7 @@ export abstract class BaseService<T extends WithId = any> {
    * if provided string it will assume it's Id andtry to find in db.
    * If not found throw an exception.
    */
-  protected async convertToEntity(entityOrId: T | string) {
+  protected async convertToEntity(entityOrId: T | string): Promise<T> {
     let entity: T | undefined;
     if (typeof entityOrId === 'string') {
       entity = await this.repository.findOne(entityOrId);
@@ -207,7 +207,7 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Throw exception if entity is undefined. Simple helper function */
-  protected throwIfNotFound(entity: T | undefined) {
+  protected throwIfNotFound(entity: T | undefined): T {
     if (!entity) throw new NotFoundException();
     return entity;
   }

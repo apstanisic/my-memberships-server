@@ -1,10 +1,12 @@
+import { Struct } from './types';
+
 /**
  * Removes properties that are null, undefined or empty string
  * @example
  * const from = { a: 'Hello', b: '', c: null, d: undefined };
  * const to = { a: 'Hello' };
  */
-export function removeEmptyItems(obj: Record<string, any>) {
+export function removeEmptyItems(obj: Struct): Struct {
   const validItems: any = {};
 
   Object.keys(obj).forEach((key: string) => {
@@ -17,8 +19,8 @@ export function removeEmptyItems(obj: Record<string, any>) {
 }
 
 /** Make pause for provided miliseconds. setTimeout never throws an error */
-export function wait(time: number) {
-  return new Promise(res => {
+export function wait(time: number): Promise<void> {
+  return new Promise((res): void => {
     setTimeout(res, time);
   });
 }

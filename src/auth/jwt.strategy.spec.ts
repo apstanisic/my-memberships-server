@@ -1,17 +1,13 @@
 import { Test } from '@nestjs/testing';
-import {
-  ForbiddenException,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '../config/config.service';
 import { AuthService } from './auth.service';
 import { User } from '../user/user.entity';
 
-const configMock = jest.fn(() => ({ get: (key: any) => key }));
+const configMock = jest.fn(() => ({ get: (key: any): string => key }));
 const authMock = jest.fn(() => ({
-  validateJwt(payload: any) {
+  async validateJwt(payload: any): Promise<User | undefined> {
     if (payload.email === 'throwme') throw new ForbiddenException();
     if (payload.email === 'return-falsy') return undefined;
     return new User();
@@ -19,27 +15,17 @@ const authMock = jest.fn(() => ({
 }));
 
 describe('JwtStrategy', () => {
-  //   let configService;
-  //   let authService;
   let jwtStrategy: JwtStrategy;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        { provide: ConfigService, useFactory: configMock },
+        { provide: AuthService, useFactory: authMock },
         JwtStrategy,
-        {
-          provide: ConfigService,
-          useFactory: configMock,
-        },
-        {
-          provide: AuthService,
-          useFactory: authMock,
-        },
       ],
     }).compile();
 
-    // configService = module.get<ConfigService>(ConfigService);
-    // authService = module.get<AuthService>(AuthService);
     jwtStrategy = module.get<JwtStrategy>(JwtStrategy);
   });
 

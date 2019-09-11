@@ -15,7 +15,10 @@ export class PricingPlanService extends BaseService<PricingPlan> {
     super(repository);
   }
 
-  async extendPlan(companyId: string, changes: PlanChanges) {
+  async extendPlan(
+    companyId: string,
+    changes: PlanChanges,
+  ): Promise<PricingPlan> {
     /** It will find one, latest, still active */
     const pp = await this.findOne({ companyId });
     const newPlan = await PricingPlan.fromOld(pp, changes);

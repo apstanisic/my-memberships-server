@@ -55,7 +55,7 @@ export class ParseCursor<T extends WithId = any> {
   }
 
   /** Parse cursor to TypeOrm query item */
-  private toTypeOrmQuery() {
+  private toTypeOrmQuery(): Record<string, FindOperator<any>> {
     // Id must be valid UUID
     if (!this.validator.isUUID(this.id)) {
       throw new BadRequestException("Cursor's Id part not UUID");
@@ -66,11 +66,11 @@ export class ParseCursor<T extends WithId = any> {
     const sign = this.order === 'ASC' ? '>' : '<';
 
     // Where part in case query value is different then provided cursor value
-    const valueIsDiff = (column: string) =>
+    const valueIsDiff = (column: string): string =>
       `${column} ${sign} ${e(this.columnValue)}`;
 
     // Where part in case query value is same as provided cursor value
-    const valueIsEqual = (column: string) =>
+    const valueIsEqual = (column: string): string =>
       `${column} = ${e(this.columnValue)}`;
     return {
       [this.columnName]: Raw(alias => {
@@ -86,7 +86,7 @@ export class ParseCursor<T extends WithId = any> {
   }
 
   /** Parse value to correct type. Currently there should not be passed type */
-  private convertValueToCorrectType(type?: string) {
+  private convertValueToCorrectType(type?: string): void {
     // If column name ends with At assume it's a date and convert
     let converted;
     // if (type === 'number') {
