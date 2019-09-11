@@ -40,6 +40,7 @@ describe('ConfigService', () => {
     (readFileSync as jest.Mock).mockImplementation(() => {
       throw new Error();
     });
+    global.console.error = jest.fn();
 
     await expect(
       Test.createTestingModule({

@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { classToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { UsersService } from '../user/user.service';
@@ -27,13 +27,11 @@ export class AuthService {
   }
 
   /** Validate token on every request. From docs */
-  async validateJwt({ email }: JwtPayload): Promise<User> {
-    try {
-      return this.usersService.findOne({ email });
-    } catch (error) {
-      this.logger.error('There was an error with validation jwt.', error);
-      throw new ForbiddenException();
+  async validateJwt(payload: JwtPayload): Promise<User> {
+    if (!payload || !this.validator.isEmail(payload.email)) {
+      throw new BadRequestException();
     }
+    return this.usersService.findOne({ email: payload.email });
   }
 
   /** Generate new token when user logs in */

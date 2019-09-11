@@ -35,7 +35,7 @@ export class MailService {
   private secure: boolean = false;
 
   /** Logger */
-  private logger = new Logger();
+  private logger = new Logger(MailService.name);
 
   /** Validator */
   private validator = new Validator();
@@ -90,8 +90,8 @@ export class MailService {
     );
     this.transporter
       .verify()
-      .then(() => this.logger.log('Mail is working correctly.', 'MailModule'))
-      .catch(e => this.logger.error('Mail is not working', e, 'MailModule'));
+      .then(() => this.logger.log('Mail is working correctly.'))
+      .catch(e => this.logger.error('Mail is not working', e));
   }
 
   throwIfEmpty(value: any): string {

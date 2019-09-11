@@ -19,7 +19,7 @@ export class ConfigService {
       const file = readFileSync(fileName || '.env');
       this.envConfig = dotenv.parse(file);
     } catch (error) {
-      this.logger.error('No file for config found.');
+      // this.logger.error('No file for config found.');
       throw new InternalServerErrorException();
     }
   }
