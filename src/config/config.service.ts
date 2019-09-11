@@ -6,10 +6,11 @@ import {
   Optional,
   Logger,
 } from '@nestjs/common';
+import { Struct } from '../core/types';
 
 @Injectable()
 export class ConfigService {
-  private readonly envConfig: Record<string, string>;
+  private readonly envConfig: Struct<string>;
 
   private logger = new Logger();
 
@@ -29,7 +30,7 @@ export class ConfigService {
   }
 
   /** Get all values from config */
-  getAll(): Record<string, any> {
+  getAll(): Struct {
     return this.envConfig;
   }
 }

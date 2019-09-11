@@ -1,7 +1,8 @@
 import { parseQuery } from './parse-to-orm-query';
+import { Struct } from '../types';
 
 describe('Parse object to orm query', () => {
-  let obj: Record<string, any>;
+  let obj: Struct;
 
   beforeEach(() => {
     obj = {

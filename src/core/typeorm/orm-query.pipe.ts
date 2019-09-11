@@ -1,9 +1,9 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
 import { FindOperator } from 'typeorm';
 import { parseQuery } from './parse-to-orm-query';
-import { OrmWhere } from '../types';
+import { OrmWhere, Struct } from '../types';
 
-export type OrmQuery<T = any, U = FindOperator<T>> = Record<string, U>;
+export type OrmQuery<T = any, U = FindOperator<T>> = Struct<U>;
 
 /**
  * Wrapper around parseQuery function to be used as a pipe

@@ -5,7 +5,7 @@ import {
 import { Validator } from 'class-validator';
 import { FindOperator, Raw } from 'typeorm';
 import { escape as e } from 'sqlstring';
-import { WithId } from '../types';
+import { WithId, Struct } from '../types';
 
 /** Parse cursor to proper where query part */
 export class ParseCursor<T extends WithId = any> {
@@ -55,7 +55,7 @@ export class ParseCursor<T extends WithId = any> {
   }
 
   /** Parse cursor to TypeOrm query item */
-  private toTypeOrmQuery(): Record<string, FindOperator<any>> {
+  private toTypeOrmQuery(): Struct<FindOperator<any>> {
     // Id must be valid UUID
     if (!this.validator.isUUID(this.id)) {
       throw new BadRequestException("Cursor's Id part not UUID");

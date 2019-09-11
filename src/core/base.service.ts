@@ -14,7 +14,7 @@ import {
 import { Validator } from 'class-validator';
 import { parseQuery } from './typeorm/parse-to-orm-query';
 import { paginate } from './pagination/paginate.helper';
-import { OrmWhere, WithId } from './types';
+import { OrmWhere, WithId, Struct } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
 import { SoftDelete } from './entities/soft-delete.interface';
@@ -218,7 +218,7 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Check if entity can be soft deleted */
-  private canSoftDelete(entity: Record<string, any>): entity is SoftDelete {
+  private canSoftDelete(entity: Struct): entity is SoftDelete {
     return typeof entity === 'object' && typeof entity.deleted === 'object';
   }
 }
