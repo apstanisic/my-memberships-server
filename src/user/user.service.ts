@@ -14,8 +14,8 @@ import { Role } from '../access-control/roles.entity';
 @Injectable()
 export class UsersService extends BaseService<User> {
   constructor(
-    @InjectRepository(User) repository: Repository<User>,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    @InjectRepository(User) repository: Repository<User>,
   ) {
     super(repository);
   }

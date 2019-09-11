@@ -25,7 +25,7 @@ export class StorageService {
     const bucket = this.config.get('STORAGE_BUCKET_NAME');
 
     if (!bucket || !endPoint || !accessKey || !secretKey) {
-      new Logger().error('Storage is in use, and storage keys are not defined');
+      this.logger.error('Storage mounted, but storage keys are undefined.');
       throw new InternalServerErrorException();
     }
 
@@ -39,13 +39,17 @@ export class StorageService {
     });
   }
 
-  async put(image: Buffer, name: string): Promise<string> {
+  /**
+   * Put file to storage, returns file path.
+   * @todo Fix retries for upload
+   */
+  async put(file: Buffer, name: string): Promise<string> {
     return new Promise((res: (value: string) => any, rej): void => {
       this.client.putObject(
         this.bucket,
         name,
-        image,
-        image.byteLength,
+        file,
+        file.byteLength,
         { 'Content-Type': 'image/jpeg' },
         async (error: any) => {
           if (error !== null) {
@@ -56,9 +60,9 @@ export class StorageService {
 
             if (error.code === 'InternalError') {
               await wait(200);
-              this.put(image, name)
+              this.put(file, name)
                 .then(res)
-                .catch(err => this.put(image, name))
+                .catch(err => this.put(file, name))
                 .then(res)
                 .catch(rej);
             } else {
@@ -91,16 +95,17 @@ export class StorageService {
    * @param prefix for them is 2019/05/22/qwer12.
    */
   async deleteMany(prefix: string): Promise<string[]> {
+    const filenames = await this.listFiles(prefix);
+
     return new Promise((res, rej): void => {
-      this.listFiles(prefix).then(filenames => {
-        this.client.removeObjects(this.bucket, filenames, err => {
-          if (err === null) res(filenames);
-          if (err !== null) rej();
-        });
+      this.client.removeObjects(this.bucket, filenames, err => {
+        if (err === null) res(filenames);
+        if (err !== null) rej();
       });
     });
   }
 
+  /** Lists all files with given path (prefix) */
   async listFiles(prefix: string): Promise<string[]> {
     return new Promise((res, rej): void => {
       const filenames: string[] = [];
