@@ -5,6 +5,8 @@ import { ConfigService } from './config.service';
 
 jest.mock('fs');
 
+// Disable logging for testing
+
 describe('ConfigService', () => {
   let service: ConfigService;
   const returnValue = { EXAMPLE: '1', TEST: 'string-test' };

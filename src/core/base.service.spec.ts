@@ -1,9 +1,8 @@
-import { Repository, Equal } from 'typeorm';
+import { Equal } from 'typeorm';
 import {
   NotFoundException,
   InternalServerErrorException,
   Logger,
-  ForbiddenException,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 
@@ -41,6 +40,7 @@ describe('Base Service', () => {
     findOne.mockClear();
     findByIds.mockClear();
     find.mockClear();
+    count.mockClear();
   });
 
   describe('findOne', () => {
@@ -129,6 +129,45 @@ describe('Base Service', () => {
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(find).toBeCalledTimes(1);
       expect(find).toBeCalledWith({ where: { some: Equal('value') } });
+    });
+  });
+
+  describe('count', () => {
+    it('counts results', async () => {
+      const res = service.count({ some: 'value' });
+      await expect(res).resolves.toEqual(3);
+      expect(count).toBeCalledTimes(1);
+      expect(count).toBeCalledWith({ where: { some: Equal('value') } });
+    });
+
+    it('counts results without parsing', async () => {
+      const res = service.count({ some: 'value' }, {}, false);
+      await expect(res).resolves.toEqual(3);
+      expect(count).toBeCalledTimes(1);
+      expect(count).toBeCalledWith({ where: { some: 'value' } });
+    });
+
+    it('passes second param to repo', async () => {
+      const res = service.count(
+        { some: 'value' },
+        { relations: ['user'], take: 10 },
+        false,
+      );
+      await expect(res).resolves.toEqual(3);
+      expect(count).toBeCalledTimes(1);
+      expect(count).toBeCalledWith({
+        where: { some: 'value' },
+        relations: ['user'],
+        take: 10,
+      });
+    });
+
+    it('throws if repo throws', async () => {
+      count.mockRejectedValue(new Error('test error'));
+      const res = service.count({ some: 'value' });
+      await expect(res).rejects.toThrow(InternalServerErrorException);
+      expect(count).toBeCalledTimes(1);
+      expect(count).toBeCalledWith({ where: { some: Equal('value') } });
     });
   });
 });
