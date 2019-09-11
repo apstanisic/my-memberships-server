@@ -36,7 +36,8 @@
     "consistent-return": "off", // Have ts, no need for this
     "implicit-arrow-linebreak": "off", // causes problems
     "no-console": "warn", // It just makes it harder to debug
-    "no-empty": "off" // Sometimes I don't care about errors
+    "no-empty": "off", // Sometimes I don't care about errors
+    "@typescript-eslint/explicit-function-return-type": "error"
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

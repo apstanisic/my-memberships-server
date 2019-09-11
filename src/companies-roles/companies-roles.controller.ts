@@ -19,6 +19,8 @@ import { PaginationParams } from '../core/pagination/pagination-options';
 import { ValidRole } from '../access-control/valid-role.pipe';
 import { RoleName } from '../access-control/roles.list';
 import { CreateRoleDto, UpdateRoleDto } from '../access-control/roles.dto';
+import { PgResult } from '../core/pagination/pagination.types';
+import { Role } from '../access-control/roles.entity';
 
 /**
  * Every method is check for proper permissions.
@@ -44,7 +46,7 @@ export class CompaniesRolesController {
   find(
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetPagination() pg: PaginationParams,
-  ) {
+  ): PgResult<Role> {
     return this.rolesService.paginate(pg, { domain: companyId });
   }
 
@@ -54,7 +56,7 @@ export class CompaniesRolesController {
   findUsersRoles(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('userId', ValidUUID) userId: UUID,
-  ) {
+  ): Promise<Role[]> {
     return this.rolesService.find({ userId, domain: companyId });
   }
 
@@ -65,7 +67,7 @@ export class CompaniesRolesController {
     @Param('roleName', ValidRole) roleName: RoleName,
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetPagination() pg: PaginationParams,
-  ) {
+  ): PgResult<Role> {
     return this.rolesService.paginate(pg, {
       domain: companyId,
       name: roleName,
@@ -78,7 +80,7 @@ export class CompaniesRolesController {
   findRoleById(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
-  ) {
+  ): Promise<Role> {
     return this.rolesService.findOne({ id: roleId, domain: companyId });
   }
 
@@ -88,7 +90,7 @@ export class CompaniesRolesController {
   addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Body() data: CreateRoleDto,
-  ) {
+  ): Promise<Role> {
     return this.rolesService.create({ ...data, ...{ domain: companyId } });
   }
 
@@ -99,7 +101,7 @@ export class CompaniesRolesController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
     @Body() data: UpdateRoleDto,
-  ) {
+  ): Promise<Role> {
     return this.rolesService.updateWhere(
       { domain: companyId, id: roleId },
       data,
@@ -112,7 +114,7 @@ export class CompaniesRolesController {
   async deleteRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
-  ) {
+  ): Promise<Role> {
     return this.rolesService.deleteWhere({ id: roleId, domain: companyId });
   }
 }

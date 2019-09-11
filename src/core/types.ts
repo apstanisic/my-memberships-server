@@ -19,3 +19,5 @@ export interface WithId {
   id: string;
   [key: string]: any;
 }
+
+export type Struct<T = any> = Record<string, T>;

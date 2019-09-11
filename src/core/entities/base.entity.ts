@@ -41,7 +41,7 @@ export abstract class BaseEntity {
   /** All entities will be auto validated before inserting or updating. */
   @BeforeInsert()
   @BeforeUpdate()
-  async validate() {
+  async validate(): Promise<void> {
     let errors = await validate(this);
     // Exclude some private fields. Those fields are excluded when transformed.
     errors = errors.map(({ target, ...other }) => ({

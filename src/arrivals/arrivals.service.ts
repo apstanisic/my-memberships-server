@@ -16,7 +16,10 @@ export class ArrivalsService extends BaseService<Arrival> {
    * Creates new arrival. This method is specific for arrivals.
    * It's mostly wrapper around BaseService create method.
    */
-  newArrival(location: Location, subscription: Subscription | string) {
+  newArrival(
+    location: Location,
+    subscription: Subscription | string,
+  ): Promise<Arrival> {
     const arrival = new Arrival();
     arrival.address = location.address;
     arrival.lat = location.lat;

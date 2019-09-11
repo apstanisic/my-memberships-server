@@ -2,7 +2,7 @@ import * as Faker from 'faker';
 import { Arrival } from './arrivals.entity';
 import { Company } from '../company/company.entity';
 
-export function generateArrival(companies: Company[]) {
+export function generateArrival(companies: Company[]): Arrival {
   const random = Faker.random.arrayElement;
   const company = random(companies);
 

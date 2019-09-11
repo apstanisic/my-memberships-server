@@ -25,13 +25,13 @@ export class AuthController {
   /** Attempt to login user */
   @Post('login')
   async login(@Body() { email, password }: LoginData): Promise<SignInResponse> {
-    return this.authService.tryToLogin(email, password);
+    return this.authService.attemptLogin(email, password);
   }
 
   /** Register new user */
   /** @todo Add sending mail */
   @Post('register')
-  async register(@Body() data: RegisterData) {
+  async register(@Body() data: RegisterData): Promise<SignInResponse> {
     const user = await this.usersService.create(data);
     const token = this.authService.createJwt(data.email);
 
@@ -51,7 +51,7 @@ export class AuthController {
   async confirmAccout(
     @Param('email') email: string,
     @Param('token') token: string,
-  ) {
+  ): Promise<User> {
     const user = await this.usersService.findOne({ email });
     if (user === undefined) throw new UnauthorizedException();
     if (user.secureToken !== token) throw new BadRequestException();

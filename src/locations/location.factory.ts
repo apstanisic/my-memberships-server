@@ -12,7 +12,7 @@ const workhours = {
   sunday: '09:00-15:00',
 };
 
-export function generateLocation(companies: Company[]) {
+export function generateLocation(companies: Company[]): Location {
   const location = new Location();
 
   location.lat = Number(Faker.address.latitude());

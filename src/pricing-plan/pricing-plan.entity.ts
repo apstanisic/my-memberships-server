@@ -9,7 +9,10 @@ import { PlanName } from './plans.list';
 
 // @Entity()
 export class PricingPlan extends BaseEntity {
-  static async fromOld(pp: PricingPlan, changes: PlanChanges) {
+  static async fromOld(
+    pp: PricingPlan,
+    changes: PlanChanges,
+  ): Promise<PricingPlan> {
     const newPlan = classToClass(pp);
     newPlan.from = pp.to;
     newPlan.to = moment(newPlan.from)

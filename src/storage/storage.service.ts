@@ -40,7 +40,7 @@ export class StorageService {
   }
 
   async put(image: Buffer, name: string): Promise<string> {
-    return new Promise((res: (value: string) => any, rej) => {
+    return new Promise((res: (value: string) => any, rej): void => {
       this.client.putObject(
         this.bucket,
         name,
@@ -76,7 +76,7 @@ export class StorageService {
 
   /** Remove one file */
   async delete(file: string): Promise<void> {
-    return new Promise((res, rej) => {
+    return new Promise((res, rej): void => {
       this.client.removeObject(this.bucket, file, err => {
         if (err === null) res();
         if (err !== null) rej(err);
@@ -91,7 +91,7 @@ export class StorageService {
    * @param prefix for them is 2019/05/22/qwer12.
    */
   async deleteMany(prefix: string): Promise<string[]> {
-    return new Promise((res, rej) => {
+    return new Promise((res, rej): void => {
       this.listFiles(prefix).then(filenames => {
         this.client.removeObjects(this.bucket, filenames, err => {
           if (err === null) res(filenames);
@@ -102,7 +102,7 @@ export class StorageService {
   }
 
   async listFiles(prefix: string): Promise<string[]> {
-    return new Promise((res, rej) => {
+    return new Promise((res, rej): void => {
       const filenames: string[] = [];
       const filesStream = this.client.listObjectsV2(this.bucket, prefix);
       filesStream.on('data', filename => filenames.push(filename.name));

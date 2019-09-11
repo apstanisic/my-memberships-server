@@ -4,7 +4,7 @@ import { availableRoles } from './roles.list';
 import { User } from '../user/user.entity';
 import { UUID } from '../core/types';
 
-export function generateRole(users: User[], domain: UUID[] = []) {
+export function generateRole(users: User[], domain: UUID[] = []): Role {
   const random = Faker.random.arrayElement;
 
   const role = new Role();
@@ -15,7 +15,7 @@ export function generateRole(users: User[], domain: UUID[] = []) {
   return role;
 }
 
-export function generateUserRole(user: User) {
+export function generateUserRole(user: User): Role {
   const role = new Role();
   role.user = user;
   role.name = availableRoles['1'];

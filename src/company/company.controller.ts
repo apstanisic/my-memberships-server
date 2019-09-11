@@ -19,6 +19,7 @@ import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../access-control/permissions.guard';
 import { UpdateCompanyDto } from './company.dto';
+import { PgResult } from '../core/pagination/pagination.types';
 
 /** Companies Controller */
 @Controller('companies')
@@ -27,7 +28,7 @@ export class CompaniesController {
 
   /** Get companies, filtered and paginated */
   @Get()
-  find(@GetPagination() params: PaginationParams) {
+  find(@GetPagination() params: PaginationParams): PgResult<Company> {
     return this.service.paginate(params);
   }
 

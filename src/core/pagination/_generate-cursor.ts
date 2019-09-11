@@ -25,7 +25,7 @@ export class GenerateCursor<T extends WithId = any> {
   }
 
   /** Get value from entity from provided column. Throw error if null value */
-  private getColumnValueFromEntity() {
+  private getColumnValueFromEntity(): any {
     const value = this.entity[this.column];
     if (value === undefined) {
       throw new BadRequestException(

@@ -75,7 +75,7 @@ export class MailService {
   }
 
   /** Creates transporter instance */
-  private createTransport() {
+  private createTransport(): void {
     this.transporter = nodemailer.createTransport(
       {
         host: this.host,

@@ -44,7 +44,7 @@ export class UserController {
   /** Get logged user info */
   @Get('account')
   @UseGuards(AuthGuard('jwt'))
-  getAccount(@GetUser() user: User) {
+  getAccount(@GetUser() user: User): User {
     return user;
   }
 
@@ -54,7 +54,7 @@ export class UserController {
   async deleteUser(
     @GetUser() loggedUser: User,
     @Body() { email, password }: LoginData,
-  ) {
+  ): Promise<User> {
     const user = await this.usersService.findForLogin(email, password);
     if (user.id !== loggedUser.id) throw new ForbiddenException();
     return this.usersService.delete(user);
@@ -62,7 +62,7 @@ export class UserController {
 
   /** Get general user info by id */
   @Get('users/:id')
-  GetUser(@Param('id', ValidUUID) id: string) {
+  GetUser(@Param('id', ValidUUID) id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 }

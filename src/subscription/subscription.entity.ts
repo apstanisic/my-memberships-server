@@ -73,7 +73,7 @@ export class Subscription extends BaseEntity implements SoftDelete {
   deleted: DeletedColumns;
 
   /** Check if subscription is still valid */
-  isValid() {
+  isValid(): boolean {
     if (this.deleted.at) return false;
     if (moment(this.expiresAt).isBefore(moment.now())) return false;
     if (this.allowedUses && this.allowedUses <= this.usedAmount) return false;
@@ -87,7 +87,7 @@ export class Subscription extends BaseEntity implements SoftDelete {
   setDuration(
     duration: moment.Duration = moment.duration(1, 'month'),
     timeFrom: moment.Moment = moment(),
-  ) {
+  ): void {
     this.startsAt = timeFrom.toDate();
     this.expiresAt = timeFrom
       .add(duration)
