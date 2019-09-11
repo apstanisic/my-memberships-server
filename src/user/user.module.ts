@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { UsersService } from './user.service';
 import { User } from './user.entity';
-import { Role } from '../access-control/roles.entity';
+import { Role } from '../core/access-control/roles.entity';
 
 /**
  * User module depends on auth module and core folder.

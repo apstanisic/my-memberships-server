@@ -6,7 +6,7 @@ import {
   Optional,
   Logger,
 } from '@nestjs/common';
-import { Struct } from '../core/types';
+import { Struct } from '../types';
 
 @Injectable()
 export class ConfigService {

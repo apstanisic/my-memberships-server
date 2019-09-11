@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Client } from 'minio';
 import { ConfigService } from '../config/config.service';
-import { wait } from '../core/helpers';
+import { wait } from '../helpers';
 
 @Injectable()
 export class StorageService {

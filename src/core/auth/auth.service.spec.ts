@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { UsersService } from '../user/user.service';
+import { UsersService } from '../../user/user.service';
 import { AuthService } from './auth.service';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 
 const jwtMock = jest.fn(() => ({ sign: (value: any): string => value }));
 const findMock = jest.fn().mockReturnValue(new User());

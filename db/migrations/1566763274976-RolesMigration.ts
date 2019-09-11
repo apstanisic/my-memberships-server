@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Role } from '../../src/access-control/roles.entity';
 import { User } from '../../src/user/user.entity';
 import { Company } from '../../src/company/company.entity';
 import {
   generateRole,
   generateUserRole,
-} from '../../src/access-control/role.factory';
+} from '../../src/core/access-control/role.factory';
+import { Role } from '../../src/core/access-control/roles.entity';
 
 export class RolesMigration1566763274976 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

@@ -2,10 +2,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { classToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
-import { UsersService } from '../user/user.service';
+import { UsersService } from '../../user/user.service';
 import { JwtPayload } from './jwt.strategy';
 import { SignInResponse } from './auth.dto';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 
 @Injectable()
 export class AuthService {

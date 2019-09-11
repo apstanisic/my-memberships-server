@@ -4,7 +4,7 @@ import { Repository, DeepPartial } from 'typeorm';
 import { Company } from './company.entity';
 import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
-import { RoleService } from '../access-control/role.service';
+import { RoleService } from '../core/access-control/role.service';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {

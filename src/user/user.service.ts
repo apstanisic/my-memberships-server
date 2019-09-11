@@ -7,9 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { RegisterData } from '../auth/auth.dto';
+import { RegisterData } from '../core/auth/auth.dto';
 import { BaseService } from '../core/base.service';
-import { Role } from '../access-control/roles.entity';
+import { Role } from '../core/access-control/roles.entity';
 
 @Injectable()
 export class UsersService extends BaseService<User> {

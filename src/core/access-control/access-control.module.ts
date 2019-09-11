@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionsGuard } from './permissions.guard';
 import { Role } from './roles.entity';
@@ -10,6 +10,7 @@ import { RoleService } from './role.service';
  * AC Module only depends on core folder.
  * user.entity is used in this module only as a type.
  */
+@Global()
 @Module({
   imports: [TypeOrmModule.forFeature([Role])],
   providers: [

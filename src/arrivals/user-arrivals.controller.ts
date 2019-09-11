@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { ArrivalsService } from './arrivals.service';
 import { ValidUUID } from '../core/uuid.pipe';
-import { PermissionsGuard } from '../access-control/permissions.guard';
-import { IfAllowed } from '../access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { GetUser } from '../user/get-user.decorator';

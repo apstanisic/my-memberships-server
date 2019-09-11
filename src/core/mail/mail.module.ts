@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { ConfigModule } from '../config/config.module';
 
@@ -7,6 +7,7 @@ import { ConfigModule } from '../config/config.module';
  * Use this instead of @nest-modules/mailer cause it has fewer
  * dependecies. I don't want Pug or Handlebars without reason.
  */
+@Global()
 @Module({
   providers: [MailService],
   imports: [ConfigModule],

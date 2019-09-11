@@ -14,7 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { PgResult } from '../core/pagination/pagination.types';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { GetPagination } from '../core/pagination/pagination.decorator';
-import { IfAllowed } from '../access-control/if-allowed.decorator';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from './subscription.entity';
 import {
@@ -22,7 +22,7 @@ import {
   UpdateSubscriptionDto,
 } from './subscription.dto';
 import { ValidUUID } from '../core/uuid.pipe';
-import { PermissionsGuard } from '../access-control/permissions.guard';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { UUID } from '../core/types';
 import { ManyUUID } from '../core/many-uuid.pipe';
 

@@ -1,4 +1,3 @@
-import { Field, ID } from 'type-graphql';
 import { Exclude, classToClass } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
@@ -20,7 +19,6 @@ import {
 export abstract class BaseEntity {
   /** Unique Id */
   @PrimaryGeneratedColumn('uuid')
-  @Field(type => ID)
   id: string;
 
   /**
@@ -35,7 +33,6 @@ export abstract class BaseEntity {
   /** Date when entity was created. It has index for cursor pagination */
   @CreateDateColumn({ precision: 3 })
   @Index()
-  @Field()
   createdAt: Date;
 
   /** All entities will be auto validated before inserting or updating. */

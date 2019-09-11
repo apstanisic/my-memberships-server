@@ -7,7 +7,7 @@ import { Company } from '../company/company.entity';
 import { PlanChanges } from './pricing-plan.dto';
 import { PlanName } from './plans.list';
 
-// @Entity()
+@Entity()
 export class PricingPlan extends BaseEntity {
   static async fromOld(
     pp: PricingPlan,

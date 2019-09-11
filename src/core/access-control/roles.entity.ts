@@ -1,9 +1,8 @@
 import { ManyToOne, Entity, Column } from 'typeorm';
-import { Field } from 'type-graphql';
 import { IsIn, IsString, IsOptional, Length } from 'class-validator';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 import { RoleName, availableRoles } from './roles.list';
-import { BaseEntity } from '../core/entities/base.entity';
+import { BaseEntity } from '../entities/base.entity';
 
 /**
  * To add admin for company f32 to user
@@ -19,19 +18,16 @@ import { BaseEntity } from '../core/entities/base.entity';
 export class Role extends BaseEntity {
   /** User that have this role */
   @ManyToOne(type => User, user => user.roles)
-  @Field(type => User)
   user: User;
 
   /** User's id */
   @Column()
-  @Field()
   userId: string;
 
   /** Role name */
   @Column()
   @IsString()
   @IsIn([...availableRoles])
-  @Field(type => String)
   name: RoleName;
 
   /**
@@ -41,7 +37,6 @@ export class Role extends BaseEntity {
    */
   @Column({ default: '/*' })
   @IsString()
-  @Field()
   domain: string;
 
   /**
@@ -49,7 +44,6 @@ export class Role extends BaseEntity {
    * For example, owner can leave reason why admin have this role
    */
   @Column({ type: 'text', nullable: true })
-  @Field(type => String, { nullable: true })
   @IsOptional()
   @IsString()
   @Length(2, 2000)

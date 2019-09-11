@@ -9,18 +9,18 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PermissionsGuard } from '../access-control/permissions.guard';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { ValidUUID } from '../core/uuid.pipe';
 import { UUID } from '../core/types';
-import { IfAllowed } from '../access-control/if-allowed.decorator';
-import { RoleService } from '../access-control/role.service';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+import { RoleService } from '../core/access-control/role.service';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PaginationParams } from '../core/pagination/pagination-options';
-import { ValidRole } from '../access-control/valid-role.pipe';
-import { RoleName } from '../access-control/roles.list';
-import { CreateRoleDto, UpdateRoleDto } from '../access-control/roles.dto';
+import { ValidRole } from '../core/access-control/valid-role.pipe';
+import { RoleName } from '../core/access-control/roles.list';
+import { CreateRoleDto, UpdateRoleDto } from '../core/access-control/roles.dto';
 import { PgResult } from '../core/pagination/pagination.types';
-import { Role } from '../access-control/roles.entity';
+import { Role } from '../core/access-control/roles.entity';
 
 /**
  * Every method is check for proper permissions.

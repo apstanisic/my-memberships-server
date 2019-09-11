@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { plainToClass, classToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
-import { UsersService } from '../user/user.service';
+import { UsersService } from '../../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 import { MailService } from '../mail/mail.service';
 
 @Controller('auth')
