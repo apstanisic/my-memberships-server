@@ -178,10 +178,12 @@ export abstract class BaseService<T extends WithId = any> {
     parse = true,
   ): Promise<number> {
     try {
-      return this.repository.count({
+      // Don't return directly, handle errors first
+      const count = await this.repository.count({
         ...options,
         where: parse ? parseQuery(filter) : filter,
       });
+      return count;
     } catch (error) {
       throw this.internalError(error);
     }
