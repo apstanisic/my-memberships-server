@@ -11,7 +11,7 @@ Logger.overrideLogger(true);
 
 const exampleEntity = { id: 'qwerty', name: 'some name' };
 
-const find = jest.fn().mockReturnValue([exampleEntity]);
+const find = jest.fn().mockResolvedValue([exampleEntity]);
 const findOne = jest.fn().mockResolvedValue(exampleEntity);
 const findByIds = jest.fn().mockResolvedValue([exampleEntity]);
 const create = jest.fn().mockResolvedValue(exampleEntity);
@@ -31,9 +31,13 @@ const repoMock = jest.fn(() => ({
   count,
 }));
 // Base service is abstract class
-class Service extends BaseService {}
+class Service extends BaseService {
+  public async convertToEntity(value: any): Promise<any> {
+    return super.convertToEntity(value);
+  }
+}
 describe('Base Service', () => {
-  let service: BaseService;
+  let service: Service;
 
   beforeEach(() => {
     service = new Service(repoMock() as any);
@@ -168,6 +172,38 @@ describe('Base Service', () => {
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(count).toBeCalledTimes(1);
       expect(count).toBeCalledWith({ where: { some: Equal('value') } });
+    });
+  });
+
+  describe('convertToEntity', () => {
+    it('returns same entity instance if value entity', async () => {
+      const res = service.convertToEntity(exampleEntity);
+      await expect(res).resolves.toBe(exampleEntity);
+      await expect(findOne).not.toHaveBeenCalled();
+    });
+
+    it('converts string to entity', async () => {
+      findOne.mockResolvedValue(Promise.resolve(exampleEntity));
+      const res = service.convertToEntity('value');
+      await expect(res).resolves.toBe(exampleEntity);
+      expect(findOne).toHaveBeenCalledTimes(1);
+      expect(findOne).toHaveBeenCalledWith('value');
+    });
+
+    it('converts string to entity', async () => {
+      findOne.mockResolvedValue(Promise.resolve(exampleEntity));
+      const res = service.convertToEntity('value');
+      await expect(res).resolves.toBe(exampleEntity);
+      expect(findOne).toHaveBeenCalledTimes(1);
+      expect(findOne).toHaveBeenCalledWith('value');
+    });
+
+    it('passes thrown error upstairs', async () => {
+      findOne.mockRejectedValue(new Error('test error'));
+      const res = service.convertToEntity('value');
+      await expect(res).rejects.toThrow(Error);
+      expect(findOne).toHaveBeenCalledTimes(1);
+      expect(findOne).toHaveBeenCalledWith('value');
     });
   });
 });
