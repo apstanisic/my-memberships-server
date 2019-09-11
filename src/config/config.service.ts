@@ -1,26 +1,35 @@
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { readFileSync } from 'fs';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Optional,
+  Logger,
+} from '@nestjs/common';
 
 @Injectable()
 export class ConfigService {
   private readonly envConfig: Record<string, string>;
 
-  constructor() {
+  private logger = new Logger();
+
+  constructor(@Optional() fileName?: string) {
     try {
-      const file = fs.readFileSync('.env');
-      dotenv.config();
+      const file = readFileSync(fileName || '.env');
       this.envConfig = dotenv.parse(file);
     } catch (error) {
-      throw new InternalServerErrorException('No .env file found');
+      this.logger.error('No file for config found.');
+      throw new InternalServerErrorException();
     }
   }
 
+  /** Get specified value from config */
   get(key: string): string | undefined {
     return this.envConfig[key];
   }
 
-  getAll(): Record<string, string> {
+  /** Get all values from config */
+  getAll(): Record<string, any> {
     return this.envConfig;
   }
 }

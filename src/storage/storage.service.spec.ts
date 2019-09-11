@@ -1,12 +1,13 @@
-import { Client } from 'minio';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Client } from 'minio';
+import { removeObject } from '../../__mocks__/minio';
 import { StorageService } from './storage.service';
 import { ConfigService } from '../config/config.service';
 
 // jest.mock('minio');
 describe('StorageService', () => {
   let service: StorageService;
-  let removeMock: jest.Mock;
+  let mock: jest.Mock;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +27,7 @@ describe('StorageService', () => {
     }).compile();
 
     service = module.get<StorageService>(StorageService);
+    removeObject.mockClear();
   });
 
   it('should be defined', () => {
@@ -34,18 +36,23 @@ describe('StorageService', () => {
 
   it('should return promise when delete file', async () => {
     // expect(1).toBe(1);
-    const testClient = new Client({} as any);
-    expect(testClient.removeObject).not.toBeCalled();
+    expect(removeObject).not.toBeCalled();
     await service.delete('someFile');
-    expect(testClient.removeObject).toBeCalled();
-    expect(testClient.removeObject).toBeCalledWith(
+    expect(removeObject).toBeCalled();
+    expect(removeObject).toBeCalledWith(
       expect.anything(),
       'someFile',
       expect.anything(),
     );
-    const response2 = await service.delete('otherfile');
-    expect(response2).rejects.toThrow();
-    // service.delete('random file');
-    // expect()
+    await expect(service.delete('some-file-2')).rejects.toEqual(
+      'some-non-null-value',
+    );
+    expect(removeObject).toHaveBeenNthCalledWith(
+      2,
+      expect.anything(),
+      'some-file-2',
+      expect.anything(),
+    );
+    await expect(service.delete('3rd-time')).resolves.toBeUndefined();
   });
 });
