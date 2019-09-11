@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { PlanName } from './pricing-plan.entity';
+import { PlanName } from './plans.list';
 
 export interface PlanChanges {
   duration: moment.Duration;
