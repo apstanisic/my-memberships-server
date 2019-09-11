@@ -16,8 +16,8 @@ import { User } from '../user/user.entity';
 import { CompanyService } from './company.service';
 import { GetPagination } from '../core/pagination/pagination.decorator';
 import { GetUser } from '../user/get-user.decorator';
-import { IfAllowed } from '../access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../access-control/permissions.guard';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { UpdateCompanyDto } from './company.dto';
 import { PgResult } from '../core/pagination/pagination.types';
 

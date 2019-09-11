@@ -1,6 +1,5 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import * as moment from 'moment';
-import { Field } from 'type-graphql';
 import { Expose } from 'class-transformer';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
@@ -14,7 +13,6 @@ import { Location } from '../locations/location.entity';
 export class Arrival extends BaseEntity {
   /** To which subscription this arrival belongs */
   @ManyToOne(type => Subscription)
-  @Field(type => Subscription)
   subscription: Subscription;
 
   /** Subscription that was used for this arrival */
@@ -26,7 +24,6 @@ export class Arrival extends BaseEntity {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  @Field(type => Location)
   location?: Location;
 
   /** Get only Id from location */
@@ -35,12 +32,10 @@ export class Arrival extends BaseEntity {
 
   /** When did person arrive */
   @Column({ update: false, default: new Date(), precision: 3 })
-  @Field()
   arrivedAt: Date;
 
   /** When did person leave. It's nullable, if person does not checkout */
   @Column({ nullable: true, precision: 3 })
-  @Field({ nullable: true })
   leftAt?: Date;
 
   /** Address at which location is located */

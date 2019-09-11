@@ -6,8 +6,8 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { SubscriptionService } from './subscription.service';
 import { Subscription } from './subscription.entity';
 import { ValidUUID } from '../core/uuid.pipe';
-import { IfAllowed } from '../access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../access-control/permissions.guard';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { UUID } from '../core/types';
 
 /** Controller in charge for getting user subscriptions */

@@ -1,7 +1,6 @@
 import { Column, Index } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { Field } from 'type-graphql';
 import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
 import { random } from 'faker';
 import { BaseEntity } from './base.entity';
@@ -15,7 +14,6 @@ export abstract class BaseUser extends BaseEntity implements IUser {
   /** User Email, has to be unique and to be valid email */
   @Column()
   @Index({ unique: true })
-  @Field()
   @IsEmail()
   email: string;
 
@@ -28,14 +26,12 @@ export abstract class BaseUser extends BaseEntity implements IUser {
 
   /** User real name */
   @Column()
-  @Field()
   @IsString()
   @Length(2, 100)
   name: string;
 
   /** User's profile picture */
   @Column({ nullable: true, type: 'text' })
-  @Field({ nullable: true })
   @IsOptional()
   @Length(10, 500)
   avatar?: string;

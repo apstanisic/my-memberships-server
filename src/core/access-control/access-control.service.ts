@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Enforcer, newEnforcer, StringAdapter } from 'casbin';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 import { casbinValidDomain } from './casbin/custom-matchers';
 import { casbinPolicies } from './casbin/casbin-policies';
 import { casbinModel } from './casbin/casbin-model';

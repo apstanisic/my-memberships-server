@@ -8,12 +8,12 @@ import {
 } from '@nestjs/common';
 import * as moment from 'moment';
 import { classToClass } from 'class-transformer';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 import { LoginData } from './auth.dto';
-import { UsersService } from '../user/user.service';
-import { ValidEmail } from '../core/validate-email.pipe';
+import { UsersService } from '../../user/user.service';
+import { ValidEmail } from '../validate-email.pipe';
 import { MailService } from '../mail/mail.service';
-import { GetUserPipe } from '../user/get-user.pipe';
+import { GetUserPipe } from '../../user/get-user.pipe';
 
 /** Controller for password reseting */
 @Controller('auth')

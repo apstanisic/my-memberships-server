@@ -3,7 +3,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '../config/config.service';
 import { AuthService } from './auth.service';
-import { User } from '../user/user.entity';
+import { User } from '../../user/user.entity';
 
 const configMock = jest.fn(() => ({ get: (key: any): string => key }));
 const validateJwtMock = jest.fn().mockReturnValue(new User());
