@@ -6,6 +6,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
+import { PaginationParams } from './pagination/pagination-options';
+import { PaginatorResponse } from './pagination/pagination.types';
+import { paginate } from './pagination/_paginate.helper';
 
 // Supres NestJs console logs
 Logger.overrideLogger(true);
@@ -13,21 +16,23 @@ Logger.overrideLogger(true);
 const exampleEntity = { id: 'qwerty', name: 'some name' };
 
 const find = jest.fn();
-find.mockResolvedValue([exampleEntity]);
 const findOne = jest.fn();
-findOne.mockResolvedValue(exampleEntity);
 const findByIds = jest.fn();
-findByIds.mockResolvedValue([exampleEntity]);
 const create = jest.fn();
-create.mockResolvedValue(exampleEntity);
 const save = jest.fn();
-save.mockResolvedValue(exampleEntity);
 const merge = jest.fn();
-merge.mockReturnValue(exampleEntity);
 const remove = jest.fn();
-remove.mockResolvedValue(exampleEntity);
 const count = jest.fn();
-count.mockResolvedValue(3);
+const paginateMock = jest.fn();
+
+jest.mock('./pagination/_paginate.helper', () => {
+  // Returns provided option.
+  const mock = jest.fn(({ options }: any): any => options);
+  return {
+    __esModule: true,
+    paginate: mock,
+  };
+});
 
 const repoMock = jest.fn(() => ({
   find,
@@ -54,6 +59,15 @@ describe('BaseService', () => {
   beforeEach(() => {
     service = new Service(repoMock() as any);
     jest.clearAllMocks();
+    // Reset return value after each test
+    find.mockResolvedValue([exampleEntity]);
+    findOne.mockResolvedValue(exampleEntity);
+    create.mockReturnValue(exampleEntity);
+    findByIds.mockResolvedValue([exampleEntity]);
+    save.mockResolvedValue(exampleEntity);
+    merge.mockReturnValue(exampleEntity);
+    remove.mockResolvedValue(exampleEntity);
+    count.mockResolvedValue(3);
   });
 
   /** Testing service.findOne */
@@ -117,6 +131,13 @@ describe('BaseService', () => {
       expect(find).toBeCalledWith({ where: { some: Equal('value') } });
     });
 
+    it('returns all if filter not provided', async () => {
+      const res = service.find();
+      await expect(res).resolves.toEqual([exampleEntity]);
+      expect(find).toBeCalledTimes(1);
+      expect(find).toBeCalledWith({ where: {} });
+    });
+
     it('throws if repo throws', async () => {
       find.mockRejectedValue(new Error('find'));
       const res = service.find({ some: 'value' });
@@ -170,7 +191,6 @@ describe('BaseService', () => {
     });
 
     it('converts string to entity', async () => {
-      findOne.mockResolvedValue(exampleEntity);
       const res = service.convertToEntity('value');
       await expect(res).resolves.toBe(exampleEntity);
       expect(findOne).toHaveBeenCalledTimes(1);
@@ -178,7 +198,6 @@ describe('BaseService', () => {
     });
 
     it('converts string to entity', async () => {
-      findOne.mockResolvedValue(exampleEntity);
       const res = service.convertToEntity('value');
       await expect(res).resolves.toBe(exampleEntity);
       expect(findOne).toHaveBeenCalledTimes(1);
@@ -197,8 +216,6 @@ describe('BaseService', () => {
   /** Testing service.delete */
   describe('delete', () => {
     it('deletes an entity with id', async () => {
-      findOne.mockResolvedValue(exampleEntity);
-      remove.mockResolvedValue(exampleEntity);
       const res = service.delete('some-id');
       await expect(res).resolves.toEqual(exampleEntity);
       expect(remove).toBeCalledTimes(1);
@@ -206,8 +223,6 @@ describe('BaseService', () => {
     });
 
     it('deletes an entity', async () => {
-      findOne.mockResolvedValue(exampleEntity);
-      remove.mockResolvedValue(exampleEntity);
       const res = service.delete(exampleEntity);
       await expect(res).resolves.toEqual(exampleEntity);
       expect(remove).toBeCalledTimes(1);
@@ -224,7 +239,7 @@ describe('BaseService', () => {
     });
 
     it('throws if remove throws', async () => {
-      findOne.mockResolvedValue(exampleEntity);
+      // findOne.mockResolvedValueOnce(exampleEntity);
       remove.mockRejectedValue(new Error('delete remove throws'));
       const res = service.delete('entity-id');
       await expect(res).rejects.toThrow(InternalServerErrorException);
@@ -291,16 +306,74 @@ describe('BaseService', () => {
   /** Testing service.updateWhere */
   describe('updateWhere', () => {
     it('updates entity with conditions', async () => {
-      save.mockResolvedValue(exampleEntity);
-      merge.mockResolvedValue(exampleEntity);
-      findOne.mockResolvedValue(exampleEntity);
-      const res = service.updateWhere({ id: '34' } as any, exampleEntity);
+      service.findOne = jest.fn().mockResolvedValue(exampleEntity);
+      service.update = jest.fn().mockResolvedValue(exampleEntity);
+
+      const filter = { id: '34' };
+
+      const res = service.updateWhere(filter as any, exampleEntity);
       await expect(res).resolves.toEqual(exampleEntity);
-      expect(findOne).toBeCalledTimes(1);
-      expect(findOne).toBeCalledWith({ where: { id: Equal('34') } });
-      expect(merge).toBeCalledTimes(1);
-      expect(merge).toBeCalledWith(exampleEntity, exampleEntity);
-      expect(save).toBeCalledTimes(1);
+      expect(service.findOne).toBeCalledTimes(1);
+      expect(service.findOne).toBeCalledWith(filter);
+      expect(service.update).toBeCalledTimes(1);
+      expect(service.update).toBeCalledWith(exampleEntity, exampleEntity);
+    });
+  });
+
+  /** Testing service.updateWhere */
+  describe('deleteWhere', () => {
+    it('delete entity with conditions', async () => {
+      service.findOne = jest.fn().mockResolvedValueOnce(exampleEntity);
+      service.delete = jest.fn().mockResolvedValueOnce(exampleEntity);
+
+      const filter = { id: '34' };
+
+      const res = service.deleteWhere(filter as any);
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(service.findOne).toBeCalledTimes(1);
+      expect(service.findOne).toBeCalledWith(filter);
+      expect(service.delete).toBeCalledTimes(1);
+      expect(service.delete).toBeCalledWith(exampleEntity);
+    });
+  });
+
+  describe('create', () => {
+    it('creates entity in db', async () => {
+      const res = service.create(exampleEntity);
+      await expect(res).resolves.toEqual(exampleEntity);
+    });
+
+    it('throws if repo throws', async () => {
+      save.mockRejectedValue(new Error('create throw'));
+      const res = service.create(exampleEntity);
+      await expect(res).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  /** Testing service.paginate
+   * paginate mock always retuns options param
+   */
+  describe('paginate', () => {
+    let params: PaginationParams;
+
+    beforeEach(() => {
+      params = new PaginationParams();
+      params.relations = ['test'];
+      params.currentUrl = 'hello-world';
+    });
+
+    it('passes data to paginate', async () => {
+      const res = service.paginate(params);
+      await expect(res).resolves.toEqual({ ...params, where: {} });
+    });
+
+    it('combines params and where', async () => {
+      params.where = { id: 7 };
+      const res = service.paginate(params, { hello: 'world' });
+      await expect(res).resolves.toEqual({
+        ...params,
+        where: { id: Equal(7), hello: Equal('world') },
+      });
     });
   });
 });

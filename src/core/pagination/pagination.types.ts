@@ -3,6 +3,11 @@
  * Use PaginationResponse for docs
  */
 export class PaginatorResponse<T = any> {
+  constructor() {
+    // There must be pagination object
+    this.pagination = { amount: 0, isLastPage: true };
+  }
+
   /** Pagination metadata */
   pagination: {
     amount: number;
