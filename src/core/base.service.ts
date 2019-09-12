@@ -1,6 +1,5 @@
 import {
   Repository,
-  DeepPartial,
   FindOneOptions,
   FindManyOptions,
   FindConditions,
@@ -13,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { parseQuery } from './typeorm/parse-to-orm-query';
-import { paginate } from './pagination/paginate.helper';
+import { paginate } from './pagination/_paginate.helper';
 import { OrmWhere, WithId, Struct } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
@@ -28,6 +27,9 @@ type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
  * Services are in change of throwing HTTP errors.
  * There is no need for every controller to check if result
  * is null, this service will automatically check for him.
+ * @warning Don't return promise directly. If repo throw an error,
+ * service should catch her and pass error that can be shown
+ * to users.
  */
 export abstract class BaseService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
@@ -40,21 +42,23 @@ export abstract class BaseService<T extends WithId = any> {
 
   /**
    * Find companies that match criteria
-   * @param parse Should query be parsed to TypeOrm
+   * If filter is string or number it will search for Id
    * @example Left is passed value, right is parsed
    *  ({ price__lt: 5 } => { price: LessThan(5) })
    */
   async findOne(
-    filter: OrmWhere<T>,
+    filter: OrmWhere<T> | number,
     options: FindOneParams<T> = {},
-    parse = true,
   ): Promise<T> {
     let entity: T | undefined;
     let where;
 
-    // If string, then search by id
-    where = typeof filter === 'string' ? { id: filter } : filter;
-    where = parse ? parseQuery(where) : where;
+    // If string or number, then search by id
+    where =
+      typeof filter === 'string' || typeof filter === 'number'
+        ? { id: filter }
+        : filter;
+    where = parseQuery(where);
 
     try {
       entity = await this.repository.findOne({ ...options, where });
@@ -65,10 +69,10 @@ export abstract class BaseService<T extends WithId = any> {
     return this.throwIfNotFound(entity);
   }
 
-  async findByIds(ids: string[] | number[]): Promise<T[]> {
+  async findByIds(ids: (string | number)[]): Promise<T[]> {
     try {
-      // Don't return directly. Let service handle exception
-      return await this.repository.findByIds(ids);
+      const entities = await this.repository.findByIds(ids);
+      return entities;
     } catch (error) {
       throw this.internalError(error);
     }
@@ -76,15 +80,11 @@ export abstract class BaseService<T extends WithId = any> {
 
   /**
    * Find companies that match criteria
-   * @param parse Should query be parsed to TypeOrm specific
    */
-  async find(filter: OrmWhere<T> = {}, parse = true): Promise<T[]> {
+  async find(filter: OrmWhere<T> = {}): Promise<T[]> {
     try {
-      // Don't remove await. Let service handle exception.
-      const result = await this.repository.find({
-        where: parse ? parseQuery(filter) : filter,
-      });
-      return result;
+      const res = await this.repository.find({ where: parseQuery(filter) });
+      return res;
     } catch (error) {
       throw this.internalError(error);
     }
@@ -109,12 +109,14 @@ export abstract class BaseService<T extends WithId = any> {
     } else {
       combinedOptions.where = where;
     }
+    combinedOptions.where = parseQuery(where);
 
-    return paginate({ repository, options: combinedOptions });
+    const paginated = await paginate({ repository, options: combinedOptions });
+    return paginated;
   }
 
   /* Create new entity */
-  async create(entity: DeepPartial<T>): Promise<T> {
+  async create(entity: Partial<T>): Promise<T> {
     try {
       const createdEntity = this.repository.create(entity);
       const savedEntity = await this.repository.save(createdEntity);
@@ -125,33 +127,33 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Update entity */
-  async update(entityOrId: T | string, data: DeepPartial<T> = {}): Promise<T> {
+  async update(entityOrId: T | string, data: Partial<T> = {}): Promise<T> {
     const entity = await this.convertToEntity(entityOrId);
     try {
       this.repository.merge(entity, data);
-      return this.repository.save(entity);
+      const updated = await this.repository.save(entity);
+      return updated;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();
     }
   }
 
-  /** Update entity by providing where clause */
-  async updateWhere(
-    where: FindConditions<T>,
-    data: DeepPartial<T>,
-  ): Promise<T> {
-    const entity = await this.findOne({ where: parseQuery(where) });
-    return this.update(entity, data);
+  /** Update entity by providing where clause. Only one entity updated. */
+  async updateWhere(where: FindConditions<T>, data: Partial<T>): Promise<T> {
+    // Don't parse query here. findOne will
+    const entity = await this.findOne(where);
+    const updated = await this.update(entity, data);
+    return updated;
   }
 
   /** Remove entity */
-  async delete(entityOrId: T | string, userForsoftDelete?: User): Promise<T> {
+  async delete(entityOrId: T | string, userForSoftDelete?: User): Promise<T> {
     try {
       const entity = await this.convertToEntity(entityOrId);
-      if (this.canSoftDelete(entity) && userForsoftDelete) {
+      if (this.canSoftDelete(entity) && userForSoftDelete) {
         entity.deleted.at = new Date();
-        entity.deleted.by = userForsoftDelete;
+        entity.deleted.by = userForSoftDelete;
         const deleted = await this.update(entity);
         return deleted;
       }
@@ -169,21 +171,19 @@ export abstract class BaseService<T extends WithId = any> {
    *  where = {id: someId, parentId: someParentId}
    */
   async deleteWhere(where: FindConditions<T>): Promise<T> {
-    const entity = await this.findOne({ where: parseQuery(where) });
+    const entity = await this.findOne({ where });
     return this.delete(entity);
   }
 
   /** Count result of a query */
   async count(
     filter: OrmWhere<T>,
-    options: FindManyParams<T> = {},
-    parse = true,
+    searchOptions: FindManyParams<T> = {},
   ): Promise<number> {
     try {
-      // Don't return directly, handle errors first
       const count = await this.repository.count({
-        ...options,
-        where: parse ? parseQuery(filter) : filter,
+        ...searchOptions,
+        where: parseQuery(filter),
       });
       return count;
     } catch (error) {

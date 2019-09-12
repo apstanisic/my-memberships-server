@@ -69,8 +69,4 @@ export class PaginationParams<T = any> {
   @IsArray()
   @IsString({ each: true })
   relations: string[] = [];
-  /** Should query be parsed */
-
-  @IsBoolean()
-  shouldParse: boolean = true;
 }

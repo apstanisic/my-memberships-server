@@ -14,9 +14,9 @@ describe('Parse object to orm query', () => {
       field5__lk: 'some-value',
       field6__in: '[1,2,3,4]',
       field7__btw: '[1,3]',
-      field8__man: 'some-value',
-      field9__eq: 'some-value',
-      field10: 'some-value',
+      field8__eq: 'some-value',
+      field9: 'some-value',
+      // field8__man: 'some-value',
     };
   });
 
