@@ -1,3 +1,6 @@
+/.env
+/.production.env
+
 # compiled output
 /dist
 /node_modules
@@ -12,7 +15,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # OS
-.DS_Store
+.DS_Store,
 
 # Tests
 /coverage
@@ -33,3 +36,4 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+

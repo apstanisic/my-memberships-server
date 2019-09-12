@@ -47,6 +47,7 @@
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
+    "sqlite3": "^4.1.0",
     "sqlstring": "^2.3.1",
     "typeorm": "^0.2.18"
   },

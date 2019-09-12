@@ -18,6 +18,7 @@
     "allowUnreachableCode": false,
     "resolveJsonModule": true,
     "preserveConstEnums": true
+    // "allowJs": true
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src"]
