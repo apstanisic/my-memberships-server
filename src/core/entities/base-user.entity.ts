@@ -10,7 +10,7 @@ import { IUser } from './user.interface';
  * This should be general user that can be extracted in seperate module.
  * There should be another entity User that contains app specific properties.
  */
-export abstract class BaseUser extends BaseEntity implements IUser {
+export class BaseUser extends BaseEntity implements IUser {
   /** User Email, has to be unique and to be valid email */
   @Column()
   @Index({ unique: true })

@@ -20,6 +20,7 @@ export class Arrival extends BaseEntity {
   subscriptionId: string;
 
   /** At which location did arrival happen */
+  /* istanbul ignore next */
   @ManyToOne(type => Location, location => location.arrivals, {
     nullable: true,
     onDelete: 'SET NULL',

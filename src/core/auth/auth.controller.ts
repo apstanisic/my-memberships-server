@@ -11,15 +11,24 @@ import { plainToClass, classToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
 import { UsersService } from '../../user/user.service';
 import { LoginData, SignInResponse, RegisterData } from './auth.dto';
-import { User } from '../../user/user.entity';
 import { MailService } from '../mail/mail.service';
+import { BaseUser } from '../entities/base-user.entity';
+import { Struct } from '../types';
+
+/** AuthController needs this method. Implement so we can inject usersService */
+interface IUsersService {
+  attemptLogin: (email: string, password: string) => Promise<SignInResponse>;
+  findOne: (filter: Struct) => Promise<BaseUser>;
+  create: (user: RegisterData) => Promise<BaseUser>;
+  update: (user: BaseUser, newData?: any) => Promise<BaseUser>;
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersService: UsersService,
     private readonly mailService: MailService,
+    private readonly usersService: UsersService,
   ) {}
 
   /** Attempt to login user */
@@ -51,7 +60,7 @@ export class AuthController {
   async confirmAccout(
     @Param('email') email: string,
     @Param('token') token: string,
-  ): Promise<User> {
+  ): Promise<BaseUser> {
     const user = await this.usersService.findOne({ email });
     if (user === undefined) throw new UnauthorizedException();
     if (user.secureToken !== token) throw new BadRequestException();
@@ -59,6 +68,6 @@ export class AuthController {
     user.secureToken = undefined;
     user.tokenCreatedAt = undefined;
     await this.usersService.update(user);
-    return plainToClass(User, user);
+    return plainToClass(BaseUser, user);
   }
 }

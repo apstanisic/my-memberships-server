@@ -5,11 +5,13 @@ import {
   IsOptional,
   Length,
   IsNumber,
+  ArrayMaxSize,
 } from 'class-validator';
 import { Company } from '../company/company.entity';
 import { Arrival } from '../arrivals/arrivals.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Workhours } from './workhours';
+import { ImageSizes } from '../core/types';
 
 // In future maybe add number that represents position in
 // globe, so it's less expensive to find near places
@@ -61,4 +63,10 @@ export class Location extends BaseEntity {
   @IsOptional()
   @IsNumber()
   long?: number;
+
+  /** Path to images of this location. Currently 5 images max */
+  @Column({ type: 'simple-json', default: [] })
+  @IsString({ each: true })
+  @ArrayMaxSize(5)
+  images: ImageSizes[];
 }

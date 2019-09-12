@@ -19,8 +19,8 @@ import { GetUserPipe } from '../../user/get-user.pipe';
 @Controller('auth')
 export class PasswordResetController {
   constructor(
-    private readonly usersService: UsersService,
     private readonly mailService: MailService,
+    private readonly usersService: UsersService,
   ) {}
 
   /** Send email with reset instruction */

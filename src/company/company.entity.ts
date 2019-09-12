@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsInt,
+  ArrayMaxSize,
 } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
@@ -17,6 +18,7 @@ import { Location } from '../locations/location.entity';
 import { DeletedColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
+import { ImageSizes } from '../core/types';
 
 /**
  * Company can be deleted only if there is no more
@@ -88,4 +90,10 @@ export class Company extends BaseEntity implements SoftDelete {
     onDelete: 'CASCADE',
   })
   locations: Location[];
+
+  /** Path to images of company. Currently 5 images max */
+  @Column({ type: 'simple-json', default: [] })
+  @IsString({ each: true })
+  @ArrayMaxSize(5)
+  images: ImageSizes[];
 }
