@@ -1,4 +1,5 @@
 /.env
+/production.env
 /.production.env
 
 # compiled output
