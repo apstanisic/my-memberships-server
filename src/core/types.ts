@@ -21,3 +21,11 @@ export interface WithId {
 }
 
 export type Struct<T = any> = Record<string, T>;
+
+export type ImageSizes = {
+  xs?: string; // 168px
+  sm?: string; // 320px
+  md?: string; // 640px
+  lg?: string; // 1280px
+  xl?: string; // 1920px
+};

@@ -5,9 +5,12 @@ import { UsersService } from '../../user/user.service';
 import { AuthService } from './auth.service';
 import { User } from '../../user/user.entity';
 
+const testUser = new User();
+testUser.email = 'testemail@email.com';
+
 const jwtMock = jest.fn(() => ({ sign: (value: any): string => value }));
-const findMock = jest.fn().mockReturnValue(new User());
-const findOneMock = jest.fn().mockReturnValue(new User());
+const findMock = jest.fn().mockResolvedValue(testUser);
+const findOneMock = jest.fn().mockResolvedValue(testUser);
 const userMock = jest.fn(() => ({
   findForLogin: findMock,
   findOne: findOneMock,
@@ -29,37 +32,46 @@ describe('AuthService', () => {
     userMock.mockClear();
   });
 
-  it('creates passed value to jwt.sign', () => {
-    expect(authService.createJwt('test')).toEqual({ email: 'test' });
-    expect(authService.createJwt('any-value')).toEqual({ email: 'any-value' });
+  describe('createJwt', () => {
+    it('creates passed value to jwt.sign', () => {
+      expect(authService.createJwt('test')).toEqual({ email: 'test' });
+      expect(authService.createJwt('any-value')).toEqual({
+        email: 'any-value',
+      });
+    });
   });
 
-  it('validates jwt', async () => {
-    await expect(
-      authService.validateJwt({ email: 'valid@email.com' }),
-    ).resolves.toBeInstanceOf(User);
+  describe('validateJwt', () => {
+    it('validates jwt', async () => {
+      await expect(
+        authService.validateJwt({ email: 'valid@email.com' }),
+      ).resolves.toBeInstanceOf(User);
+    });
+
+    it('throws on invalid values', async () => {
+      await expect(authService.validateJwt(undefined as any)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(
+        authService.validateJwt({ email: 'bad-email' }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('passes findOne error', async () => {
+      findOneMock.mockRejectedValue(new NotFoundException());
+      await expect(
+        authService.validateJwt({ email: 'test@email.com' }),
+      ).rejects.toThrow(NotFoundException);
+    });
   });
 
-  it('throws on invalid values', async () => {
-    await expect(authService.validateJwt(undefined as any)).rejects.toThrow(
-      BadRequestException,
-    );
-    await expect(
-      authService.validateJwt({ email: 'bad-email' }),
-    ).rejects.toThrow(BadRequestException);
-  });
+  describe('attemptLogin', () => {
+    it('returns user jwt token', async () => {
+      const token = await authService.createJwt(testUser.email);
 
-  it('passes findOne error', async () => {
-    findOneMock.mockRejectedValue(new NotFoundException());
-    await expect(
-      authService.validateJwt({ email: 'test@email.com' }),
-    ).rejects.toThrow(NotFoundException);
-  });
-
-  it('passes findOne error', async () => {
-    findOneMock.mockRejectedValue(new NotFoundException());
-    await expect(
-      authService.validateJwt({ email: 'test@email.com' }),
-    ).rejects.toThrow(NotFoundException);
+      await expect(
+        authService.attemptLogin(testUser.email, 'password'),
+      ).resolves.toEqual({ user: testUser, token });
+    });
   });
 });

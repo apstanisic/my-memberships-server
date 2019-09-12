@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { User } from '../../user/user.entity';
+import { BaseUser } from '../entities/base-user.entity';
 
 /** Data provided for login */
 export class LoginData {
@@ -33,5 +34,5 @@ export class UpdatePasswordData {
 export class SignInResponse {
   token: string;
 
-  user: User;
+  user: BaseUser;
 }
