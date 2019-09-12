@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Company } from './company.entity';
 import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
@@ -37,10 +37,7 @@ export class CompanyService extends BaseService<Company> {
    * We can do create(entity, owner) cause of TS limitations.
    * More info: https://stackoverflow.com/questions/33542359
    */
-  async createCompany(
-    entity: DeepPartial<Company>,
-    owner: User,
-  ): Promise<Company> {
+  async createCompany(entity: Partial<Company>, owner: User): Promise<Company> {
     const company = await this.create({ ...entity, owner });
     await this.roleService.create({
       user: owner,
