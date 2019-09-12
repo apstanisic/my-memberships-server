@@ -19,7 +19,6 @@ describe('Paginator', () => {
 
   it('executes with valid params', async () => {
     const params = new PaginationParams();
-    params.shouldParse = false;
     params.currentUrl = '/hello/world';
     params.cursor = new GenerateCursor(
       {

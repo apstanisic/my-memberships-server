@@ -3,6 +3,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 
@@ -22,7 +23,7 @@ create.mockResolvedValue(exampleEntity);
 const save = jest.fn();
 save.mockResolvedValue(exampleEntity);
 const merge = jest.fn();
-merge.mockResolvedValue(exampleEntity);
+merge.mockReturnValue(exampleEntity);
 const remove = jest.fn();
 remove.mockResolvedValue(exampleEntity);
 const count = jest.fn();
@@ -39,19 +40,23 @@ const repoMock = jest.fn(() => ({
   count,
 }));
 // Base service is abstract class
-class Service extends BaseService {
+class Service extends BaseService<any> {
   public async convertToEntity(value: any): Promise<any> {
     return super.convertToEntity(value);
   }
 }
-describe('Base Service', () => {
+
+/** Base service */
+describe('BaseService', () => {
   let service: Service;
 
+  /** Before each test */
   beforeEach(() => {
     service = new Service(repoMock() as any);
     jest.clearAllMocks();
   });
 
+  /** Testing service.findOne */
   describe('findOne', () => {
     it('successfully finds entity with id', async () => {
       const res = service.findOne('querty');
@@ -67,20 +72,6 @@ describe('Base Service', () => {
       expect(findOne).toBeCalledWith({ where: { id: Equal(5) } });
     });
 
-    it('successfully finds entity without parsed query', async () => {
-      const res = service.findOne({ id: 'some-id' }, {}, false);
-      await expect(res).resolves.toEqual(exampleEntity);
-      expect(findOne).toBeCalledTimes(1);
-      expect(findOne).toBeCalledWith({ where: { id: 'some-id' } });
-    });
-
-    it('successfully finds entity without parsed id', async () => {
-      const res = service.findOne('some-id', {}, false);
-      await expect(res).resolves.toEqual(exampleEntity);
-      expect(findOne).toBeCalledTimes(1);
-      expect(findOne).toBeCalledWith({ where: { id: 'some-id' } });
-    });
-
     it('throws if entity not found', async () => {
       findOne.mockResolvedValue(Promise.resolve(undefined));
       const res = service.findOne('id');
@@ -89,14 +80,14 @@ describe('Base Service', () => {
     });
 
     it('throws if entity not found', async () => {
-      findOne.mockRejectedValue(new Error('Test Error'));
+      findOne.mockRejectedValue(new Error('findOne'));
       const res = service.findOne('id');
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(findOne).toBeCalledTimes(1);
     });
   });
 
-  // Find by Ids
+  /** Test service.findByIds */
   describe('findByIds', () => {
     it('returns find value', async () => {
       findByIds.mockResolvedValue(Promise.resolve(['value1', 'value2']));
@@ -111,12 +102,13 @@ describe('Base Service', () => {
     });
 
     it('throws if repo throw', async () => {
-      findByIds.mockRejectedValue(new Error('findByIds error'));
+      findByIds.mockRejectedValue(new Error('findByIds'));
       const res = service.findByIds([1, 2, 3, 4]);
       await expect(res).rejects.toThrow(InternalServerErrorException);
     });
   });
 
+  /** Testing service.find */
   describe('find', () => {
     it('returns found results', async () => {
       const res = service.find({ some: 'value' });
@@ -125,15 +117,8 @@ describe('Base Service', () => {
       expect(find).toBeCalledWith({ where: { some: Equal('value') } });
     });
 
-    it('returns found results without parse', async () => {
-      const res = service.find({ some: 'value' }, false);
-      await expect(res).resolves.toEqual([exampleEntity]);
-      expect(find).toBeCalledTimes(1);
-      expect(find).toBeCalledWith({ where: { some: 'value' } });
-    });
-
     it('throws if repo throws', async () => {
-      find.mockRejectedValue(new Error('test error'));
+      find.mockRejectedValue(new Error('find'));
       const res = service.find({ some: 'value' });
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(find).toBeCalledTimes(1);
@@ -141,6 +126,7 @@ describe('Base Service', () => {
     });
   });
 
+  /** Testing service.count */
   describe('count', () => {
     it('counts results', async () => {
       const res = service.count({ some: 'value' });
@@ -149,30 +135,22 @@ describe('Base Service', () => {
       expect(count).toBeCalledWith({ where: { some: Equal('value') } });
     });
 
-    it('counts results without parsing', async () => {
-      const res = service.count({ some: 'value' }, {}, false);
-      await expect(res).resolves.toEqual(3);
-      expect(count).toBeCalledTimes(1);
-      expect(count).toBeCalledWith({ where: { some: 'value' } });
-    });
-
     it('passes second param to repo', async () => {
       const res = service.count(
         { some: 'value' },
         { relations: ['user'], take: 10 },
-        false,
       );
       await expect(res).resolves.toEqual(3);
       expect(count).toBeCalledTimes(1);
       expect(count).toBeCalledWith({
-        where: { some: 'value' },
+        where: { some: Equal('value') },
         relations: ['user'],
         take: 10,
       });
     });
 
     it('throws if repo throws', async () => {
-      count.mockRejectedValue(new Error('test error'));
+      count.mockRejectedValue(new Error('count'));
       const res = service.count({ some: 'value' });
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(count).toBeCalledTimes(1);
@@ -180,6 +158,10 @@ describe('Base Service', () => {
     });
   });
 
+  /**
+   * Testing service.convertToEntity
+   * This is protected method
+   */
   describe('convertToEntity', () => {
     it('returns same entity instance if value entity', async () => {
       const res = service.convertToEntity(exampleEntity);
@@ -204,7 +186,7 @@ describe('Base Service', () => {
     });
 
     it('passes thrown error upstairs', async () => {
-      findOne.mockRejectedValue(new Error('test error'));
+      findOne.mockRejectedValue(new Error('convertToEntity'));
       const res = service.convertToEntity('value');
       await expect(res).rejects.toThrow(Error);
       expect(findOne).toHaveBeenCalledTimes(1);
@@ -212,6 +194,7 @@ describe('Base Service', () => {
     });
   });
 
+  /** Testing service.delete */
   describe('delete', () => {
     it('deletes an entity with id', async () => {
       findOne.mockResolvedValue(exampleEntity);
@@ -232,7 +215,7 @@ describe('Base Service', () => {
     });
 
     it('throws if convertToEntity throws', async () => {
-      findOne.mockRejectedValue(new Error('test error'));
+      findOne.mockRejectedValue(new Error('delete convert throws'));
       // remove.mockResolvedValue(exampleEntity);
       const res = service.delete('entity-id');
       await expect(res).rejects.toThrow(InternalServerErrorException);
@@ -242,7 +225,7 @@ describe('Base Service', () => {
 
     it('throws if remove throws', async () => {
       findOne.mockResolvedValue(exampleEntity);
-      remove.mockRejectedValue(new Error('test error'));
+      remove.mockRejectedValue(new Error('delete remove throws'));
       const res = service.delete('entity-id');
       await expect(res).rejects.toThrow(InternalServerErrorException);
       expect(findOne).toBeCalledTimes(1);
@@ -256,6 +239,68 @@ describe('Base Service', () => {
       await expect(res).resolves.toMatchObject(exampleEntity);
       expect(findOne).not.toBeCalled();
       expect(remove).not.toBeCalled();
+    });
+  });
+
+  /** Testing service.update */
+  describe('update', () => {
+    it('updates the user with id', async () => {
+      const res = service.update('entity-id', { id: 'test' });
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(findOne).toBeCalledTimes(1);
+      expect(merge).toBeCalledTimes(1);
+      expect(merge).toBeCalledWith(exampleEntity, { id: 'test' });
+      expect(save).toBeCalledTimes(1);
+    });
+
+    it('updates the user', async () => {
+      const res = service.update(exampleEntity, { id: 'test' });
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(findOne).not.toBeCalled();
+      expect(merge).toBeCalledTimes(1);
+      expect(merge).toBeCalledWith(exampleEntity, { id: 'test' });
+      expect(save).toBeCalledTimes(1);
+    });
+
+    it('updates the user without new data', async () => {
+      const res = service.update(exampleEntity);
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(findOne).not.toBeCalled();
+      expect(merge).toBeCalledTimes(1);
+      expect(merge).toBeCalledWith(exampleEntity, {});
+      expect(save).toBeCalledTimes(1);
+    });
+
+    it('throws if repo throws', async () => {
+      save.mockRejectedValue(new Error('update repo throws'));
+      const res = service.update(exampleEntity);
+      await expect(res).rejects.toThrow(BadRequestException);
+      expect(merge).toBeCalledWith(exampleEntity, {});
+    });
+
+    it('throws if repo.merge throws', async () => {
+      merge.mockImplementation(() => {
+        throw new Error('update merge throws');
+      });
+      const res = service.update(exampleEntity);
+      await expect(res).rejects.toThrow(BadRequestException);
+      expect(merge).toBeCalledWith(exampleEntity, {});
+    });
+  });
+
+  /** Testing service.updateWhere */
+  describe('updateWhere', () => {
+    it('updates entity with conditions', async () => {
+      save.mockResolvedValue(exampleEntity);
+      merge.mockResolvedValue(exampleEntity);
+      findOne.mockResolvedValue(exampleEntity);
+      const res = service.updateWhere({ id: '34' } as any, exampleEntity);
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(findOne).toBeCalledTimes(1);
+      expect(findOne).toBeCalledWith({ where: { id: Equal('34') } });
+      expect(merge).toBeCalledTimes(1);
+      expect(merge).toBeCalledWith(exampleEntity, exampleEntity);
+      expect(save).toBeCalledTimes(1);
     });
   });
 });

@@ -46,7 +46,7 @@ export class Paginator<T extends WithId> {
   private requestQuery: OrmWhere<T>;
 
   /** Should paginator parse query to TypeOrm format */
-  private shouldParseQuery?: boolean = true;
+  // private shouldParseQuery?: boolean = true;
 
   constructor(repo: Repository<T>) {
     this.repo = repo;
@@ -63,11 +63,11 @@ export class Paginator<T extends WithId> {
     this.cursor = params.cursor;
     this.requestQuery = params.where;
     this.relations = params.relations;
-    this.shouldParseQuery = params.shouldParse;
+    // this.shouldParseQuery = params.shouldParse;
   }
 
   /* Execute query */
-  async execute(filter?: OrmWhere<T>, useQuery = true): PgResult<T> {
+  async execute(filter?: OrmWhere<T>): PgResult<T> {
     let cursorQuery;
     if (this.cursor) {
       cursorQuery = new ParseCursor(this.cursor).query;
@@ -77,14 +77,15 @@ export class Paginator<T extends WithId> {
 
     // If filter is not provided,
     // and user didn't forbid to use query, use query
-    const whereQuery = filter && useQuery ? filter : this.requestQuery;
+    const whereQuery = filter || this.requestQuery;
     if (typeof whereQuery === 'string') {
       throw new BadRequestException('Filter is string');
     }
 
-    let where = this.shouldParseQuery
-      ? parseQuery(whereQuery)
-      : convertToObject(whereQuery);
+    // let where = this.shouldParseQuery
+    //   ? parseQuery(whereQuery)
+    //   : convertToObject(whereQuery);
+    let where = convertToObject(whereQuery);
     where = { ...where, ...cursorQuery };
 
     const result = await this.repo.find({

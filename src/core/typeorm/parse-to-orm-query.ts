@@ -68,14 +68,16 @@ export function parseQuery<T = any>(
           }
         } catch (error) {}
         break;
-      case 'man':
-        // Do nothing, handle manually. If not handled TypeOrm will assume Eq
-        typeOrmQuery[`${name}__man`] = value;
-        break;
       // If it isn't provided, assume equal
       default:
         typeOrmQuery[name] = Equal(value);
         break;
+      // This option can be abused. Better use manually,
+      // then to let someone bypass parsing query
+      // case 'man':
+      //   // Do nothing, handle manually. If not handled TypeOrm will assume Eq
+      //   typeOrmQuery[`${name}__man`] = value;
+      //   break;
     }
   });
 
