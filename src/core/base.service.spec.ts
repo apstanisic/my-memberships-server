@@ -11,14 +11,22 @@ Logger.overrideLogger(true);
 
 const exampleEntity = { id: 'qwerty', name: 'some name' };
 
-const find = jest.fn().mockResolvedValue([exampleEntity]);
-const findOne = jest.fn().mockResolvedValue(exampleEntity);
-const findByIds = jest.fn().mockResolvedValue([exampleEntity]);
-const create = jest.fn().mockResolvedValue(exampleEntity);
-const save = jest.fn().mockResolvedValue(exampleEntity);
-const merge = jest.fn().mockResolvedValue(exampleEntity);
-const remove = jest.fn().mockResolvedValue(exampleEntity);
-const count = jest.fn().mockReturnValue(3);
+const find = jest.fn();
+find.mockResolvedValue([exampleEntity]);
+const findOne = jest.fn();
+findOne.mockResolvedValue(exampleEntity);
+const findByIds = jest.fn();
+findByIds.mockResolvedValue([exampleEntity]);
+const create = jest.fn();
+create.mockResolvedValue(exampleEntity);
+const save = jest.fn();
+save.mockResolvedValue(exampleEntity);
+const merge = jest.fn();
+merge.mockResolvedValue(exampleEntity);
+const remove = jest.fn();
+remove.mockResolvedValue(exampleEntity);
+const count = jest.fn();
+count.mockResolvedValue(3);
 
 const repoMock = jest.fn(() => ({
   find,
@@ -41,10 +49,7 @@ describe('Base Service', () => {
 
   beforeEach(() => {
     service = new Service(repoMock() as any);
-    findOne.mockClear();
-    findByIds.mockClear();
-    find.mockClear();
-    count.mockClear();
+    jest.clearAllMocks();
   });
 
   describe('findOne', () => {
@@ -183,7 +188,7 @@ describe('Base Service', () => {
     });
 
     it('converts string to entity', async () => {
-      findOne.mockResolvedValue(Promise.resolve(exampleEntity));
+      findOne.mockResolvedValue(exampleEntity);
       const res = service.convertToEntity('value');
       await expect(res).resolves.toBe(exampleEntity);
       expect(findOne).toHaveBeenCalledTimes(1);
@@ -191,7 +196,7 @@ describe('Base Service', () => {
     });
 
     it('converts string to entity', async () => {
-      findOne.mockResolvedValue(Promise.resolve(exampleEntity));
+      findOne.mockResolvedValue(exampleEntity);
       const res = service.convertToEntity('value');
       await expect(res).resolves.toBe(exampleEntity);
       expect(findOne).toHaveBeenCalledTimes(1);
@@ -204,6 +209,53 @@ describe('Base Service', () => {
       await expect(res).rejects.toThrow(Error);
       expect(findOne).toHaveBeenCalledTimes(1);
       expect(findOne).toHaveBeenCalledWith('value');
+    });
+  });
+
+  describe('delete', () => {
+    it('deletes an entity with id', async () => {
+      findOne.mockResolvedValue(exampleEntity);
+      remove.mockResolvedValue(exampleEntity);
+      const res = service.delete('some-id');
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(remove).toBeCalledTimes(1);
+      expect(remove).toReturnWith(Promise.resolve(exampleEntity));
+    });
+
+    it('deletes an entity', async () => {
+      findOne.mockResolvedValue(exampleEntity);
+      remove.mockResolvedValue(exampleEntity);
+      const res = service.delete(exampleEntity);
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(remove).toBeCalledTimes(1);
+      expect(remove).toReturnWith(Promise.resolve(exampleEntity));
+    });
+
+    it('throws if convertToEntity throws', async () => {
+      findOne.mockRejectedValue(new Error('test error'));
+      // remove.mockResolvedValue(exampleEntity);
+      const res = service.delete('entity-id');
+      await expect(res).rejects.toThrow(InternalServerErrorException);
+      expect(findOne).toBeCalledTimes(1);
+      expect(remove).not.toBeCalled();
+    });
+
+    it('throws if remove throws', async () => {
+      findOne.mockResolvedValue(exampleEntity);
+      remove.mockRejectedValue(new Error('test error'));
+      const res = service.delete('entity-id');
+      await expect(res).rejects.toThrow(InternalServerErrorException);
+      expect(findOne).toBeCalledTimes(1);
+      expect(remove).toBeCalledTimes(1);
+    });
+
+    it('soft delete entity', async () => {
+      const softDelete = { ...exampleEntity, deleted: {} };
+      const user = { id: 'any' };
+      const res = service.delete(softDelete, user as any);
+      await expect(res).resolves.toMatchObject(exampleEntity);
+      expect(findOne).not.toBeCalled();
+      expect(remove).not.toBeCalled();
     });
   });
 });

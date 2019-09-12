@@ -152,9 +152,11 @@ export abstract class BaseService<T extends WithId = any> {
       if (this.canSoftDelete(entity) && userForsoftDelete) {
         entity.deleted.at = new Date();
         entity.deleted.by = userForsoftDelete;
-        return this.update(entity);
+        const deleted = await this.update(entity);
+        return deleted;
       }
-      return this.repository.remove(entity);
+      const deleted = await this.repository.remove(entity);
+      return deleted;
     } catch (error) {
       throw this.internalError(error);
     }
