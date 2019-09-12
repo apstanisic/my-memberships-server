@@ -6,7 +6,6 @@ import {
   IsInt,
   IsArray,
   IsString,
-  IsBoolean,
 } from 'class-validator';
 import { IsBetween } from '../is-between';
 import { OrmWhere, Struct } from '../types';

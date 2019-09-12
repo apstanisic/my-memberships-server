@@ -109,13 +109,13 @@ export abstract class BaseService<T extends WithId = any> {
     } else {
       combinedOptions.where = where;
     }
-    combinedOptions.where = parseQuery(where);
+    combinedOptions.where = parseQuery(combinedOptions.where);
 
     const paginated = await paginate({ repository, options: combinedOptions });
     return paginated;
   }
 
-  /* Create new entity */
+  /** Create new entity */
   async create(entity: Partial<T>): Promise<T> {
     try {
       const createdEntity = this.repository.create(entity);
@@ -170,9 +170,13 @@ export abstract class BaseService<T extends WithId = any> {
    * @example
    *  where = {id: someId, parentId: someParentId}
    */
-  async deleteWhere(where: FindConditions<T>): Promise<T> {
-    const entity = await this.findOne({ where });
-    return this.delete(entity);
+  async deleteWhere(
+    where: FindConditions<T>,
+    userForSoftDelete?: User,
+  ): Promise<T> {
+    const entity = await this.findOne(where);
+    const deleted = await this.delete(entity);
+    return deleted;
   }
 
   /** Count result of a query */
