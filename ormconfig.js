@@ -1,8 +1,12 @@
+const path = require('path');
+const dotenv = require('dotenv');
 /* This is config file for TypeOrm */
-const { getMetadataArgsStorage } = require('typeorm');
-require('dotenv').config();
+// const { getMetadataArgsStorage } = require('typeorm');
 
-const envs = process.env;
+const nodeEnv = process.env.NODE_ENV || '';
+const envs = dotenv.config({ path: `${nodeEnv}.env` }).parsed;
+
+// const envs = process.env;
 
 const config = {
   type: envs.DB_TYPE,
@@ -28,7 +32,7 @@ const config = {
 if (process.env.NODE_ENV === 'production') {
   config.entities = ['dist/**/*.entity.js'];
 } else {
-  config.synchronize = true;
+  // config.synchronize = true;
   config.logging = 'all';
   config.migrations = ['db/migrations/*{.ts,.js}'];
   // This is for migration
