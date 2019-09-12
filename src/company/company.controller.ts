@@ -42,7 +42,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async create(
-    @Body() data: DeepPartial<Company>,
+    @Body() data: Partial<Company>,
     @GetUser() user: User,
   ): Promise<Company> {
     return this.service.createCompany(data, user);
