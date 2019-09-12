@@ -1,6 +1,9 @@
+# Possible .env files for production
 /.env
 /production.env
 /.production.env
+/.prod.env
+/prod.env
 
 # compiled output
 /dist
