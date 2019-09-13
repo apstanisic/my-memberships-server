@@ -11,6 +11,7 @@ import { LocationsModule } from '../locations/locations.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompaniesRolesModule } from '../companies-roles/companies-roles.module';
 import { CoreModule } from '../core/core.module';
+import { CompanyImagesModule } from '../company-images/company-images.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CoreModule } from '../core/core.module';
     SubscriptionModule,
     ArrivalsModule,
     CompaniesRolesModule,
+    CompanyImagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
