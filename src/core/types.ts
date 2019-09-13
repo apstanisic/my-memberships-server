@@ -22,10 +22,12 @@ export interface WithId {
 
 export type Struct<T = any> = Record<string, T>;
 
-export type ImageSizes = {
+export type ImageMetadata = {
+  id: string; // uuid
+  position: number; // Zero index
   xs?: string; // 168px
   sm?: string; // 320px
   md?: string; // 640px
   lg?: string; // 1280px
-  xl?: string; // 1920px
+  // xl?: string; // 1920px // curently lg is max
 };
