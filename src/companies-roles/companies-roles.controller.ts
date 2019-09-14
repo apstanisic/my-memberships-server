@@ -30,7 +30,7 @@ import { Role } from '../core/access-control/roles.entity';
  * @method findRoleById Find role by id.
  * @method findUsersRoles Finds all roles given user has in company.
  * That is usually one role.
- * @method findAllWhoHaveGivenRole Find users that have that role in company.
+ * @method findAllWhoHaveARoleInCompany Find users that have role in company.
  * @method addNewRole Create new role for this company.
  * @method changeRole Change role.
  * @method deleteRole Delete role.
@@ -63,7 +63,7 @@ export class CompaniesRolesController {
   /** Get all users that have given role in this company */
   @IfAllowed('read')
   @Get('name/:roleName')
-  findAllWhoHaveGivenRole(
+  findAllWhoHaveARoleInCompany(
     @Param('roleName', ValidRole) roleName: RoleName,
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetPagination() pg: PaginationParams,

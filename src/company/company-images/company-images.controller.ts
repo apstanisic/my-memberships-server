@@ -10,18 +10,16 @@ import {
   Param,
   NotImplementedException,
   UseGuards,
-  Body,
-  BadRequestException,
 } from '@nestjs/common';
-import { ValidUUID } from '../core/uuid.pipe';
-import { UUID, ImageMetadata } from '../core/types';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
+import { ValidUUID } from '../../core/uuid.pipe';
+import { UUID } from '../../core/types';
+import { PermissionsGuard } from '../../core/access-control/permissions.guard';
 import { validImage } from './multer-options';
-import { CompanyService } from '../company/company.service';
-import { LocationsService } from '../locations/locations.service';
+import { CompanyService } from '../company.service';
+import { LocationsService } from '../../locations/locations.service';
 import { CompanyImagesService } from './company-images.service';
-import { Company } from '../company/company.entity';
-import { Location } from '../locations/location.entity';
+import { Company } from '../company.entity';
+import { Location } from '../../locations/location.entity';
 
 // @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId')
