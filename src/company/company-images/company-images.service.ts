@@ -1,6 +1,6 @@
 import * as Faker from 'faker';
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { ImageMetadata, UUID } from '../core/types';
+import { ImageMetadata, UUID } from '../../core/types';
 
 @Injectable()
 export class CompanyImagesService {
