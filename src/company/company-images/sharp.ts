@@ -1,10 +1,13 @@
 import * as sharp from 'sharp';
+import { Struct } from '../../core/types';
 
 /**
  * Compress and generate different sizes for saving to external services
  * @param image Image to be compressed, and generate different sizes
  */
-export async function generateImages(image: Buffer): Promise<any> {
+export async function generateAllImageSizes(
+  image: Buffer,
+): Promise<Struct<Buffer>> {
   const base = sharp(image);
   // .jpeg({ quality: 70 });
   const xs = base

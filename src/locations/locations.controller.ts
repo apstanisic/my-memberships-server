@@ -18,6 +18,8 @@ import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
 import { Location } from './location.entity';
 import { PgResult } from '../core/pagination/pagination.types';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
 
 /**
  * Controller for managing locations
@@ -75,7 +77,8 @@ export class LocationsController {
   async delete(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('id', ValidUUID) id: string,
+    @GetUser() user: User,
   ): Promise<Location> {
-    return this.locationsService.deleteWhere({ id, companyId });
+    return this.locationsService.deleteWhere({ id, companyId }, { by: user });
   }
 }

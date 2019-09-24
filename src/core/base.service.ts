@@ -9,6 +9,7 @@ import {
   Logger,
   InternalServerErrorException,
   BadRequestException,
+  Optional,
 } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { parseQuery } from './typeorm/parse-to-orm-query';
@@ -18,9 +19,17 @@ import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
 import { SoftDelete } from './entities/soft-delete.interface';
 import { User } from '../user/user.entity';
+import { IUser } from './entities/user.interface';
+import { Log } from './logger/log.entity';
+import { LoggerService } from './logger/logger.service';
 
 type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
+
+export interface LogMetadata {
+  by: User;
+  reason?: string;
+}
 
 /**
  * Base service that implements some basic crud methods.
@@ -32,7 +41,10 @@ type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
  * to users.
  */
 export abstract class BaseService<T extends WithId = any> {
-  constructor(protected readonly repository: Repository<T>) {}
+  constructor(
+    protected readonly repository: Repository<T>,
+    @Optional() private readonly logService?: LoggerService<T>,
+  ) {}
 
   /** Logger */
   protected logger = new Logger();
@@ -116,10 +128,10 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Create new entity */
-  async create(entity: Partial<T>): Promise<T> {
+  async create(data: Partial<T>, meta?: LogMetadata): Promise<T> {
     try {
-      const createdEntity = this.repository.create(entity);
-      const savedEntity = await this.repository.save(createdEntity);
+      const entity = this.repository.create(data);
+      const savedEntity = await this.repository.save(entity);
       return savedEntity;
     } catch (error) {
       throw new BadRequestException(error);
@@ -127,11 +139,32 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Update entity */
-  async update(entityOrId: T | string, data: Partial<T> = {}): Promise<T> {
+  async update(
+    entityOrId: T | string,
+    data: Partial<T> = {},
+    meta?: LogMetadata,
+  ): Promise<T> {
     const entity = await this.convertToEntity(entityOrId);
+    // const entity = await this.findOne(entityOrId);
+    let log: Log | undefined;
+
+    if (this.logService) {
+      log = this.logService.init({
+        oldValue: entity,
+        user: meta!.by,
+        reason: meta!.reason,
+      });
+    }
+
     try {
       this.repository.merge(entity, data);
       const updated = await this.repository.save(entity);
+
+      if (this.logService && log !== undefined) {
+        log.after = updated;
+        await this.logService.store(log, 'update');
+      }
+
       return updated;
     } catch (error) {
       this.logger.error(error);
@@ -140,24 +173,36 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Update entity by providing where clause. Only one entity updated. */
-  async updateWhere(where: FindConditions<T>, data: Partial<T>): Promise<T> {
-    // Don't parse query here. findOne will
+  async updateWhere(
+    where: FindConditions<T>,
+    data: Partial<T>,
+    meta?: LogMetadata,
+  ): Promise<T> {
     const entity = await this.findOne(where);
-    const updated = await this.update(entity, data);
+    const updated = await this.update(entity, data, meta);
     return updated;
   }
 
-  /** Remove entity */
-  async delete(entityOrId: T | string, userForSoftDelete?: User): Promise<T> {
+  /** Remove entity. */
+  async delete(entityOrId: T | string, logMetadata?: LogMetadata): Promise<T> {
     try {
       const entity = await this.convertToEntity(entityOrId);
-      if (this.canSoftDelete(entity) && userForSoftDelete) {
-        entity.deleted.at = new Date();
-        entity.deleted.by = userForSoftDelete;
-        const deleted = await this.update(entity);
-        return deleted;
+
+      let log: Log | undefined;
+      if (this.logService && logMetadata) {
+        log = this.logService.init({
+          oldValue: entity,
+          reason: logMetadata.reason,
+          user: logMetadata.by,
+        });
       }
+
       const deleted = await this.repository.remove(entity);
+
+      if (this.logService && log !== undefined) {
+        await this.logService.store(log, 'delete');
+      }
+
       return deleted;
     } catch (error) {
       throw this.internalError(error);
@@ -167,15 +212,16 @@ export abstract class BaseService<T extends WithId = any> {
   /** Delete first entity that match condition.
    * Useful when need more validation.
    * This will delete only if id match, but also parent match
+   * Deletion will always be logged if logService is provided
    * @example
    *  where = {id: someId, parentId: someParentId}
    */
   async deleteWhere(
     where: FindConditions<T>,
-    userForSoftDelete?: User,
+    logMetadata?: LogMetadata,
   ): Promise<T> {
     const entity = await this.findOne(where);
-    const deleted = await this.delete(entity);
+    const deleted = await this.delete(entity, logMetadata);
     return deleted;
   }
 

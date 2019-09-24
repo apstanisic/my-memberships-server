@@ -7,6 +7,12 @@ import { Client } from 'minio';
 import { ConfigService } from '../config/config.service';
 import { wait } from '../helpers';
 
+/**
+ * This service is wrapper around minio client.
+ * We are using cb and wrap them in promise cause AWS SDK does not contain
+ * promises nativly. We should be able to replace minio with AWS without
+ * changing underlying api.
+ */
 @Injectable()
 export class StorageService {
   /** Client that stores files */
@@ -41,38 +47,42 @@ export class StorageService {
 
   /**
    * Put file to storage, returns file path.
-   * @todo Fix retries for upload
+   * B2 offten returns 500. In that case just try again couple of times.
+   * It must be recursive, there is not better way.
+   * Don't touch this code unles you have to, it's B2's fault.
+   * B2 sucks, but it's cheapest file hosting. In case of switch to
+   * S3 or Wasabi, remove recursion, as it's not needed.
+   * Avoid changing number of attempts, it's there for recursion.
    */
-  async put(file: Buffer, name: string): Promise<string> {
+  async put(file: Buffer, name: string, _retries = 3): Promise<string> {
+    const filename = `/${this.bucket}/${name}`;
     return new Promise((res: (value: string) => any, rej): void => {
       this.client.putObject(
         this.bucket,
         name,
         file,
-        file.byteLength,
-        { 'Content-Type': 'image/jpeg' },
-        async (error: any) => {
-          if (error !== null) {
-            /* Dirty code, but it works */
-            /* Backblaze often returns 500 errors,  */
-            /* After 3 times with a same file, stop trying */
-            this.logger.warn('B2 returned error, try again. File name:', name);
+        // file.byteLength,
+        // { 'Content-Type': type },
+        (error: any) => {
+          // If there is no error, resolve;
+          if (error === null) return res(filename);
 
-            if (error.code === 'InternalError') {
-              await wait(200);
-              this.put(file, name)
-                .then(res)
-                .catch(err => this.put(file, name))
-                .then(res)
-                .catch(rej);
-            } else {
-              this.logger.error('B2 non fixable error ');
-              rej(error);
-            }
-          } else {
-            // res(result);
-            res(`/${this.bucket}/${name}`);
+          // If it's not 500 error or attempts are out. Reject for good
+          if (
+            !(error.code as string).includes('InternalError') ||
+            _retries === 0
+          ) {
+            this.logger.error('B2 non fixable error ');
+            return rej(error);
           }
+
+          // If it's 500 and there are more attempts, try this method again
+          this.logger.warn('B2 returned error, try again. File name:', name);
+          wait(100).then(() => {
+            this.put(file, name, _retries - 1)
+              .then(() => res(filename))
+              .catch(rej);
+          });
         },
       );
     });
@@ -106,7 +116,7 @@ export class StorageService {
   }
 
   /** Lists all files with given path (prefix) */
-  async listFiles(prefix: string): Promise<string[]> {
+  private async listFiles(prefix: string): Promise<string[]> {
     return new Promise((res, rej): void => {
       const filenames: string[] = [];
       const filesStream = this.client.listObjectsV2(this.bucket, prefix);

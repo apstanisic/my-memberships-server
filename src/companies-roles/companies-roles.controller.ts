@@ -21,6 +21,8 @@ import { RoleName } from '../core/access-control/roles.list';
 import { CreateRoleDto, UpdateRoleDto } from '../core/access-control/roles.dto';
 import { PgResult } from '../core/pagination/pagination.types';
 import { Role } from '../core/access-control/roles.entity';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
 
 /**
  * Every method is check for proper permissions.
@@ -114,7 +116,11 @@ export class CompaniesRolesController {
   async deleteRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
+    @GetUser() user: User,
   ): Promise<Role> {
-    return this.rolesService.deleteWhere({ id: roleId, domain: companyId });
+    return this.rolesService.deleteWhere(
+      { id: roleId, domain: companyId },
+      { by: user },
+    );
   }
 }

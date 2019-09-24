@@ -12,7 +12,7 @@ import { CoreModule } from '../core/core.module';
 
 @Module({
   imports: [
-    CoreModule,
+    CoreModule.forRoot(),
     TypeOrmModule.forRoot(),
     UserModule,
     LocationsModule,

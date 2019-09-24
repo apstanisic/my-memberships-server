@@ -5,7 +5,7 @@ import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
 import { BaseEntity } from '../core/entities/base.entity';
-import { DeletedColumns } from '../core/entities/deleted-columns.entity';
+import { ActionColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
 
@@ -57,9 +57,9 @@ export class Subscription extends BaseEntity implements SoftDelete {
   usedAmount: number;
 
   /** Standard deleted columns */
-  @Column(type => DeletedColumns)
+  @Column(type => ActionColumns)
   @Exclude()
-  deleted: DeletedColumns;
+  deleted: ActionColumns;
 
   /** Check if subscription is still valid */
   isValid(): boolean {

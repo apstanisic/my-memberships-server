@@ -5,7 +5,7 @@ import { Subscription } from '../subscription/subscription.entity';
 import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../company/company.entity';
 import { Role } from '../core/access-control/roles.entity';
-import { DeletedColumns } from '../core/entities/deleted-columns.entity';
+import { ActionColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 
 /** User Entity */
@@ -34,7 +34,7 @@ export class User extends BaseUser implements SoftDelete {
   @Length(5, 50)
   phoneNumber?: string;
 
-  @Column(type => DeletedColumns)
+  @Column(type => ActionColumns)
   @Exclude()
-  deleted: DeletedColumns;
+  deleted: ActionColumns;
 }
