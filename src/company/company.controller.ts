@@ -53,7 +53,7 @@ export class CompaniesController {
   @IfAllowed()
   @Delete(':id')
   remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
-    return this.service.delete(id, user);
+    return this.service.delete(id, { by: user });
   }
 
   /** Update company */

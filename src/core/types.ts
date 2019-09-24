@@ -22,6 +22,8 @@ export interface WithId {
 
 export type Struct<T = any> = Record<string, T>;
 
+export const imagesSizes = ['xs', 'sm', 'md', 'lg'];
+
 export type ImageMetadata = {
   id: string; // uuid
   position: number; // Zero index

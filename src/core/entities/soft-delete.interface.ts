@@ -1,6 +1,6 @@
-import { DeletedColumns } from './deleted-columns.entity';
+import { ActionColumns } from './deleted-columns.entity';
 
 export interface SoftDelete {
-  deleted: DeletedColumns;
+  deleted: ActionColumns;
   [key: string]: any;
 }

@@ -1,4 +1,9 @@
-import { Module, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Module,
+  InternalServerErrorException,
+  Logger,
+  Global,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -9,6 +14,7 @@ import { ConfigService } from '../config/config.service';
 import { UserModule } from '../../user/user.module';
 
 /** Auth module depends on user module and mail module and config module */
+@Global()
 @Module({
   imports: [
     UserModule,
