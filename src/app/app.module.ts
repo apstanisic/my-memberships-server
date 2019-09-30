@@ -7,7 +7,6 @@ import { UserModule } from '../user/user.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { LocationsModule } from '../locations/locations.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
-// import { CompaniesRolesModule } from '../companies-roles/companies-roles.module';
 import { CoreModule } from '../core/core.module';
 import { ConfigService } from '../core/config/config.service';
 import { Log } from '../core/logger/log.entity';

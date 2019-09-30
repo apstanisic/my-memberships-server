@@ -8,11 +8,11 @@ import {
   RelationId,
 } from 'typeorm';
 import * as moment from 'moment';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { User } from '../user/user.entity';
 import { Company } from '../company/company.entity';
 import { BaseEntity } from '../core/entities/base.entity';
-import { ActionColumns } from '../core/entities/deleted-columns.entity';
+import { DeleteColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
 import { Arrival } from '../arrivals/arrivals.entity';
@@ -36,15 +36,15 @@ export class Subscription extends BaseEntity implements SoftDelete {
   ownerId: string;
 
   /* Date from which subscription is valid */
-  @Column({ precision: 3 })
+  @Column({ precision: 3, default: new Date() })
   @IsDate()
   startsAt: Date;
 
   /* Date to which subscription is valid. Has index couse it's offten sorted */
-  @Column({ precision: 3 })
+  @Column({ precision: 3, nullable: true })
   @Index()
   @IsDate()
-  expiresAt: Date;
+  expiresAt?: Date;
 
   /* How much did this subscription cost */
   @Column()
@@ -71,16 +71,17 @@ export class Subscription extends BaseEntity implements SoftDelete {
   // usedAmount: number;
 
   /** How much time is this sub used */
+  @Expose()
   get usedAmount(): number {
     return this.arrivalIds.length;
   }
 
-  /** Standard deleted columns */
-  @Column(type => ActionColumns)
-  @Exclude()
-  deleted: ActionColumns;
+  /** Disables this subscription. It contains reason, who and when. */
+  @Column(type => DeleteColumns)
+  deleted: DeleteColumns;
 
   /** Check if subscription is still valid */
+  @Expose()
   isValid(): boolean {
     if (this.deleted.at) return false;
     if (moment(this.expiresAt).isBefore(moment.now())) return false;

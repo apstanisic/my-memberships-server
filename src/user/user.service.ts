@@ -10,6 +10,8 @@ import { User } from './user.entity';
 import { RegisterData } from '../core/auth/auth.dto';
 import { BaseService } from '../core/base.service';
 import { Role } from '../core/access-control/roles.entity';
+import { LogMetadata } from '../core/logger/log-metadata';
+import { Log } from '../core/logger/log.entity';
 
 @Injectable()
 export class UsersService extends BaseService<User> {

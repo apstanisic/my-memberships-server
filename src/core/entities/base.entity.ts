@@ -19,7 +19,7 @@ import {
 export abstract class BaseEntity {
   /** Unique Id */
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  readonly id: string;
 
   /**
    * Date when entity was last updated.
