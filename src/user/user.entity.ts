@@ -1,16 +1,14 @@
-import { Entity, Column, OneToMany, RelationId } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { Length, IsOptional } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { Subscription } from '../subscription/subscription.entity';
 import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../company/company.entity';
 import { Role } from '../core/access-control/roles.entity';
-import { DeleteColumns } from '../core/entities/deleted-columns.entity';
-import { SoftDelete } from '../core/entities/soft-delete.interface';
 
 /** User Entity */
 @Entity('users')
-export class User extends BaseUser implements SoftDelete {
+export class User extends BaseUser {
   /** All roles user have */
   @OneToMany(type => Role, role => role.user, { eager: true })
   @Exclude()
@@ -33,8 +31,4 @@ export class User extends BaseUser implements SoftDelete {
   @IsOptional()
   @Length(5, 50)
   phoneNumber?: string;
-
-  @Column(type => DeleteColumns)
-  @Exclude()
-  deleted: DeleteColumns;
 }

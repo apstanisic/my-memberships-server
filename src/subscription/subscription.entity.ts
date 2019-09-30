@@ -52,6 +52,10 @@ export class Subscription extends BaseEntity implements SoftDelete {
   @IsBetween(0, 100000)
   price: number;
 
+  /** This entity serves as a subscription and as voucher */
+  @Column({ default: 'membership' })
+  type: 'membership' | 'voucher';
+
   @OneToMany(type => Arrival, arrival => arrival.subscription)
   arrivals: Arrival[];
 
