@@ -1,50 +1,96 @@
 import {
   Entity,
   Column,
-  Index,
   ObjectID,
   ObjectIdColumn,
   BeforeInsert,
 } from 'typeorm';
-import { classToClass } from 'class-transformer';
+import { classToClass, plainToClass, Exclude } from 'class-transformer';
+import { diff } from 'deep-diff';
+import * as Faker from 'faker';
 import { UUID, WithId } from '../types';
-import { NoRelActionColumns } from '../entities/deleted-columns.entity';
+import { IUser } from '../entities/user.interface';
+
+/** This part of user is stored with log. */
+class UserInfo {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
 
 /**
  * This entity is using MongoDb. TypeOrm currently supports only this NoSql db.
  * It's better then to store in Sql.
- * "before" and "after" don't need to be converted to json.
  */
 @Entity()
 export class Log<T extends WithId = any> {
+  /** Default mongo id */
   @ObjectIdColumn()
+  @Exclude()
   _id: ObjectID;
 
-  /** Old entity value. Just created will have no before value. */
-  @Column({ nullable: true })
-  before?: T;
-
-  /** New entity value. If object is deleted it will not have after value */
-  @Column({ nullable: true })
-  after?: T;
+  /** Id for public use */
+  @Column({ default: Faker.random.uuid(), type: 'string' })
+  id: UUID;
 
   /** What action was executed (delete, update, custom-action) */
-  @Column({ type: 'string' })
+  @Column({ type: 'string', default: 'update' })
   action: 'update' | 'delete' | 'create' | string;
 
-  /** Standard deleted columns */
-  @Column(type => NoRelActionColumns)
-  executed: NoRelActionColumns;
+  /** Why is this action executed. */
+  @Column({ nullable: true })
+  reason?: string;
 
+  // /** Who executed this action */
+  @Column(type => UserInfo)
+  executedBy: UserInfo | IUser;
+
+  /** At what time was this action executed. */
+  @Column({ precision: 3, default: new Date() })
+  readonly executedAt: Date;
+
+  /** Value before changes. For creating it will be null. Don't set directly. */
+  @Column({ nullable: true })
+  initialValue?: T;
+
+  /** Diff of changes. */
+  @Column()
+  changes: any;
+
+  /**
+   * entityId is used for easier filtering of results.
+   * If action is create, use id after creating.
+   * It can be filtered directly on entity, but this way it's
+   * easier to migrate no Sql db or log to file.
+   */
   @Column('string')
-  @Index()
   entityId: UUID;
 
-  /** Remove sensitive data from entities. */
+  /**
+   * Id of domain this log belongs to.
+   * It can be company, web store, school, group.
+   * Useful for finding many logs. Example: all changes in this store.
+   */
+  @Column({ type: 'string', nullable: true })
+  domainId?: UUID;
+
+  /** This will generate difference between new and old values. */
+  set newValue(newValue: T | undefined) {
+    this.changes = diff(this.initialValue, newValue);
+    if (!this.entityId && newValue && newValue.id) {
+      this.entityId = newValue.id;
+    }
+  }
+
+  /** Remove unnecesary data from user. */
   @BeforeInsert()
-  removeSensitiveData(): void {
-    this.before = classToClass(this.before);
-    this.after = classToClass(this.after);
-    this.executed.by = classToClass(this.executed.by);
+  _prepare(): void {
+    this.executedBy = plainToClass(UserInfo, this.executedBy);
+    // Remove excluded properties, and set entity id
+    this.initialValue = classToClass(this.initialValue);
+    if (this.initialValue && this.initialValue.id) {
+      this.entityId = this.initialValue.id;
+    }
   }
 }

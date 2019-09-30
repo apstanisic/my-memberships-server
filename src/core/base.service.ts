@@ -14,22 +14,15 @@ import {
 import { Validator } from 'class-validator';
 import { parseQuery } from './typeorm/parse-to-orm-query';
 import { paginate } from './pagination/_paginate.helper';
-import { OrmWhere, WithId, Struct } from './types';
+import { OrmWhere, WithId } from './types';
 import { PgResult } from './pagination/pagination.types';
 import { PaginationParams } from './pagination/pagination-options';
-import { SoftDelete } from './entities/soft-delete.interface';
-import { User } from '../user/user.entity';
-import { IUser } from './entities/user.interface';
 import { Log } from './logger/log.entity';
-import { LoggerService } from './logger/logger.service';
+import { DbLoggerService } from './logger/db-logger.service';
+import { LogMetadata } from './logger/log-metadata';
 
 type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
-
-export interface LogMetadata {
-  by: User;
-  reason?: string;
-}
 
 /**
  * Base service that implements some basic crud methods.
@@ -43,7 +36,7 @@ export interface LogMetadata {
 export abstract class BaseService<T extends WithId = any> {
   constructor(
     protected readonly repository: Repository<T>,
-    @Optional() private readonly logService?: LoggerService<T>,
+    @Optional() private readonly dbLoggerService?: DbLoggerService<T>,
   ) {}
 
   /** Logger */
@@ -132,6 +125,12 @@ export abstract class BaseService<T extends WithId = any> {
     try {
       const entity = this.repository.create(data);
       const savedEntity = await this.repository.save(entity);
+
+      if (this.dbLoggerService && meta) {
+        const log = this.dbLoggerService.generateLog({ meta });
+        await this.dbLoggerService.store(log, 'create', savedEntity);
+      }
+
       return savedEntity;
     } catch (error) {
       throw new BadRequestException(error);
@@ -144,28 +143,23 @@ export abstract class BaseService<T extends WithId = any> {
     data: Partial<T> = {},
     meta?: LogMetadata,
   ): Promise<T> {
-    const entity = await this.convertToEntity(entityOrId);
-    // const entity = await this.findOne(entityOrId);
-    let log: Log | undefined;
-
-    if (this.logService) {
-      log = this.logService.init({
-        oldValue: entity,
-        user: meta!.by,
-        reason: meta!.reason,
-      });
-    }
-
     try {
-      this.repository.merge(entity, data);
-      const updated = await this.repository.save(entity);
+      // const entity = await this.findOne(entityOrId);
+      const entity = await this.convertToEntity(entityOrId);
+      let log: Log | undefined;
 
-      if (this.logService && log !== undefined) {
-        log.after = updated;
-        await this.logService.store(log, 'update');
+      if (this.dbLoggerService && meta) {
+        log = this.dbLoggerService.generateLog({ meta, oldValue: entity });
       }
 
-      return updated;
+      this.repository.merge(entity, data);
+      const updatedEntity = await this.repository.save(entity);
+
+      if (this.dbLoggerService && log !== undefined) {
+        await this.dbLoggerService.store(log, 'update', updatedEntity);
+      }
+
+      return updatedEntity;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();
@@ -184,23 +178,19 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Remove entity. */
-  async delete(entityOrId: T | string, logMetadata?: LogMetadata): Promise<T> {
+  async delete(entityOrId: T | string, meta?: LogMetadata): Promise<T> {
     try {
       const entity = await this.convertToEntity(entityOrId);
-
       let log: Log | undefined;
-      if (this.logService && logMetadata) {
-        log = this.logService.init({
-          oldValue: entity,
-          reason: logMetadata.reason,
-          user: logMetadata.by,
-        });
+
+      if (this.dbLoggerService && meta) {
+        log = this.dbLoggerService.generateLog({ oldValue: entity, meta });
       }
 
       const deleted = await this.repository.remove(entity);
 
-      if (this.logService && log !== undefined) {
-        await this.logService.store(log, 'delete');
+      if (this.dbLoggerService && log !== undefined) {
+        await this.dbLoggerService.store(log, 'delete');
       }
 
       return deleted;
@@ -209,7 +199,8 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
-  /** Delete first entity that match condition.
+  /**
+   * Delete first entity that match condition.
    * Useful when need more validation.
    * This will delete only if id match, but also parent match
    * Deletion will always be logged if logService is provided
@@ -266,10 +257,5 @@ export abstract class BaseService<T extends WithId = any> {
   protected internalError(error: any): InternalServerErrorException {
     this.logger.error(error);
     return new InternalServerErrorException();
-  }
-
-  /** Check if entity can be soft deleted */
-  private canSoftDelete(entity: Struct): entity is SoftDelete {
-    return typeof entity === 'object' && typeof entity.deleted === 'object';
   }
 }

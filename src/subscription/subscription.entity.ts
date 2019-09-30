@@ -1,5 +1,12 @@
 import { IsDate } from 'class-validator';
-import { Column, Entity, ManyToOne, Index } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  Index,
+  OneToMany,
+  RelationId,
+} from 'typeorm';
 import * as moment from 'moment';
 import { Exclude } from 'class-transformer';
 import { User } from '../user/user.entity';
@@ -8,6 +15,7 @@ import { BaseEntity } from '../core/entities/base.entity';
 import { ActionColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
+import { Arrival } from '../arrivals/arrivals.entity';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity implements SoftDelete {
@@ -44,6 +52,12 @@ export class Subscription extends BaseEntity implements SoftDelete {
   @IsBetween(0, 100000)
   price: number;
 
+  @OneToMany(type => Arrival, arrival => arrival.subscription)
+  arrivals: Arrival[];
+
+  @RelationId((sub: Subscription) => sub.arrivals)
+  arrivalIds: string[];
+
   /**
    * How much time can user use this subscription
    * (enter an gym, attend pilates...).
@@ -53,8 +67,13 @@ export class Subscription extends BaseEntity implements SoftDelete {
   allowedUses?: number;
 
   /** How much time is this sub used */
-  @Column({ default: 0 })
-  usedAmount: number;
+  // @Column({ default: 0 })
+  // usedAmount: number;
+
+  /** How much time is this sub used */
+  get usedAmount(): number {
+    return this.arrivalIds.length;
+  }
 
   /** Standard deleted columns */
   @Column(type => ActionColumns)

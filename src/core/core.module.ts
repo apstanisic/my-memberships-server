@@ -4,9 +4,16 @@ import { ConfigModule } from './config/config.module';
 import { AccessControlModule } from './access-control/access-control.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
+import { StorageModule } from './storage/storage.module';
 
 /** Available modules */
-type AvailableModules = 'Mail' | 'Config' | 'AccessControl' | 'Auth' | 'Log';
+type AvailableModules =
+  | 'Mail'
+  | 'Config'
+  | 'AccessControl'
+  | 'Auth'
+  | 'Log'
+  | 'Storage';
 
 /** Params for dynamic module */
 interface ForRootParams {
@@ -17,13 +24,19 @@ interface ForRootParams {
 @Module({})
 export class CoreModule {
   static forRoot(params?: ForRootParams): DynamicModule {
-    const ignore = params ? params.ignore : [];
     const imports = [];
-    if (!ignore.includes('Mail')) imports.push(MailModule);
-    if (!ignore.includes('AccessControl')) imports.push(AccessControlModule);
-    if (!ignore.includes('Auth')) imports.push(AuthModule);
-    if (!ignore.includes('Config')) imports.push(ConfigModule);
-    if (!ignore.includes('Log')) imports.push(LoggerModule);
+    const ignore = params ? params.ignore : [];
+    // Shorthand for checking if module should be included
+    const shouldInclude = (module: AvailableModules): boolean =>
+      !ignore.includes(module);
+
+    if (shouldInclude('Mail')) imports.push(MailModule);
+    if (shouldInclude('AccessControl')) imports.push(AccessControlModule);
+    if (shouldInclude('Auth')) imports.push(AuthModule);
+    if (shouldInclude('Config')) imports.push(ConfigModule);
+    if (shouldInclude('Log')) imports.push(LoggerModule);
+    if (shouldInclude('Storage')) imports.push(StorageModule);
+
     return {
       imports,
       module: CoreModule,

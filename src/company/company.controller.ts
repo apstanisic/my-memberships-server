@@ -53,7 +53,7 @@ export class CompaniesController {
   @IfAllowed()
   @Delete(':id')
   remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
-    return this.service.delete(id, { by: user });
+    return this.service.delete(id, { user, domain: id });
   }
 
   /** Update company */
@@ -63,7 +63,8 @@ export class CompaniesController {
   async update(
     @Param('id') id: string,
     @Body() updateData: UpdateCompanyDto,
+    @GetUser() user: User,
   ): Promise<Company> {
-    return this.service.update(id, updateData);
+    return this.service.update(id, updateData, { user, domain: id });
   }
 }

@@ -57,7 +57,7 @@ export class UserController {
   ): Promise<User> {
     const user = await this.usersService.findForLogin(email, password);
     if (user.id !== loggedUser.id) throw new ForbiddenException();
-    return this.usersService.delete(user, { by: user });
+    return this.usersService.delete(user, { user });
   }
 
   /** Get general user info by id */

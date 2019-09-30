@@ -120,7 +120,7 @@ export class CompaniesRolesController {
   ): Promise<Role> {
     return this.rolesService.deleteWhere(
       { id: roleId, domain: companyId },
-      { by: user },
+      { user: user },
     );
   }
 }
