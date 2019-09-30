@@ -6,8 +6,8 @@ import { User } from './user.entity';
 const passwordHash = bcrypt.hashSync('password', 12);
 
 export function generateUser(): User {
-  const user = new User();
-  user.id = Faker.random.uuid();
+  const user = new User(Faker.random.uuid());
+  // user.id = Faker.random.uuid();
   user.email = Faker.internet.email().toLowerCase();
   user._password = passwordHash;
   user.name = Faker.name.firstName();

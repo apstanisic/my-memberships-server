@@ -17,6 +17,11 @@ import {
  */
 @Index(['createdAt', 'id'])
 export abstract class BaseEntity {
+  /** Id can only be set in constructor */
+  constructor(id?: string) {
+    if (id) this.id = id;
+  }
+
   /** Unique Id */
   @PrimaryGeneratedColumn('uuid')
   readonly id: string;

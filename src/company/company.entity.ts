@@ -25,7 +25,7 @@ import { ImageMetadata } from '../core/types';
  * valid subscriptions
  */
 @Entity('companies')
-export class Company extends BaseEntity implements SoftDelete {
+export class Company extends BaseEntity {
   /** Company name */
   @Column()
   @Index()
@@ -69,10 +69,6 @@ export class Company extends BaseEntity implements SoftDelete {
   @IsNotEmpty()
   @IsEmail({}, { each: true })
   emails: string[];
-
-  @Column(type => DeleteColumns)
-  @Exclude()
-  deleted: DeleteColumns;
 
   /** How many credit company have for buying stuff */
   @Column({ default: 0, type: 'int' })
