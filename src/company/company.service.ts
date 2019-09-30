@@ -2,9 +2,10 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from './company.entity';
-import { BaseService, LogMetadata } from '../core/base.service';
+import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
 import { RoleService } from '../core/access-control/role.service';
+import { LogMetadata } from '../core/logger/log-metadata';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
@@ -37,7 +38,7 @@ export class CompanyService extends BaseService<Company> {
 
   /**
    * Creates new company and owner role.
-   * We can do create(entity, owner) cause of TS limitations.
+   * We can't do create(entity, owner) cause of TS limitations.
    * More info: https://stackoverflow.com/questions/33542359
    */
   async createCompany(entity: Partial<Company>, owner: User): Promise<Company> {

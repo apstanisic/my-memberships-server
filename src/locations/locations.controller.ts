@@ -79,6 +79,9 @@ export class LocationsController {
     @Param('id', ValidUUID) id: string,
     @GetUser() user: User,
   ): Promise<Location> {
-    return this.locationsService.deleteWhere({ id, companyId }, { by: user });
+    return this.locationsService.deleteWhere(
+      { id, companyId },
+      { user: user, domain: companyId },
+    );
   }
 }

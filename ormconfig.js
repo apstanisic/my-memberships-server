@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
   config.logging = 'all';
   config.migrations = ['db/migrations/*{.ts,.js}'];
   // This is for migration
-  config.entities = ['src/**/*.entity{.ts,.js}'];
+  config.entities = ['src/**/!(log).entity{.ts,.js}'];
   // This is for webpack
   // config.entities = getMetadataArgsStorage().tables.map(tbl => tbl.target);
   // config.migrationsRun = true;

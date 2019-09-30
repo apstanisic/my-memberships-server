@@ -10,7 +10,6 @@ services:
       - my_subs_network
 
   db:
-    container_name: 'my_sub_pg'
     image: postgres:11-alpine
     restart: unless-stopped
     ports:
@@ -21,6 +20,20 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
+    networks:
+      - my_subs_network
+
+  log-db:
+    image: mongo:4
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      # MONGO_INITDB_ROOT_USERNAME: ${LOG_DB_USER}
+      # MONGO_INITDB_ROOT_PASSWORD: ${LOG_DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${LOG_DB_DATABASE}
+    volumes:
+      - ./volumes/log-database:/data/db
     networks:
       - my_subs_network
 

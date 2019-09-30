@@ -1,6 +1,16 @@
 import { Column, ManyToOne } from 'typeorm';
 import { User } from '../../user/user.entity';
 
+class UserInfo {
+  id: string;
+
+  name: string;
+
+  email: string;
+
+  avatar?: string;
+}
+
 /**
  * This entity is designed to be embedded
  * It adds time, who deleted it and reason for deletion.
@@ -34,6 +44,6 @@ export class ActionColumns extends WithoutUserActionColumns {
  * Action columns without relations
  */
 export class NoRelActionColumns extends WithoutUserActionColumns {
-  @Column()
-  by?: User;
+  @Column(type => User)
+  by?: UserInfo;
 }

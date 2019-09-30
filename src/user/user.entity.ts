@@ -21,7 +21,7 @@ export class User extends BaseUser implements SoftDelete {
   subscriptions: Subscription[];
 
   /** Only subscription ids */
-  @RelationId((user: User) => user.subscriptions)
+  // @RelationId((user: User) => user.subscriptions)
   subscriptionIds: string[];
 
   /** Companies owned by this user */

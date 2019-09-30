@@ -25,6 +25,8 @@ import { ValidUUID } from '../core/uuid.pipe';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { UUID } from '../core/types';
 import { ManyUUID } from '../core/many-uuid.pipe';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')
@@ -64,8 +66,12 @@ export class SubscriptionController {
   async create(
     @Body() subscription: CreateSubscriptionDto,
     @Param('companyId', ValidUUID) companyId: UUID,
+    @GetUser() user: User,
   ): Promise<Subscription> {
-    return this.service.create({ ...subscription, companyId });
+    return this.service.create(
+      { ...subscription, companyId },
+      { user, domain: companyId },
+    );
   }
 
   /** Remove subscription */
@@ -74,8 +80,12 @@ export class SubscriptionController {
   remove(
     @Param('id', ValidUUID) id: UUID,
     @Param('companyId', ValidUUID) companyId: UUID,
+    @GetUser() user: User,
   ): Promise<Subscription> {
-    return this.service.deleteWhere({ id, companyId });
+    return this.service.deleteWhere(
+      { id, companyId },
+      { user, domain: companyId },
+    );
   }
 
   /** Update subscription */
