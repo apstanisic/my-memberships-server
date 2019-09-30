@@ -34,7 +34,7 @@ class WithoutUserActionColumns {
 /**
  * Default action columns with relations to user table
  */
-export class ActionColumns extends WithoutUserActionColumns {
+export class DeleteColumns extends WithoutUserActionColumns {
   /** User that deleted this entity */
   @ManyToOne(type => User, { nullable: true })
   by?: User;

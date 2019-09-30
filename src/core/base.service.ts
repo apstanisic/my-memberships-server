@@ -36,7 +36,7 @@ type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 export abstract class BaseService<T extends WithId = any> {
   constructor(
     protected readonly repository: Repository<T>,
-    @Optional() private readonly dbLoggerService?: DbLoggerService<T>,
+    @Optional() protected readonly dbLoggerService?: DbLoggerService<T>,
   ) {}
 
   /** Logger */
@@ -144,8 +144,8 @@ export abstract class BaseService<T extends WithId = any> {
     meta?: LogMetadata,
   ): Promise<T> {
     try {
-      // const entity = await this.findOne(entityOrId);
-      const entity = await this.convertToEntity(entityOrId);
+      const entity = await this.findOne(entityOrId);
+      // const entity = await this.convertToEntity(entityOrId);
       let log: Log | undefined;
 
       if (this.dbLoggerService && meta) {
@@ -155,11 +155,35 @@ export abstract class BaseService<T extends WithId = any> {
       this.repository.merge(entity, data);
       const updatedEntity = await this.repository.save(entity);
 
-      if (this.dbLoggerService && log !== undefined) {
+      if (this.dbLoggerService && log) {
         await this.dbLoggerService.store(log, 'update', updatedEntity);
       }
 
       return updatedEntity;
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException();
+    }
+  }
+
+  /**
+   * Accepts mutated entity, instead of original entity and changes.
+   * Used when entities have special setters.
+   */
+  async mutate(entity: T, meta?: LogMetadata): Promise<T> {
+    try {
+      let log: Log | undefined;
+      const oldValue = await this.findOne(entity.id);
+
+      if (this.dbLoggerService && meta) {
+        log = this.dbLoggerService.generateLog({ meta, oldValue });
+      }
+      const mutatedEntity = await this.repository.save(entity);
+
+      if (this.dbLoggerService && log) {
+        await this.dbLoggerService.store(log, 'update', mutatedEntity);
+      }
+      return mutatedEntity;
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException();

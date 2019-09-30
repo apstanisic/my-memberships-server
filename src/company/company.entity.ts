@@ -15,7 +15,7 @@ import { Subscription } from '../subscription/subscription.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { CompanyCategory, companiesCategories } from './categories.list';
 import { Location } from '../locations/location.entity';
-import { ActionColumns } from '../core/entities/deleted-columns.entity';
+import { DeleteColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { ImageMetadata } from '../core/types';
@@ -70,9 +70,9 @@ export class Company extends BaseEntity implements SoftDelete {
   @IsEmail({}, { each: true })
   emails: string[];
 
-  @Column(type => ActionColumns)
+  @Column(type => DeleteColumns)
   @Exclude()
-  deleted: ActionColumns;
+  deleted: DeleteColumns;
 
   /** How many credit company have for buying stuff */
   @Column({ default: 0, type: 'int' })

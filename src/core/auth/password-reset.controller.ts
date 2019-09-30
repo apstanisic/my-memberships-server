@@ -69,11 +69,13 @@ export class PasswordResetController {
       );
     }
 
-    const clonedUser = classToClass(user);
-
-    clonedUser.password = data.password;
-    clonedUser.disableSecureToken();
-    await this.usersService.update(clonedUser);
+    user.password = data.password;
+    user.disableSecureToken();
+    user = await this.usersService.mutate(user, {
+      user,
+      reason: 'Password reset',
+      domain: user.id,
+    });
 
     return user;
   }
