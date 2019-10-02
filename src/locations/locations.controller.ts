@@ -54,8 +54,12 @@ export class LocationsController {
   async create(
     @Param('companyId', ValidUUID) companyId: string,
     @Body() location: CreateLocationDto,
+    @GetUser() user: User,
   ): Promise<Location> {
-    return this.locationsService.create({ ...location, companyId });
+    return this.locationsService.create(
+      { ...location, companyId },
+      { user, domain: companyId },
+    );
   }
 
   /** Update location */
@@ -66,8 +70,12 @@ export class LocationsController {
     @Param('companyId', ValidUUID) companyId: string,
     @Param('id', ValidUUID) id: string,
     @Body() updateData: UpdateLocationDto,
+    @GetUser() user: User,
   ): Promise<Location> {
-    return this.locationsService.updateWhere({ id, companyId }, updateData);
+    return this.locationsService.updateWhere({ id, companyId }, updateData, {
+      user,
+      domain: companyId,
+    });
   }
 
   /** Delete location */
@@ -81,7 +89,7 @@ export class LocationsController {
   ): Promise<Location> {
     return this.locationsService.deleteWhere(
       { id, companyId },
-      { user: user, domain: companyId },
+      { user, domain: companyId },
     );
   }
 }

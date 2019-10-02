@@ -1,9 +1,10 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import * as moment from 'moment';
 import { Expose } from 'class-transformer';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { Location } from '../locations/location.entity';
+import { User } from '../user/user.entity';
 
 /**
  * There is seperate address, lat and long for each arrival
@@ -50,6 +51,9 @@ export class Arrival extends BaseEntity {
   /** Coordinate */
   @Column({ nullable: true, type: 'double precision', update: false })
   long?: number;
+
+  @ManyToOne(type => User, { nullable: true })
+  approvedBy?: User;
 
   /** Get time spent in minutes */
   @Expose()

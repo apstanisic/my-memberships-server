@@ -23,6 +23,7 @@ import { PgResult } from '../core/pagination/pagination.types';
 import { Role } from '../core/access-control/roles.entity';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
+import { ValidReason } from '../core/valid-reason.pipe';
 
 /**
  * Every method is check for proper permissions.
@@ -92,8 +93,13 @@ export class CompaniesRolesController {
   addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Body() data: CreateRoleDto,
+    @GetUser() user: User,
+    @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
-    return this.rolesService.create({ ...data, ...{ domain: companyId } });
+    return this.rolesService.create(
+      { ...data, ...{ domain: companyId } },
+      { user, reason, domain: companyId },
+    );
   }
 
   /** Change role */
@@ -103,10 +109,13 @@ export class CompaniesRolesController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
     @Body() data: UpdateRoleDto,
+    @GetUser() user: User,
+    @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
     return this.rolesService.updateWhere(
       { domain: companyId, id: roleId },
       data,
+      { user, reason, domain: companyId },
     );
   }
 
@@ -117,10 +126,11 @@ export class CompaniesRolesController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Param('roleId', ValidUUID) roleId: UUID,
     @GetUser() user: User,
+    @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
     return this.rolesService.deleteWhere(
       { id: roleId, domain: companyId },
-      { user: user },
+      { user, reason },
     );
   }
 }

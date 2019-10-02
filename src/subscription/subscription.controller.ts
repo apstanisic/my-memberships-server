@@ -33,13 +33,6 @@ import { User } from '../user/user.entity';
 export class SubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
-  // @IfAllowed('read')
-  // @Get('many')
-  // findByIds(@Query('ids', ManyUUID) ids: UUID[]): Promise<Subscription[]> {
-  //   throw new NotImplementedException();
-  //   return this.service.findByIds(ids);
-  // }
-
   /** Get subscriptions, filtered and paginated */
   @IfAllowed('read')
   @Get('')
@@ -74,6 +67,18 @@ export class SubscriptionController {
     );
   }
 
+  /** Update subscription */
+  @IfAllowed()
+  @Put(':id')
+  async update(
+    @Param('id', ValidUUID) id: UUID,
+    @Body() updateData: UpdateSubscriptionDto,
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @GetUser() user: User,
+  ): Promise<Subscription> {
+    return this.service.update(id, updateData, { user, domain: companyId });
+  }
+
   /** Remove subscription */
   @IfAllowed()
   @Delete(':id')
@@ -86,15 +91,5 @@ export class SubscriptionController {
       { id, companyId },
       { user, domain: companyId },
     );
-  }
-
-  /** Update subscription */
-  @IfAllowed()
-  @Put(':id')
-  async update(
-    @Param('id', ValidUUID) id: UUID,
-    @Body() updateData: UpdateSubscriptionDto,
-  ): Promise<Subscription> {
-    return this.service.update(id, updateData);
   }
 }
