@@ -10,3 +10,12 @@ export interface IUser {
   password: string;
   checkPassword: (password: string) => Promise<boolean> | boolean;
 }
+
+export class BasicUserInfo {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface IBasicUserInfo extends BasicUserInfo {}

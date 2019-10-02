@@ -9,15 +9,7 @@ import { classToClass, plainToClass, Exclude } from 'class-transformer';
 import { diff } from 'deep-diff';
 import * as Faker from 'faker';
 import { UUID, WithId } from '../types';
-import { IUser } from '../entities/user.interface';
-
-/** This part of user is stored with log. */
-class UserInfo {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-}
+import { IUser, BasicUserInfo } from '../entities/user.interface';
 
 /**
  * This entity is using MongoDb. TypeOrm currently supports only this NoSql db.
@@ -42,9 +34,9 @@ export class Log<T extends WithId = any> {
   @Column({ nullable: true })
   reason?: string;
 
-  // /** Who executed this action */
-  @Column(type => UserInfo)
-  executedBy: UserInfo | IUser;
+  /** Who executed this action */
+  @Column(type => BasicUserInfo)
+  executedBy: BasicUserInfo | IUser;
 
   /** At what time was this action executed. */
   @Column({ precision: 3, default: new Date() })
@@ -86,7 +78,7 @@ export class Log<T extends WithId = any> {
   /** Remove unnecesary data from user. */
   @BeforeInsert()
   _prepare(): void {
-    this.executedBy = plainToClass(UserInfo, this.executedBy);
+    this.executedBy = plainToClass(BasicUserInfo, this.executedBy);
     // Remove excluded properties, and set entity id
     this.initialValue = classToClass(this.initialValue);
     if (this.initialValue && this.initialValue.id) {

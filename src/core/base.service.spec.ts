@@ -7,8 +7,13 @@ import {
 } from '@nestjs/common';
 import { BaseService } from './base.service';
 import { PaginationParams } from './pagination/pagination-options';
-import { PaginatorResponse } from './pagination/pagination.types';
-import { paginate } from './pagination/_paginate.helper';
+import { IBasicUserInfo } from './entities/user.interface';
+
+const LogUser: IBasicUserInfo = {
+  email: 'test@ts.ts',
+  id: 'fsd',
+  name: 'Test',
+};
 
 // Supres NestJs console logs
 Logger.overrideLogger(true);
@@ -23,6 +28,7 @@ const save = jest.fn();
 const merge = jest.fn();
 const remove = jest.fn();
 const count = jest.fn();
+const mutate = jest.fn();
 const paginateMock = jest.fn();
 
 jest.mock('./pagination/_paginate.helper', () => {
@@ -43,6 +49,7 @@ const repoMock = jest.fn(() => ({
   merge,
   remove,
   count,
+  mutate,
 }));
 // Base service is abstract class
 class Service extends BaseService<any> {
@@ -250,7 +257,7 @@ describe('BaseService', () => {
 
   /** Testing service.update */
   describe('update', () => {
-    it('updates the user with id', async () => {
+    it('updates the entity with id', async () => {
       const res = service.update('entity-id', { id: 'test' });
       await expect(res).resolves.toEqual(exampleEntity);
       expect(findOne).toBeCalledTimes(1);
@@ -259,7 +266,7 @@ describe('BaseService', () => {
       expect(save).toBeCalledTimes(1);
     });
 
-    it('updates the user', async () => {
+    it('updates the entity', async () => {
       const res = service.update(exampleEntity, { id: 'test' });
       await expect(res).resolves.toEqual(exampleEntity);
       expect(findOne).toBeCalled();
@@ -288,6 +295,33 @@ describe('BaseService', () => {
       merge.mockImplementation(() => {
         throw new Error('update merge throws');
       });
+      const res = service.update(exampleEntity);
+      await expect(res).rejects.toThrow(BadRequestException);
+      expect(merge).toBeCalledWith(exampleEntity, {});
+    });
+  });
+
+  /** Testing service.mutate */
+  describe('mutate', () => {
+    it('mutate entity', async () => {
+      const res = service.mutate(exampleEntity);
+      await expect(res).resolves.toEqual(exampleEntity);
+      expect(findOne).not.toBeCalled();
+      expect(merge).not.toBeCalled();
+      expect(save).toBeCalledTimes(1);
+    });
+
+    // it('updates the user without new data', async () => {
+    //   const res = service.update(exampleEntity);
+    //   await expect(res).resolves.toEqual(exampleEntity);
+    //   expect(findOne).not.toBeCalled();
+    //   expect(merge).toBeCalledTimes(1);
+    //   expect(merge).toBeCalledWith(exampleEntity, {});
+    //   expect(save).toBeCalledTimes(1);
+    // });
+
+    it('throws if repo throws', async () => {
+      save.mockRejectedValue(new Error('mutate repo throws'));
       const res = service.update(exampleEntity);
       await expect(res).rejects.toThrow(BadRequestException);
       expect(merge).toBeCalledWith(exampleEntity, {});

@@ -25,21 +25,27 @@ type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
 type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 
 /**
- * Base service that implements some basic crud methods.
+ * Base service that implements some basic methods.
  * Services are in change of throwing HTTP errors.
  * There is no need for every controller to check if result
  * is null, this service will automatically check for him.
+ * Methods that chanages data (update, delete create) can accept meta
+ * as their last parameter. It's used for logging, if logger is provided.
+ * Info contains user that executes operation and reason. More info
+ * can be added in the future. If meta object is provided user is required.
+ * Time of execution is automaticly created. Can't be manually set.
  * @warning Don't return promise directly. If repo throw an error,
  * service should catch her and pass error that can be shown
  * to users.
  */
 export abstract class BaseService<T extends WithId = any> {
+  /** Accepts repository for accessing data, and loger service for logging */
   constructor(
     protected readonly repository: Repository<T>,
     @Optional() protected readonly dbLoggerService?: DbLoggerService<T>,
   ) {}
 
-  /** Logger */
+  /** Terminal logger */
   protected logger = new Logger();
 
   /** Validator */
@@ -71,9 +77,11 @@ export abstract class BaseService<T extends WithId = any> {
       throw this.internalError(error);
     }
 
-    return this.throwIfNotFound(entity);
+    if (!entity) throw new NotFoundException();
+    return entity;
   }
 
+  /** Find entities by multiple ids */
   async findByIds(ids: (string | number)[]): Promise<T[]> {
     try {
       const entities = await this.repository.findByIds(ids);
@@ -83,9 +91,7 @@ export abstract class BaseService<T extends WithId = any> {
     }
   }
 
-  /**
-   * Find companies that match criteria
-   */
+  /** Find all entities that match criteria */
   async find(filter: OrmWhere<T> = {}): Promise<T[]> {
     try {
       const res = await this.repository.find({ where: parseQuery(filter) });
@@ -98,7 +104,8 @@ export abstract class BaseService<T extends WithId = any> {
   /**
    * Find entities that match criteria with pagination.
    * Pagination has it's own error handling. Don't handle errors twice
-   * You can pass where query in options object or as a second param
+   * You can pass where query in options object or as a second param.
+   * It will merge both wheres, with newer where having presedance.
    */
   async paginate(
     options: PaginationParams<T>,
@@ -106,12 +113,13 @@ export abstract class BaseService<T extends WithId = any> {
   ): PgResult<T> {
     const { repository } = this;
     const combinedOptions = { ...options };
+
     if (
       typeof combinedOptions.where === 'object' &&
       typeof where === 'object'
     ) {
       combinedOptions.where = { ...combinedOptions.where, ...where };
-    } else {
+    } else if (typeof where === 'object') {
       combinedOptions.where = where;
     }
     combinedOptions.where = parseQuery(combinedOptions.where);
@@ -140,19 +148,18 @@ export abstract class BaseService<T extends WithId = any> {
   /** Update entity */
   async update(
     entityOrId: T | string,
-    data: Partial<T> = {},
+    updatedData: Partial<T> = {},
     meta?: LogMetadata,
   ): Promise<T> {
     try {
       const entity = await this.findOne(entityOrId);
-      // const entity = await this.convertToEntity(entityOrId);
       let log: Log | undefined;
 
       if (this.dbLoggerService && meta) {
         log = this.dbLoggerService.generateLog({ meta, oldValue: entity });
       }
 
-      this.repository.merge(entity, data);
+      this.repository.merge(entity, updatedData);
       const updatedEntity = await this.repository.save(entity);
 
       if (this.dbLoggerService && log) {
@@ -173,9 +180,9 @@ export abstract class BaseService<T extends WithId = any> {
   async mutate(entity: T, meta?: LogMetadata): Promise<T> {
     try {
       let log: Log | undefined;
-      const oldValue = await this.findOne(entity.id);
 
       if (this.dbLoggerService && meta) {
+        const oldValue = await this.findOne(entity.id);
         log = this.dbLoggerService.generateLog({ meta, oldValue });
       }
       const mutatedEntity = await this.repository.save(entity);
@@ -204,7 +211,7 @@ export abstract class BaseService<T extends WithId = any> {
   /** Remove entity. */
   async delete(entityOrId: T | string, meta?: LogMetadata): Promise<T> {
     try {
-      const entity = await this.convertToEntity(entityOrId);
+      const entity = await this.findOne(entityOrId);
       let log: Log | undefined;
 
       if (this.dbLoggerService && meta) {
@@ -226,9 +233,8 @@ export abstract class BaseService<T extends WithId = any> {
   /**
    * Delete first entity that match condition.
    * Useful when need more validation.
-   * This will delete only if id match, but also parent match
    * Deletion will always be logged if logService is provided
-   * @example
+   * @example This will delete only if id match, but also parent match
    *  where = {id: someId, parentId: someParentId}
    */
   async deleteWhere(
@@ -254,28 +260,6 @@ export abstract class BaseService<T extends WithId = any> {
     } catch (error) {
       throw this.internalError(error);
     }
-  }
-
-  /**
-   * If provided entity return that entity,
-   * if provided string it will assume it's Id andtry to find in db.
-   * If not found throw an exception.
-   */
-  protected async convertToEntity(entityOrId: T | string): Promise<T> {
-    let entity: T | undefined;
-    if (typeof entityOrId === 'string') {
-      entity = await this.repository.findOne(entityOrId);
-      entity = this.throwIfNotFound(entity);
-    } else {
-      entity = entityOrId;
-    }
-    return entity;
-  }
-
-  /** Throw exception if entity is undefined. Simple helper function */
-  protected throwIfNotFound(entity: T | undefined): T {
-    if (!entity) throw new NotFoundException();
-    return entity;
   }
 
   protected internalError(error: any): InternalServerErrorException {

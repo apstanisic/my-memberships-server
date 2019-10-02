@@ -28,7 +28,11 @@ export class UserController {
 
     const user = await this.usersService.findForLogin(email, oldPassword);
     user.password = newPassword;
-    return this.usersService.mutate(user);
+    return this.usersService.mutate(user, {
+      user,
+      domain: user.id,
+      reason: 'Change password.',
+    });
   }
 
   /** Update user info */

@@ -29,9 +29,9 @@ services:
     ports:
       - 27017:27017
     environment:
+      MONGO_INITDB_DATABASE: ${LOG_DB_DATABASE}
       # MONGO_INITDB_ROOT_USERNAME: ${LOG_DB_USER}
       # MONGO_INITDB_ROOT_PASSWORD: ${LOG_DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${LOG_DB_DATABASE}
     volumes:
       - ./volumes/log-database:/data/db
     networks:

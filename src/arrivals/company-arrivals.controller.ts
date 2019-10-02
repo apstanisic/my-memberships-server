@@ -10,6 +10,9 @@ import { LocationsService } from '../locations/locations.service';
 import { PgResult } from '../core/pagination/pagination.types';
 import { Arrival } from './arrivals.entity';
 import { Location } from '../locations/location.entity';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
+import { ValidReason } from '../core/valid-reason.pipe';
 
 /**
  * Keep track of arrivals in subscriptions and locations.
@@ -60,9 +63,10 @@ export class CompanyArrivalsController {
     @Param('companyId', ValidUUID) companyId: string,
     @Param('locationId', ValidUUID) locationId: string,
     @Body('subscriptionId') subscriptionId: string,
+    @GetUser() user: User,
   ): Promise<Arrival> {
     const location = await this.validLocation(companyId, locationId);
-    return this.arrivalsService.newArrival(location, subscriptionId);
+    return this.arrivalsService.newArrival(location, subscriptionId, user);
   }
 
   /** Remove arrival. Admins can cancel arrival if needed */
@@ -72,9 +76,14 @@ export class CompanyArrivalsController {
     @Param('cid', ValidUUID) companyId: string,
     @Param('lid', ValidUUID) locationId: string,
     @Param('aid', ValidUUID) arrivalId: string,
+    @GetUser() user: User,
+    @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
     await this.validLocation(companyId, locationId);
-    return this.arrivalsService.deleteWhere({ locationId, id: arrivalId });
+    return this.arrivalsService.deleteWhere(
+      { locationId, id: arrivalId },
+      { user, reason },
+    );
   }
 
   /**

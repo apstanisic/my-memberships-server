@@ -5,6 +5,7 @@ import { BaseService } from '../core/base.service';
 import { Arrival } from './arrivals.entity';
 import { Location } from '../locations/location.entity';
 import { Subscription } from '../subscription/subscription.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class ArrivalsService extends BaseService<Arrival> {
@@ -19,11 +20,13 @@ export class ArrivalsService extends BaseService<Arrival> {
   newArrival(
     location: Location,
     subscription: Subscription | string,
+    user: User,
   ): Promise<Arrival> {
     const arrival = new Arrival();
     arrival.address = location.address;
     arrival.lat = location.lat;
     arrival.long = location.long;
+    arrival.approvedBy = user;
     arrival.subscriptionId =
       typeof subscription === 'string' ? subscription : subscription.id;
     return this.create(arrival);

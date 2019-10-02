@@ -45,7 +45,7 @@ export class CompaniesController {
     @Body() data: Partial<Company>,
     @GetUser() user: User,
   ): Promise<Company> {
-    return this.service.createCompany(data, user);
+    return this.service.createCompany(data, user, { user });
   }
 
   /** Remove company */

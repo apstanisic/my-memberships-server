@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Company } from './company.entity';
@@ -6,12 +6,14 @@ import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
 import { RoleService } from '../core/access-control/role.service';
 import { LogMetadata } from '../core/logger/log-metadata';
+import { DbLoggerService } from '../core/logger/db-logger.service';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
   constructor(
     @InjectRepository(Company) repository: Repository<Company>,
     private readonly roleService: RoleService,
+    @Optional() protected readonly dbLoggerService?: DbLoggerService<Company>,
   ) {
     super(repository);
   }
@@ -41,13 +43,24 @@ export class CompanyService extends BaseService<Company> {
    * We can't do create(entity, owner) cause of TS limitations.
    * More info: https://stackoverflow.com/questions/33542359
    */
-  async createCompany(entity: Partial<Company>, owner: User): Promise<Company> {
+  async createCompany(
+    entity: Partial<Company>,
+    owner: User,
+    meta?: LogMetadata,
+  ): Promise<Company> {
     const company = await this.create({ ...entity, owner });
     await this.roleService.create({
       user: owner,
       name: 'owner',
       domain: company.id,
     });
+
+    if (this.dbLoggerService && meta) {
+      const log = this.dbLoggerService!.generateLog({
+        meta: { ...meta, domain: company.id },
+      });
+      await this.dbLoggerService.store(log, 'create', company);
+    }
     return company;
   }
 }
