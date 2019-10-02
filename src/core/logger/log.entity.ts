@@ -70,7 +70,9 @@ export class Log<T extends WithId = any> {
   /** This will generate difference between new and old values. */
   set newValue(newValue: T | undefined) {
     this.changes = diff(this.initialValue, newValue);
-    if (!this.entityId && newValue && newValue.id) {
+    // TODO Update prettier to support 3.7 ts
+    /* eslint-disable-next-line */
+    if (!this.entityId && newValue?.id) {
       this.entityId = newValue.id;
     }
   }
@@ -81,7 +83,7 @@ export class Log<T extends WithId = any> {
     this.executedBy = plainToClass(BasicUserInfo, this.executedBy);
     // Remove excluded properties, and set entity id
     this.initialValue = classToClass(this.initialValue);
-    if (this.initialValue && this.initialValue.id) {
+    if (this.initialValue?.id) {
       this.entityId = this.initialValue.id;
     }
   }
