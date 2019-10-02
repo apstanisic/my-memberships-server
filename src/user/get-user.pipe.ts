@@ -4,9 +4,9 @@ import { UsersService } from './user.service';
 import { User } from './user.entity';
 
 /**
- *  Get user by provided Id. This will return user without authorization
+ *  Get user by provided Id or email. This will return user without authorization
  *  @example
- *    method(@Param('id', UserByIdPipe) user: User) {}
+ *    method(@Param('id', GetUserPipe) user: User) {}
  */
 @Injectable()
 export class GetUserPipe implements PipeTransform<string> {
