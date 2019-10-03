@@ -15,10 +15,14 @@ import { UpdatePasswordData, LoginData } from '../core/auth/auth.dto';
 import { UsersService } from './user.service';
 import { UpdateUserInfo } from './update-user.dto';
 import { ValidUUID } from '../core/uuid.pipe';
+import { StorageService } from '../core/storage/storage.service';
 
 @Controller('auth')
 export class UserController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly storageService: StorageService,
+  ) {}
 
   /** Update user password */
   @Put('password')
@@ -43,6 +47,13 @@ export class UserController {
     @GetUser() user: User,
   ): Promise<User> {
     return this.usersService.update(user, updateData);
+  }
+
+  /** Update user info */
+  @Put('avatar')
+  @UseGuards(AuthGuard('jwt'))
+  async addProfilePicture(): Promise<User> {
+    throw new Error();
   }
 
   /** Get logged user info */

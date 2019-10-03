@@ -1,9 +1,11 @@
+import { ImageSizes } from '../types';
+
 /** User must always have this fields */
 export interface IUser {
   id: string;
   email: string;
   name?: string;
-  avatar?: string;
+  avatar?: string | ImageSizes;
   confirmed: boolean;
   secureToken?: string;
   tokenCreatedAt?: Date;

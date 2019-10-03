@@ -15,9 +15,4 @@ export class UpdateUserInfo {
   @IsString()
   @Length(8, 50)
   phoneNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  @Length(10, 500)
-  avatar?: string;
 }
