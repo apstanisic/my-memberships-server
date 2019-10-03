@@ -1,13 +1,15 @@
 import * as sharp from 'sharp';
 import { Struct } from '../../core/types';
 
+type Sizes = 'xs' | 'sm' | 'md' | 'lg';
+
 /**
  * Compress and generate different sizes for saving to external services
  * @param image Image to be compressed, and generate different sizes
  */
 export async function generateAllImageSizes(
   image: Buffer,
-): Promise<Struct<Buffer>> {
+): Promise<Record<Sizes, Buffer>> {
   const base = sharp(image);
   // .jpeg({ quality: 70 });
   const xs = base
