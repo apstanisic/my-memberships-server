@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import * as Faker from 'faker';
 import { Injectable, NotImplementedException } from '@nestjs/common';
-import { ImageMetadata, UUID, Struct } from '../../core/types';
+import { Image, UUID, Struct } from '../../core/types';
 import { generateAllImageSizes } from './sharp';
 import { StorageService } from '../../core/storage/storage.service';
 
@@ -15,42 +15,57 @@ export class CompanyImagesService {
     return `${formatedDate}/${uuid}/_${size}.${extension}`;
   }
 
-  async addImage(file: any, images: ImageMetadata[]): Promise<ImageMetadata[]> {
-    if (1) throw new NotImplementedException(0);
-    // const toResolve: Promise<{ [key: string]: string }>[] = [];
-    const toResolve: Promise<string>[] = [];
+  async addImage(file: any, initialImages: Image[]): Promise<Image[]> {
+    const images = [...initialImages];
+    const storedImages: Promise<string>[] = [];
+    // Generate all sizes for given image
     const allSizes = await generateAllImageSizes(file);
-    const sizes = Object.keys(allSizes);
-    Object.keys(allSizes).forEach(size => {});
-    // for (let i = 0; i < sizes.length; i += 1) {
-    //   await this.storage.put(allSizes[sizes[i]], this.genName(sizes[i]));
-    // }
+    // Store image on server or service
+    storedImages.push(this.storage.put(allSizes.xs, this.genName('xs')));
+    storedImages.push(this.storage.put(allSizes.sm, this.genName('sm')));
+    storedImages.push(this.storage.put(allSizes.md, this.genName('md')));
+    storedImages.push(this.storage.put(allSizes.lg, this.genName('lg')));
 
-    // store image
-    const url = Promise.all(toResolve);
-    const clonedImages = [...images];
-    clonedImages.push({
-      ...url,
+    const url = await Promise.all(storedImages);
+
+    images.push({
       id: Faker.random.uuid(),
-      position: images.length - 1,
+      position: initialImages.length - 1,
+      xs: url[0],
+      sm: url[1],
+      md: url[2],
+      lg: url[3],
     });
-    return clonedImages;
+
+    // Sort images by it's position
+    return images.sort((img1, img2) =>
+      img1.position <= img2.position ? -1 : 1,
+    );
   }
 
-  async removeImage(
-    imageId: UUID,
-    images: ImageMetadata[],
-  ): Promise<ImageMetadata[]> {
-    const notDeletedImages = [];
-    for (let index = 0; index < images.length; index += 1) {
-      const img = images[index];
-      if (img.id === imageId) {
-        throw new NotImplementedException();
-      } else {
-        notDeletedImages.push(img);
-      }
+  /** Remove all sizes for provided image. */
+  async removeImage(imageId: UUID, images: Image[]): Promise<Image[]> {
+    const image = images.find(img => img.id === imageId);
+
+    if (image) {
+      const deletingImages: Promise<void>[] = [];
+      const { xs, sm, md, lg } = image;
+
+      if (xs) deletingImages.push(this.storage.delete(xs));
+      if (sm) deletingImages.push(this.storage.delete(sm));
+      if (md) deletingImages.push(this.storage.delete(md));
+      if (lg) deletingImages.push(this.storage.delete(lg));
+
+      Promise.all(deletingImages);
     }
-    return notDeletedImages;
+
+    // Remove deleted image from array, and then fix array positions.
+    return images
+      .filter(img => img.id !== imageId)
+      .map((img, i) => {
+        img.position = i;
+        return img;
+      });
   }
 
   /** @todo */

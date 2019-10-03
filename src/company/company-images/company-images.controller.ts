@@ -20,6 +20,10 @@ import { LocationsService } from '../../locations/locations.service';
 import { CompanyImagesService } from './company-images.service';
 import { Company } from '../company.entity';
 import { Location } from '../../locations/location.entity';
+import { GetCompany } from './get-company.pipe';
+import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
+import { GetUser } from '../../user/get-user.decorator';
+import { User } from '../../user/user.entity';
 
 // @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId')
@@ -27,65 +31,89 @@ export class CompanyImagesController {
   constructor(
     private readonly companyService: CompanyService,
     private readonly locationService: LocationsService,
-    private readonly imageService: CompanyImagesService,
+    private readonly companyImageService: CompanyImagesService,
   ) {}
 
-  @Post('images')
+  /** Add new image of a company */
   @UseInterceptors(FileInterceptor('file', validImage))
+  @IfAllowed()
+  @Post('images')
   async addImageToCompany(
     @UploadedFile() file: any,
-    @Param('companyId', ValidUUID) companyId: UUID,
+    @Param('companyId', GetCompany) company: Company,
+    @GetUser() user: User,
   ): Promise<Company> {
-    const company = await this.companyService.findOne(companyId);
-    // throw new NotImplementedException();
-    company.images = await this.imageService.addImage(file, company.images);
-    return this.companyService.update(company);
+    company.images = await this.companyImageService.addImage(
+      file,
+      company.images,
+    );
+
+    return this.companyService.mutate(company, {
+      user,
+      reason: 'Add image',
+      domain: company.id,
+    });
   }
 
+  /** Remove image of company */
+  @Delete('images/:imageId')
+  async removeImageFromCompany(
+    @Param('companyId', GetCompany) company: Company,
+    @Param('imageId', ValidUUID) imageId: UUID,
+    @GetUser() user: User,
+  ): Promise<Company> {
+    company.images = await this.companyImageService.removeImage(
+      imageId,
+      company.images,
+    );
+    return this.companyService.mutate(company, {
+      user,
+      reason: 'Add image',
+      domain: company.id,
+    });
+  }
+
+  /** Add new image of location */
   @Post('locations/:locationId/images')
   @UseInterceptors(FileInterceptor('file', validImage))
   async addImageToLocation(
     @UploadedFile() file: any,
     @Param('companyId', ValidUUID) companyId: UUID,
-    @Param('locationId', ValidUUID) locationId: UUID,
+    @Param('locationId', ValidUUID) id: UUID,
+    @GetUser() user: User,
   ): Promise<Location> {
-    const location = await this.locationService.findOne({
-      companyId,
-      id: locationId,
-    });
-    location.images = await this.imageService.addImage(file, location.images);
-    return this.locationService.update(location);
-  }
-
-  @Delete('images/:imageId')
-  async removeImageFromCompany(
-    @Param('companyId', ValidUUID) companyId: UUID,
-    @Param('imageId', ValidUUID) imageId: UUID,
-  ): Promise<any> {
-    const company = await this.companyService.findOne(companyId);
-    // throw new NotImplementedException();
-    company.images = await this.imageService.removeImage(
-      imageId,
-      company.images,
+    const location = await this.locationService.findOne({ companyId, id });
+    location.images = await this.companyImageService.addImage(
+      file,
+      location.images,
     );
-    return this.companyService.update(company);
+
+    return this.locationService.mutate(location, {
+      user,
+      reason: 'Add image',
+      domain: companyId,
+    });
   }
 
+  /** Remove image of location */
   @Delete('locations/:locationId/images/:imageId')
   async removeImageFromLocation(
     @Param('companyId', ValidUUID) companyId: UUID,
-    @Param('locationId', ValidUUID) locationId: UUID,
+    @Param('locationId', ValidUUID) id: UUID,
     @Param('imageId', ValidUUID) imageId: UUID,
-  ): Promise<any> {
-    const location = await this.locationService.findOne({
-      companyId,
-      id: locationId,
-    });
-    // throw new NotImplementedException();
-    location.images = await this.imageService.removeImage(
+    @GetUser() user: User,
+  ): Promise<Location> {
+    const location = await this.locationService.findOne({ companyId, id });
+
+    location.images = await this.companyImageService.removeImage(
       imageId,
       location.images,
     );
-    return this.locationService.update(location);
+
+    return this.locationService.mutate(location, {
+      user,
+      reason: 'Delete image.',
+      domain: companyId,
+    });
   }
 }

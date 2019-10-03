@@ -20,11 +20,15 @@ export interface WithId {
   [key: string]: any;
 }
 
+/** Shorthand for Record where key is string, and second param can be any */
 export type Struct<T = any> = Record<string, T>;
 
-export const imagesSizes = ['xs', 'sm', 'md', 'lg'];
-
-export type ImageMetadata = {
+/** When storing images, image should have this info.
+ * xs, md, etc. are all defferent sizes of image.
+ * In case there is only big image, save as lg.
+ * Thumbnail is always xs.
+ */
+export type Image = {
   id: string; // uuid
   position: number; // Zero index
   xs?: string; // 168px

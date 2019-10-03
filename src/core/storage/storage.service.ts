@@ -104,7 +104,7 @@ export class StorageService {
    * If all images sizes are 2019/05/22/qwer12.xs.jpeg,
    * @param prefix for them is 2019/05/22/qwer12.
    */
-  async deleteMany(prefix: string): Promise<string[]> {
+  async deleteWherePrefix(prefix: string): Promise<string[]> {
     const filenames = await this.listFiles(prefix);
 
     return new Promise((res, rej): void => {

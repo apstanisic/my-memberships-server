@@ -18,7 +18,7 @@ import { Location } from '../locations/location.entity';
 import { DeleteColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
-import { ImageMetadata } from '../core/types';
+import { Image } from '../core/types';
 
 /**
  * Company can be deleted only if there is no more
@@ -91,5 +91,5 @@ export class Company extends BaseEntity {
   @Column({ type: 'simple-json', default: [] })
   @IsString({ each: true })
   @ArrayMaxSize(5)
-  images: ImageMetadata[];
+  images: Image[];
 }
