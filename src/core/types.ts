@@ -28,12 +28,14 @@ export type Struct<T = any> = Record<string, T>;
  * In case there is only big image, save as lg.
  * Thumbnail is always xs.
  */
-export type Image = {
+export interface Image extends ImageSizes {
   id: string; // uuid
-  position: number; // Zero index
+  position: number; // In case of storing image in array. Zero index
+}
+
+export interface ImageSizes {
   xs?: string; // 168px
   sm?: string; // 320px
   md?: string; // 640px
   lg?: string; // 1280px
-  // xl?: string; // 1920px // curently lg is max
-};
+}

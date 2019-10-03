@@ -5,6 +5,7 @@ import { IsEmail, IsString, Length, IsOptional } from 'class-validator';
 import { random } from 'faker';
 import { BaseEntity } from './base.entity';
 import { IUser } from './user.interface';
+import { ImageSizes } from '../types';
 
 /**
  * This should be general user that can be extracted in seperate module.
@@ -31,10 +32,9 @@ export class BaseUser extends BaseEntity implements IUser {
   name: string;
 
   /** User's profile picture */
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'simple-json' })
   @IsOptional()
-  @Length(10, 500)
-  avatar?: string;
+  avatar?: ImageSizes;
 
   /** Did user confirm his account */
   @Column({ default: false })
