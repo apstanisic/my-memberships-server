@@ -7,6 +7,7 @@ import {
   Body,
   Put,
   Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PaginationParams } from '../core/pagination/pagination-options';
@@ -56,6 +57,28 @@ export class LocationsController {
     @Body() location: CreateLocationDto,
     @GetUser() user: User,
   ): Promise<Location> {
+    const locations = await this.locationsService.find(
+      { companyId },
+      { relations: ['company'] },
+    );
+    const amountOfLocations = locations.length;
+
+    if (amountOfLocations >= 1 && locations[0].company.tier === 'free') {
+      throw new ForbiddenException('Quota reached.');
+    }
+    if (amountOfLocations >= 3 && locations[0].company.tier === 'basic') {
+      throw new ForbiddenException('Quota reached.');
+    }
+    if (amountOfLocations >= 8 && locations[0].company.tier === 'pro') {
+      throw new ForbiddenException('Quota reached.');
+    }
+    if (amountOfLocations >= 15 && locations[0].company.tier === 'enterprise') {
+      throw new ForbiddenException('Quota reached.');
+    }
+    if (amountOfLocations >= 40) {
+      throw new ForbiddenException('Max quota reached.');
+    }
+
     return this.locationsService.create(
       { ...location, companyId },
       { user, domain: companyId },
