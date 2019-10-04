@@ -32,7 +32,7 @@ export class CompanyLogsController {
     @GetPagination() params: PaginationParams,
     @Param('companyId', GetCompany) company: Company,
   ): PgResult<Log> {
-    if (this.isFreeTier(company)) throw new ForbiddenException();
+    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, { domainId: company.id });
   }
 
@@ -44,7 +44,7 @@ export class CompanyLogsController {
     @Param('companyId', GetCompany) company: Company,
     @Param('entityId', ValidUUID) entityId: UUID,
   ): PgResult<Log> {
-    if (this.isFreeTier(company)) throw new ForbiddenException();
+    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, { entityId, domainId: company.id });
   }
 
@@ -57,7 +57,7 @@ export class CompanyLogsController {
     @Param('companyId', GetCompany) company: Company,
     @Param('userId', ValidUUID) userId: UUID,
   ): PgResult<Log> {
-    if (this.isFreeTier(company)) throw new ForbiddenException();
+    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       executedBy: {
@@ -77,7 +77,7 @@ export class CompanyLogsController {
     @Param('companyId', GetCompany) company: Company,
     @Param('locationId', ValidUUID) locationId: UUID,
   ): PgResult<Log> {
-    if (this.isFreeTier(company)) throw new ForbiddenException();
+    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       // This should be location id.
@@ -92,13 +92,13 @@ export class CompanyLogsController {
     @Param('logId', ValidUUID) logId: UUID,
     @Param('companyId', GetCompany) company: Company,
   ): Promise<Log> {
-    if (this.isFreeTier(company)) throw new ForbiddenException();
+    if (this.canAccessLogs(company)) throw new ForbiddenException();
     const logs = await this.dbLogger.find({ id: logId, domainId: company.id });
     if (logs.length !== 1) throw new NotFoundException();
     return logs[0];
   }
 
-  private isFreeTier(company: Company): boolean {
-    return company.tier === 'free';
+  private canAccessLogs(company: Company): boolean {
+    return company.tier === 'free' || company.tier === 'basic';
   }
 }
