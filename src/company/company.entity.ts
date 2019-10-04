@@ -1,24 +1,22 @@
-import { Entity, Column, ManyToOne, OneToMany, Index } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import {
+  ArrayMaxSize,
   IsEmail,
-  Length,
-  IsString,
   IsIn,
+  IsInt,
   IsNotEmpty,
   IsOptional,
-  IsInt,
-  ArrayMaxSize,
+  IsString,
+  Length,
 } from 'class-validator';
-import { Exclude } from 'class-transformer';
-import { User } from '../user/user.entity';
-import { Subscription } from '../subscription/subscription.entity';
+import { Column, Entity, Index, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from '../core/entities/base.entity';
-import { CompanyCategory, companiesCategories } from './categories.list';
-import { Location } from '../locations/location.entity';
-import { DeleteColumns } from '../core/entities/deleted-columns.entity';
-import { SoftDelete } from '../core/entities/soft-delete.interface';
-import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { Image } from '../core/types';
+import { Location } from '../locations/location.entity';
+import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
+import { Subscription } from '../subscription/subscription.entity';
+import { User } from '../user/user.entity';
+import { companiesCategories, CompanyCategory } from './categories.list';
 
 /**
  * Company can be deleted only if there is no more

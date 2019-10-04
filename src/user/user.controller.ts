@@ -1,21 +1,25 @@
 import {
-  Controller,
-  Get,
-  UseGuards,
-  Put,
   Body,
+  Controller,
   Delete,
   ForbiddenException,
+  Get,
   Param,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from './get-user.decorator';
-import { User } from './user.entity';
-import { UpdatePasswordData, LoginData } from '../core/auth/auth.dto';
-import { UsersService } from './user.service';
-import { UpdateUserInfo } from './update-user.dto';
-import { ValidUUID } from '../core/uuid.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { validImage } from '../company/company-images/multer-options';
+import { LoginData, UpdatePasswordData } from '../core/auth/auth.dto';
 import { StorageService } from '../core/storage/storage.service';
+import { ValidUUID } from '../core/uuid.pipe';
+import { GetUser } from './get-user.decorator';
+import { UpdateUserInfo } from './update-user.dto';
+import { User } from './user.entity';
+import { UsersService } from './user.service';
 
 @Controller('auth')
 export class UserController {
@@ -39,6 +43,24 @@ export class UserController {
     });
   }
 
+  /** Update user avatar */
+  @UseInterceptors(FileInterceptor('file', validImage))
+  @Put('avatar')
+  @UseGuards(AuthGuard('jwt'))
+  async addProfilePicture(
+    @UploadedFile() file: any,
+    @GetUser() user: User,
+  ): Promise<User> {
+    return this.usersService.changeAvatar(user, file);
+  }
+
+  /** Remove user avatar */
+  @Delete('avatar')
+  @UseGuards(AuthGuard('jwt'))
+  async removeProfilePicture(@GetUser() user: User): Promise<User> {
+    return this.usersService.removeAvatar(user);
+  }
+
   /** Update user info */
   @Put()
   @UseGuards(AuthGuard('jwt'))
@@ -47,13 +69,6 @@ export class UserController {
     @GetUser() user: User,
   ): Promise<User> {
     return this.usersService.update(user, updateData);
-  }
-
-  /** Update user info */
-  @Put('avatar')
-  @UseGuards(AuthGuard('jwt'))
-  async addProfilePicture(): Promise<User> {
-    throw new Error();
   }
 
   /** Get logged user info */
