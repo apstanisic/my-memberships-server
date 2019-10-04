@@ -7,6 +7,7 @@ import {
   Body,
   Put,
   Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
@@ -24,6 +25,9 @@ import { Role } from '../core/access-control/roles.entity';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { ValidReason } from '../core/valid-reason.pipe';
+import { GetCompany } from './get-company.pipe';
+import { Company } from './company.entity';
+import { CompanyService } from './company.service';
 
 /**
  * Every method is check for proper permissions.
@@ -41,7 +45,10 @@ import { ValidReason } from '../core/valid-reason.pipe';
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/roles')
 export class CompaniesRolesController {
-  constructor(private readonly rolesService: RoleService) {}
+  constructor(
+    private readonly rolesService: RoleService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   /** Get roles for this company */
   @IfAllowed('read')
@@ -90,15 +97,33 @@ export class CompaniesRolesController {
   /** Create new role */
   @IfAllowed()
   @Post('')
-  addNewRole(
+  async addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Body() data: CreateRoleDto,
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
+    const company = await this.companyService.findOne(companyId, {
+      relations: ['roles'],
+    });
+    const rolesAmount = company.roles.length;
+
+    if (company.tier === 'free' && rolesAmount >= 5) {
+      throw new ForbiddenException('Quota used.');
+    }
+    if (company.tier === 'basic' && rolesAmount >= 15) {
+      throw new ForbiddenException('Quota used.');
+    }
+    if (company.tier === 'pro' && rolesAmount >= 40) {
+      throw new ForbiddenException('Quota used.');
+    }
+    if (rolesAmount >= 500) {
+      throw new ForbiddenException('You have 500 roles. You reach max limit.');
+    }
+
     return this.rolesService.create(
-      { ...data, ...{ domain: companyId } },
-      { user, reason, domain: companyId },
+      { ...data, ...{ domain: company.id } },
+      { user, reason, domain: company.id },
     );
   }
 

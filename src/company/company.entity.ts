@@ -17,6 +17,7 @@ import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { User } from '../user/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
+import { Role } from '../core/access-control/roles.entity';
 
 /**
  * Company can be deleted only if there is no more
@@ -84,6 +85,13 @@ export class Company extends BaseEntity {
     onDelete: 'CASCADE',
   })
   locations: Location[];
+
+  /** All roles this company have. */
+  @OneToMany(type => Role, role => role.domain)
+  roles: Role[];
+
+  /** @TODO Implement this */
+  tier: 'free' | 'basic' | 'pro' | 'enterprise' = 'pro';
 
   /** Path to images of company. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })
