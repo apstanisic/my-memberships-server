@@ -82,9 +82,12 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Find entities by multiple ids */
-  async findByIds(ids: (string | number)[]): Promise<T[]> {
+  async findByIds(
+    ids: (string | number)[],
+    searchOptions: FindManyParams<T> = {},
+  ): Promise<T[]> {
     try {
-      const entities = await this.repository.findByIds(ids);
+      const entities = await this.repository.findByIds(ids, searchOptions);
       return entities;
     } catch (error) {
       throw this.internalError(error);
@@ -92,9 +95,15 @@ export abstract class BaseService<T extends WithId = any> {
   }
 
   /** Find all entities that match criteria */
-  async find(filter: OrmWhere<T> = {}): Promise<T[]> {
+  async find(
+    filter: OrmWhere<T> = {},
+    searchOptions: FindManyParams<T> = {},
+  ): Promise<T[]> {
     try {
-      const res = await this.repository.find({ where: parseQuery(filter) });
+      const res = await this.repository.find({
+        ...searchOptions,
+        where: parseQuery(filter),
+      });
       return res;
     } catch (error) {
       throw this.internalError(error);
