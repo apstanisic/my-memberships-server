@@ -12,7 +12,12 @@ export function generateUser(): User {
   user._password = passwordHash;
   user.name = Faker.name.firstName();
   user.phoneNumber = Faker.phone.phoneNumber();
-  user.avatar = 'https://i.pravatar.cc/920';
+  user.avatar = {
+    xs: 'https://i.pravatar.cc/220',
+    sm: 'https://i.pravatar.cc/420',
+    md: 'https://i.pravatar.cc/720',
+    lg: 'https://i.pravatar.cc/920',
+  };
 
   return user;
 }
