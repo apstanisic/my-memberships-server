@@ -13,6 +13,9 @@ p, app_admin, /users/*,  (read)|(write)
 p, owner, /companies/:id,  (read)|(write)
 p, owner, /companies/:id/*, (read)|(write)
 
+p, admin, /companies/:id/logs, read
+p, admin, /companies/:id/logs/*, read
+
 p, admin, /companies/:id/subscriptions, (read)|(write)
 p, admin, /companies/:id/subscriptions/*, (read)|(write)
 
@@ -21,6 +24,7 @@ p, admin, /companies/:id/locations/*, (read)|(write)
 
 p, admin, /companies/:id/roles, read
 p, admin, /companies/:id/roles/*, read
+
 
 p, user, /users/:id/*, read
 p, user, /users/:id, read

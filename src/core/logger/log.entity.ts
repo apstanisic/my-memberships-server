@@ -38,6 +38,9 @@ export class Log<T extends WithId = any> {
   @Column(type => BasicUserInfo)
   executedBy: BasicUserInfo | IUser;
 
+  @Column('string')
+  executedById: string;
+
   /** At what time was this action executed. */
   @Column({ precision: 3, default: new Date() })
   readonly executedAt: Date;
@@ -71,8 +74,7 @@ export class Log<T extends WithId = any> {
   set newValue(newValue: T | undefined) {
     this.changes = diff(this.initialValue, newValue);
     // TODO Update prettier to support 3.7 ts
-    /* eslint-disable-next-line */
-    if (!this.entityId && newValue?.id) {
+    if (!this.entityId && newValue && newValue.id) {
       this.entityId = newValue.id;
     }
   }
@@ -83,7 +85,7 @@ export class Log<T extends WithId = any> {
     this.executedBy = plainToClass(BasicUserInfo, this.executedBy);
     // Remove excluded properties, and set entity id
     this.initialValue = classToClass(this.initialValue);
-    if (this.initialValue?.id) {
+    if (this.initialValue && this.initialValue.id) {
       this.entityId = this.initialValue.id;
     }
   }
