@@ -1,10 +1,9 @@
-import * as moment from 'moment';
+import { Injectable } from '@nestjs/common';
 import * as Faker from 'faker';
-import { Injectable, NotImplementedException } from '@nestjs/common';
-import { Image, UUID, Struct } from '../../core/types';
-import { generateAllImageSizes } from './sharp';
-import { StorageService } from '../../core/storage/storage.service';
+import * as moment from 'moment';
 import { StorageImagesService } from '../../core/storage/storage-images.service';
+import { StorageService } from '../../core/storage/storage.service';
+import { Image, UUID } from '../../core/types';
 
 @Injectable()
 export class CompanyImagesService {

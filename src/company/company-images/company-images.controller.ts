@@ -17,7 +17,7 @@ import { User } from '../../user/user.entity';
 import { Company } from '../company.entity';
 import { CompanyService } from '../company.service';
 import { CompanyImagesService } from './company-images.service';
-import { GetCompany } from './get-company.pipe';
+import { GetCompany } from '../get-company.pipe';
 import { validImage } from './multer-options';
 
 // @UseGuards(AuthGuard('jwt'), PermissionsGuard)

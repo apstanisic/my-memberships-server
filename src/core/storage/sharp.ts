@@ -1,5 +1,4 @@
 import * as sharp from 'sharp';
-import { Struct } from '../../core/types';
 
 type Sizes = 'xs' | 'sm' | 'md' | 'lg';
 

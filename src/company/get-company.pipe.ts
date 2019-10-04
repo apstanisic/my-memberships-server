@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { CompanyService } from '../company.service';
-import { Company } from '../company.entity';
+import { CompanyService } from './company.service';
+import { Company } from './company.entity';
 
 /* */
 /**

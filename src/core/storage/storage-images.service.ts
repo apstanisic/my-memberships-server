@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { join as pathJoin } from 'path';
 import { StorageService } from './storage.service';
 import { ImageSizes } from '../types';
-import { generateAllImageSizes } from '../../company/company-images/sharp';
+import { generateAllImageSizes } from './sharp';
 
+/**
+ * Storage service in charge of storing images.
+ * It will generate multiple sizes of image.
+ */
 @Injectable()
 export class StorageImagesService {
   constructor(private readonly storageService: StorageService) {}
