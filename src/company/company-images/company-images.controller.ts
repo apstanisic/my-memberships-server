@@ -1,29 +1,24 @@
-import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '@nestjs/passport';
-import * as Faker from 'faker';
 import {
   Controller,
-  Post,
   Delete,
-  UseInterceptors,
-  UploadedFile,
   Param,
-  NotImplementedException,
-  UseGuards,
+  Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ValidUUID } from '../../core/uuid.pipe';
-import { UUID } from '../../core/types';
-import { PermissionsGuard } from '../../core/access-control/permissions.guard';
-import { validImage } from './multer-options';
-import { CompanyService } from '../company.service';
-import { LocationsService } from '../../locations/locations.service';
-import { CompanyImagesService } from './company-images.service';
-import { Company } from '../company.entity';
-import { Location } from '../../locations/location.entity';
-import { GetCompany } from './get-company.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
+import { UUID } from '../../core/types';
+import { ValidUUID } from '../../core/uuid.pipe';
+import { Location } from '../../locations/location.entity';
+import { LocationsService } from '../../locations/locations.service';
 import { GetUser } from '../../user/get-user.decorator';
 import { User } from '../../user/user.entity';
+import { Company } from '../company.entity';
+import { CompanyService } from '../company.service';
+import { CompanyImagesService } from './company-images.service';
+import { GetCompany } from './get-company.pipe';
+import { validImage } from './multer-options';
 
 // @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId')

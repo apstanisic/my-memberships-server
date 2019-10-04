@@ -1,25 +1,24 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  UseGuards,
-  Body,
-  Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { Company } from './company.entity';
-import { User } from '../user/user.entity';
-import { CompanyService } from './company.service';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { GetUser } from '../user/get-user.decorator';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { UpdateCompanyDto } from './company.dto';
+import { PaginationParams } from '../core/pagination/pagination-options';
+import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PgResult } from '../core/pagination/pagination.types';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
+import { UpdateCompanyDto } from './company.dto';
+import { Company } from './company.entity';
+import { CompanyService } from './company.service';
 
 /** Companies Controller */
 @Controller('companies')

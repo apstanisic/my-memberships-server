@@ -1,1 +1,3 @@
-# Moj Gym backend server
+# My subs backend server
+
+## TODO: Add documentation
