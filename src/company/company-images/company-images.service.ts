@@ -1,16 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as Faker from 'faker';
 import * as moment from 'moment';
 import { StorageImagesService } from '../../core/storage/storage-images.service';
-import { StorageService } from '../../core/storage/storage.service';
 import { Image, UUID } from '../../core/types';
+import { Company } from '../company.entity';
+import { Location } from '../../locations/location.entity';
 
 @Injectable()
 export class CompanyImagesService {
-  constructor(
-    private readonly storage: StorageService,
-    private readonly storageImagesService: StorageImagesService,
-  ) {}
+  constructor(private readonly storageImagesService: StorageImagesService) {}
 
   async addImage(file: any, initialImages: Image[]): Promise<Image[]> {
     const images = [...initialImages];
@@ -45,5 +43,27 @@ export class CompanyImagesService {
         img.position = i;
         return img;
       });
+  }
+
+  /** Can user add new image to this company. Checks tier and images count */
+  canAddImageToCompany(company: Company): boolean {
+    const amountOfImages = company.images.length;
+    if (company.tier === 'free' && amountOfImages >= 4) return false;
+    if (company.tier === 'basic' && amountOfImages >= 6) return false;
+    if (company.tier === 'pro' && amountOfImages >= 10) return false;
+    if (company.tier === 'enterprise' && amountOfImages >= 20) return false;
+    return true;
+  }
+
+  /** Can user add new image to this location */
+  canAddImageToLocation(location: Location): any {
+    const amountOfImages = location.images.length;
+    const { company } = location;
+
+    if (company.tier === 'free' && amountOfImages >= 2) return false;
+    if (company.tier === 'basic' && amountOfImages >= 5) return false;
+    if (company.tier === 'pro' && amountOfImages >= 10) return false;
+    if (company.tier === 'enterprise' && amountOfImages >= 30) return false;
+    return true;
   }
 }

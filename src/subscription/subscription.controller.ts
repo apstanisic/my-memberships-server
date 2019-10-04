@@ -1,37 +1,41 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  UseGuards,
-  Body,
-  Delete,
   Put,
-  Query,
-  NotImplementedException,
+  UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PgResult } from '../core/pagination/pagination.types';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { PaginationParams } from '../core/pagination/pagination-options';
 import { GetPagination } from '../core/pagination/pagination.decorator';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { SubscriptionService } from './subscription.service';
-import { Subscription } from './subscription.entity';
+import { PgResult } from '../core/pagination/pagination.types';
+import { UUID } from '../core/types';
+import { ValidUUID } from '../core/uuid.pipe';
+import { GetUser } from '../user/get-user.decorator';
+import { User } from '../user/user.entity';
 import {
   CreateSubscriptionDto,
   UpdateSubscriptionDto,
 } from './subscription.dto';
-import { ValidUUID } from '../core/uuid.pipe';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { UUID } from '../core/types';
-import { ManyUUID } from '../core/many-uuid.pipe';
-import { GetUser } from '../user/get-user.decorator';
-import { User } from '../user/user.entity';
+import { Subscription } from './subscription.entity';
+import { SubscriptionService } from './subscription.service';
+import { CompanyService } from '../company/company.service';
+import { GetCompany } from '../company/get-company.pipe';
+import { Company } from '../company/company.entity';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')
 export class SubscriptionController {
-  constructor(private readonly service: SubscriptionService) {}
+  constructor(
+    private readonly service: SubscriptionService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   /** Get subscriptions, filtered and paginated */
   @IfAllowed('read')
@@ -58,13 +62,10 @@ export class SubscriptionController {
   @Post()
   async create(
     @Body() subscription: CreateSubscriptionDto,
-    @Param('companyId', ValidUUID) companyId: UUID,
+    @Param('companyId', GetCompany) company: Company,
     @GetUser() user: User,
   ): Promise<Subscription> {
-    return this.service.create(
-      { ...subscription, companyId },
-      { user, domain: companyId },
-    );
+    return this.service.createSubscription({ user, company, subscription });
   }
 
   /** Update subscription */

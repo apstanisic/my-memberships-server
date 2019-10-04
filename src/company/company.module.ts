@@ -8,6 +8,7 @@ import { CompanyImagesService } from './company-images/company-images.service';
 import { LocationsModule } from '../locations/locations.module';
 import { CompaniesRolesController } from './companies-roles.controller';
 import { AccessControlModule } from '../core/access-control/access-control.module';
+import { CompanyRolesService } from './company-roles.service';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AccessControlModule } from '../core/access-control/access-control.modul
     CompaniesRolesController,
     CompanyImagesController,
   ],
-  providers: [CompanyService, CompanyImagesService],
+  providers: [CompanyService, CompanyImagesService, CompanyRolesService],
   exports: [CompanyService],
 })
 export class CompanyModule {}

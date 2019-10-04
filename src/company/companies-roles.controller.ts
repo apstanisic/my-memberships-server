@@ -1,32 +1,31 @@
 import {
+  Body,
   Controller,
-  UseGuards,
+  Delete,
   Get,
   Param,
   Post,
-  Body,
   Put,
-  Delete,
+  UseGuards,
   ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { ValidUUID } from '../core/uuid.pipe';
-import { UUID } from '../core/types';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { RoleService } from '../core/access-control/role.service';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { ValidRole } from '../core/access-control/valid-role.pipe';
-import { RoleName } from '../core/access-control/roles.list';
 import { CreateRoleDto, UpdateRoleDto } from '../core/access-control/roles.dto';
-import { PgResult } from '../core/pagination/pagination.types';
 import { Role } from '../core/access-control/roles.entity';
+import { RoleName } from '../core/access-control/roles.list';
+import { ValidRole } from '../core/access-control/valid-role.pipe';
+import { PaginationParams } from '../core/pagination/pagination-options';
+import { GetPagination } from '../core/pagination/pagination.decorator';
+import { PgResult } from '../core/pagination/pagination.types';
+import { UUID } from '../core/types';
+import { ValidUUID } from '../core/uuid.pipe';
+import { ValidReason } from '../core/valid-reason.pipe';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
-import { ValidReason } from '../core/valid-reason.pipe';
-import { GetCompany } from './get-company.pipe';
-import { Company } from './company.entity';
+import { CompanyRolesService } from './company-roles.service';
 import { CompanyService } from './company.service';
 
 /**
@@ -48,6 +47,7 @@ export class CompaniesRolesController {
   constructor(
     private readonly rolesService: RoleService,
     private readonly companyService: CompanyService,
+    private readonly companyRolesService: CompanyRolesService,
   ) {}
 
   /** Get roles for this company */
@@ -106,19 +106,8 @@ export class CompaniesRolesController {
     const company = await this.companyService.findOne(companyId, {
       relations: ['roles'],
     });
-    const rolesAmount = company.roles.length;
-
-    if (company.tier === 'free' && rolesAmount >= 5) {
-      throw new ForbiddenException('Quota used.');
-    }
-    if (company.tier === 'basic' && rolesAmount >= 15) {
-      throw new ForbiddenException('Quota used.');
-    }
-    if (company.tier === 'pro' && rolesAmount >= 40) {
-      throw new ForbiddenException('Quota used.');
-    }
-    if (rolesAmount >= 500) {
-      throw new ForbiddenException('You have 500 roles. You reach max limit.');
+    if (!this.companyRolesService.canAddRole(company)) {
+      throw new ForbiddenException('Quota reached');
     }
 
     return this.rolesService.create(
