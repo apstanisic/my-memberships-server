@@ -93,9 +93,10 @@ export class CompanyLogsController {
     @Param('companyId', GetCompany) company: Company,
   ): Promise<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
-    const logs = await this.dbLogger.find({ id: logId, domainId: company.id });
-    if (logs.length !== 1) throw new NotFoundException();
-    return logs[0];
+    return this.dbLogger.findOne({
+      id: logId,
+      domainId: company.id,
+    });
   }
 
   private canAccessLogs(company: Company): boolean {
