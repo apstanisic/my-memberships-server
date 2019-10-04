@@ -6,6 +6,7 @@ import {
   Index,
   OneToMany,
   RelationId,
+  BeforeUpdate,
 } from 'typeorm';
 import * as moment from 'moment';
 import { Exclude, Expose } from 'class-transformer';
@@ -70,6 +71,10 @@ export class Subscription extends BaseEntity implements SoftDelete {
   @Column({ nullable: true })
   allowedUses?: number;
 
+  /** Is this subscription active. */
+  @Column({ default: true })
+  active: boolean;
+
   /** How much time is this sub used */
   // @Column({ default: 0 })
   // usedAmount: number;
@@ -85,12 +90,19 @@ export class Subscription extends BaseEntity implements SoftDelete {
   deleted: DeleteColumns;
 
   /** Check if subscription is still valid */
-  @Expose()
-  isValid(): boolean {
-    if (this.deleted.at) return false;
-    if (moment(this.expiresAt).isBefore(moment.now())) return false;
-    if (this.allowedUses && this.allowedUses <= this.usedAmount) return false;
-    return true;
+  @BeforeUpdate()
+  isValid(): void {
+    if (this.deleted.at && this.active) {
+      this.active = false;
+    }
+
+    if (moment(this.expiresAt).isBefore(moment.now()) && this.active) {
+      this.active = false;
+    }
+
+    if (this.allowedUses && this.allowedUses <= this.usedAmount) {
+      this.active = false;
+    }
   }
 
   /**

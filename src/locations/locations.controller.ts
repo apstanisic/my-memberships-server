@@ -1,26 +1,25 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  UseGuards,
-  Body,
   Put,
-  Delete,
-  ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { ValidUUID } from '../core/uuid.pipe';
-import { LocationsService } from './locations.service';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
-import { Location } from './location.entity';
+import { PaginationParams } from '../core/pagination/pagination-options';
+import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PgResult } from '../core/pagination/pagination.types';
+import { ValidUUID } from '../core/uuid.pipe';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
+import { Location } from './location.entity';
+import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
+import { LocationsService } from './locations.service';
 
 /**
  * Controller for managing locations
@@ -57,32 +56,7 @@ export class LocationsController {
     @Body() location: CreateLocationDto,
     @GetUser() user: User,
   ): Promise<Location> {
-    const locations = await this.locationsService.find(
-      { companyId },
-      { relations: ['company'] },
-    );
-    const amountOfLocations = locations.length;
-
-    if (amountOfLocations >= 1 && locations[0].company.tier === 'free') {
-      throw new ForbiddenException('Quota reached.');
-    }
-    if (amountOfLocations >= 3 && locations[0].company.tier === 'basic') {
-      throw new ForbiddenException('Quota reached.');
-    }
-    if (amountOfLocations >= 8 && locations[0].company.tier === 'pro') {
-      throw new ForbiddenException('Quota reached.');
-    }
-    if (amountOfLocations >= 15 && locations[0].company.tier === 'enterprise') {
-      throw new ForbiddenException('Quota reached.');
-    }
-    if (amountOfLocations >= 40) {
-      throw new ForbiddenException('Max quota reached.');
-    }
-
-    return this.locationsService.create(
-      { ...location, companyId },
-      { user, domain: companyId },
-    );
+    return this.locationsService.createLocation({ companyId, location, user });
   }
 
   /** Update location */

@@ -1,8 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subscription } from './subscription.entity';
 import { BaseService } from '../core/base.service';
+import { User } from '../user/user.entity';
+import { Company } from '../company/company.entity';
+import { CreateSubscriptionDto } from './subscription.dto';
+
+interface CreateSubParams {
+  user: User;
+  company: Company;
+  subscription: CreateSubscriptionDto;
+}
 
 @Injectable()
 export class SubscriptionService extends BaseService<Subscription> {
@@ -10,5 +19,34 @@ export class SubscriptionService extends BaseService<Subscription> {
     @InjectRepository(Subscription) repository: Repository<Subscription>,
   ) {
     super(repository);
+  }
+
+  async createSubscription({
+    subscription,
+    user,
+    company,
+  }: CreateSubParams): Promise<Subscription> {
+    const companyId = company.id;
+    const currentSubs = await this.count({ companyId, active: true });
+
+    if (company.tier === 'free' && currentSubs >= 80) {
+      throw new ForbiddenException('Max subs reached');
+    }
+
+    if (company.tier === 'basic' && currentSubs >= 150) {
+      throw new ForbiddenException('Max subs reached');
+    }
+
+    if (company.tier === 'pro' && currentSubs >= 300) {
+      throw new ForbiddenException('Max subs reached');
+    }
+    if (currentSubs >= 600) {
+      throw new ForbiddenException('Max subs reached');
+    }
+
+    return this.create(
+      { ...subscription, companyId },
+      { user, domain: companyId },
+    );
   }
 }
