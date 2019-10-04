@@ -21,8 +21,8 @@ import { Log } from './logger/log.entity';
 import { DbLoggerService } from './logger/db-logger.service';
 import { LogMetadata } from './logger/log-metadata';
 
-type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
-type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
+export type FindOneParams<T> = Omit<FindOneOptions<T>, 'where'>;
+export type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
 
 /**
  * Base service that implements some basic methods.
