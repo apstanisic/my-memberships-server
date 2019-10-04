@@ -41,6 +41,7 @@ export class CompanyService extends BaseService<Company> {
   /**
    * Creates new company and owner role.
    * We can't do create(entity, owner) cause of TS limitations.
+   * Method must have same signature.
    * More info: https://stackoverflow.com/questions/33542359
    */
   async createCompany(
