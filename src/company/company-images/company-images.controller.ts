@@ -5,6 +5,7 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  ForbiddenException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
@@ -38,6 +39,19 @@ export class CompanyImagesController {
     @Param('companyId', GetCompany) company: Company,
     @GetUser() user: User,
   ): Promise<Company> {
+    const amountOfImages = company.images.length;
+    if (company.tier === 'free' && amountOfImages >= 4) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'basic' && amountOfImages >= 6) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'pro' && amountOfImages >= 10) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'enterprise' && amountOfImages >= 20) {
+      throw new ForbiddenException('Max quota reached');
+    }
     company.images = await this.companyImageService.addImage(
       file,
       company.images,
@@ -77,7 +91,27 @@ export class CompanyImagesController {
     @Param('locationId', ValidUUID) id: UUID,
     @GetUser() user: User,
   ): Promise<Location> {
-    const location = await this.locationService.findOne({ companyId, id });
+    const location = await this.locationService.findOne(
+      { companyId, id },
+      { relations: ['company'] },
+    );
+
+    const amountOfImages = location.images.length;
+    const { company } = location;
+
+    if (company.tier === 'free' && amountOfImages >= 2) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'basic' && amountOfImages >= 5) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'pro' && amountOfImages >= 10) {
+      throw new ForbiddenException('Quota reached');
+    }
+    if (company.tier === 'enterprise' && amountOfImages >= 30) {
+      throw new ForbiddenException('Max quota reached');
+    }
+
     location.images = await this.companyImageService.addImage(
       file,
       location.images,
