@@ -50,23 +50,25 @@ export class AuthMailService {
   /** Send user email that enables them to reset password. */
   async sendResetPasswordEmail(email: string): Promise<void> {
     try {
-      const user = await this.usersService.findOne(email);
+      const user = await this.usersService.findOne({ email });
       const token = user.generateSecureToken();
       await this.usersService.mutate(user);
 
       const appUrl = this.configService.get('APP_URL');
       const resetUrl = `${appUrl}/auth/reset-password/${email}/${token}`;
 
-      if (!this.templates.passwordReset) return;
+      if (!this.templates.passwordReset) {
+        throw new InternalServerErrorException();
+      }
+
+      const commonValues = this.getCommonTemplateValues();
       const template = this.templates.passwordReset({
-        ...this.getCommonTemplateValues(),
         resetUrl,
       });
 
       await this.mailService.send({
         to: user.email,
-        subject: 'Password recovery - My Subscriptions',
-        text: `Here is your token ${token}`,
+        subject: `Resetovanje lozinke - ${commonValues.firmName}`,
         html: template,
       });
     } catch (error) {}
@@ -75,15 +77,18 @@ export class AuthMailService {
   async sendConfirmationEmail(email: string, token: string): Promise<void> {
     const appUrl = this.configService.get('API_URL');
     const confirmUrl = `${appUrl}/auth/confirm-account/${email}/${token}`;
-    const template = this.templates.accountConfirm!({
-      ...this.getCommonTemplateValues(),
+    const commonValues = this.getCommonTemplateValues();
+
+    if (!this.templates.accountConfirm)
+      throw new InternalServerErrorException();
+    const template = this.templates.accountConfirm({
+      ...commonValues,
       confirmUrl,
     });
 
     await this.mailService.send({
       to: email,
-      subject: 'Confirm account - My Subscriptions',
-      text: 'Please confirm your email address',
+      subject: `Potvrda naloga - ${commonValues.firmName}`,
       html: template,
     });
   }
