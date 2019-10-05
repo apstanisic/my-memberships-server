@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { plainToClass, classToClass } from 'class-transformer';
 import { AuthService } from './auth.service';
@@ -14,6 +15,7 @@ import { LoginData, SignInResponse, RegisterData } from './auth.dto';
 import { MailService } from '../mail/mail.service';
 import { BaseUser } from '../entities/base-user.entity';
 import { Struct } from '../types';
+import { AuthMailService } from './auth-mail.service';
 
 /** AuthController needs this method. Implement so we can inject usersService */
 interface IUsersService {
@@ -29,6 +31,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly usersService: UsersService,
+    private readonly authMailService: AuthMailService,
   ) {}
 
   /** Attempt to login user */
@@ -44,12 +47,11 @@ export class AuthController {
     const user = await this.usersService.create(data);
     const token = this.authService.createJwt(data.email);
 
-    await this.mailService.send({
-      to: user.email,
-      subject: 'Confirm account - My Subscriptions',
-      text: 'Please confirm your email address',
-      html: '<h1>Here is same html</h1>',
-    });
+    if (!user.secureToken) throw new ForbiddenException();
+    await this.authMailService.sendConfirmationEmail(
+      user.email,
+      user.secureToken,
+    );
 
     // For some reason user is not transformed without class to class
     return { token, user: classToClass(user) };

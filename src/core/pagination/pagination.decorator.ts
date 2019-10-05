@@ -1,4 +1,3 @@
-/* eslint-disable dot-notation */
 import { validate } from 'class-validator';
 import { createParamDecorator, BadRequestException } from '@nestjs/common';
 import { PaginationParams } from './pagination-options';

@@ -1,13 +1,12 @@
-import { Repository, FindManyOptions } from 'typeorm';
-import { validate } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
-import { ParseCursor } from './_parse-cursor';
-import { GenerateCursor } from './_generate-cursor';
-import { OrmWhere, WithId } from '../types';
-import { PgResult, PaginatorResponse } from './pagination.types';
-import { PaginationParams } from './pagination-options';
-import { parseQuery } from '../typeorm/parse-to-orm-query';
+import { validate } from 'class-validator';
+import { FindManyOptions, Repository } from 'typeorm';
 import { convertToObject } from '../helpers';
+import { OrmWhere, WithId } from '../types';
+import { PaginationParams } from './pagination-options';
+import { PaginatorResponse, PgResult } from './pagination.types';
+import { GenerateCursor } from './_generate-cursor';
+import { ParseCursor } from './_parse-cursor';
 
 /**
  * Format is: uuid;columnName;columnValue;type

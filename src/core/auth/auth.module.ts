@@ -12,6 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { PasswordResetController } from './password-reset.controller';
 import { ConfigService } from '../config/config.service';
 import { UserModule } from '../../user/user.module';
+import { AuthMailService } from './auth-mail.service';
 
 /** Auth module depends on user module and mail module and config module */
 @Global()
@@ -31,7 +32,7 @@ import { UserModule } from '../../user/user.module';
       },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, AuthMailService, JwtStrategy],
   controllers: [AuthController, PasswordResetController],
 })
 export class AuthModule {}

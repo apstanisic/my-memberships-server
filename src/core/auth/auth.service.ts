@@ -9,9 +9,6 @@ import { User } from '../../user/user.entity';
 
 @Injectable()
 export class AuthService {
-  /** Service logger */
-  private logger = new Logger();
-
   private validator = new Validator();
 
   constructor(

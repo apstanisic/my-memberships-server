@@ -43,23 +43,28 @@ export class MailService {
   /** In production use values from configModule (.env file) */
   constructor(private readonly configService: ConfigService) {
     if (configService.get('NODE_ENV') === 'production') {
-      const host = this.throwIfEmpty(this.configService.get('EMAIL_HOST'));
+      const host = this.valueOrthrowIfEmpty(
+        this.configService.get('EMAIL_HOST'),
+      );
       this.host = host;
 
       const port = Number(
-        this.throwIfEmpty(this.configService.get('EMAIL_PORT')),
+        this.valueOrthrowIfEmpty(this.configService.get('EMAIL_PORT')),
       );
       this.port = port;
 
-      const user = this.throwIfEmpty(this.configService.get('EMAIL_USER'));
+      const user = this.valueOrthrowIfEmpty(
+        this.configService.get('EMAIL_USER'),
+      );
       this.user = user;
 
-      const password = this.throwIfEmpty(
+      const password = this.valueOrthrowIfEmpty(
         this.configService.get('EMAIL_PASSWORD'),
       );
       this.password = password;
 
-      this.secure = Boolean(this.configService.get('EMAIL_SECURE')) || false; // true for 465, false for other ports
+      // true for 465, false for other ports
+      this.secure = Boolean(this.configService.get('EMAIL_SECURE')) || false;
     }
     this.createTransport();
   }
@@ -90,11 +95,11 @@ export class MailService {
     );
     this.transporter
       .verify()
-      .then(() => this.logger.log('Mail is working correctly.'))
+      .then(() => this.logger.log('MailService is working correctly.'))
       .catch(e => this.logger.error('Mail is not working', e));
   }
 
-  throwIfEmpty(value: any): string {
+  valueOrthrowIfEmpty(value: any): string {
     const { isEmpty } = this.validator;
     if (isEmpty(value)) {
       throw new InternalServerErrorException('Mail config invalid.');
