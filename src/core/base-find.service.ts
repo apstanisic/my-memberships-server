@@ -11,8 +11,11 @@ import { paginate } from './pagination/_paginate.helper';
 import { parseQuery } from './typeorm/parse-to-orm-query';
 import { OrmWhere, WithId } from './types';
 
-/** Base service for finding stuff. BaseService extends this class
- * with method that changes entities
+/**
+ * Base service for finding entities.
+ * BaseService extends this class with methods that changes entities.
+ * This is separated because LoggerService can extend this class,
+ * but not BaseService class. It's because it's used in main class.
  */
 export class BaseFindService<T extends WithId = any> {
   constructor(protected readonly repository: Repository<T>) {}
