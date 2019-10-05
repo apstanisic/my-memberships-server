@@ -23,7 +23,7 @@ export class MailService {
   private password: string = 'tXC6AxGXHYWBmXrtyq';
 
   /** Sender real name */
-  private sendeName: string = 'Toby Leffler';
+  private senderName: string = 'Toby Leffler';
 
   /** Host address */
   private host: string = 'smtp.ethereal.email';
@@ -43,22 +43,22 @@ export class MailService {
   /** In production use values from configModule (.env file) */
   constructor(private readonly configService: ConfigService) {
     if (configService.get('NODE_ENV') === 'production') {
-      const host = this.valueOrthrowIfEmpty(
+      const host = this.valueOrThrowIfEmpty(
         this.configService.get('EMAIL_HOST'),
       );
       this.host = host;
 
       const port = Number(
-        this.valueOrthrowIfEmpty(this.configService.get('EMAIL_PORT')),
+        this.valueOrThrowIfEmpty(this.configService.get('EMAIL_PORT')),
       );
       this.port = port;
 
-      const user = this.valueOrthrowIfEmpty(
+      const user = this.valueOrThrowIfEmpty(
         this.configService.get('EMAIL_USER'),
       );
       this.user = user;
 
-      const password = this.valueOrthrowIfEmpty(
+      const password = this.valueOrThrowIfEmpty(
         this.configService.get('EMAIL_PASSWORD'),
       );
       this.password = password;
@@ -99,7 +99,7 @@ export class MailService {
       .catch(e => this.logger.error('Mail is not working', e));
   }
 
-  valueOrthrowIfEmpty(value: any): string {
+  valueOrThrowIfEmpty(value: any): string {
     const { isEmpty } = this.validator;
     if (isEmpty(value)) {
       throw new InternalServerErrorException('Mail config invalid.');
