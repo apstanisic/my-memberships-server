@@ -1,35 +1,24 @@
 import {
-  Controller,
-  Body,
-  Post,
   BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
   Param,
+  Post,
   Put,
   UnauthorizedException,
-  ForbiddenException,
 } from '@nestjs/common';
-import { plainToClass, classToClass } from 'class-transformer';
-import { AuthService } from './auth.service';
+import { classToClass, plainToClass } from 'class-transformer';
 import { UsersService } from '../../user/user.service';
-import { LoginData, SignInResponse, RegisterData } from './auth.dto';
-import { MailService } from '../mail/mail.service';
 import { BaseUser } from '../entities/base-user.entity';
-import { Struct } from '../types';
 import { AuthMailService } from './auth-mail.service';
-
-/** AuthController needs this method. Implement so we can inject usersService */
-interface IUsersService {
-  attemptLogin: (email: string, password: string) => Promise<SignInResponse>;
-  findOne: (filter: Struct) => Promise<BaseUser>;
-  create: (user: RegisterData) => Promise<BaseUser>;
-  update: (user: BaseUser, newData?: any) => Promise<BaseUser>;
-}
+import { LoginData, RegisterData, SignInResponse } from './auth.dto';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly mailService: MailService,
     private readonly usersService: UsersService,
     private readonly authMailService: AuthMailService,
   ) {}

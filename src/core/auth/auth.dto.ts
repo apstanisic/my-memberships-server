@@ -1,5 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
-import { User } from '../../user/user.entity';
+import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 import { BaseUser } from '../entities/base-user.entity';
 
 /** Data provided for login */
@@ -9,12 +8,19 @@ export class LoginData {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(6)
+  @Length(2, 200)
+  password: string;
+}
+
+/** When reseting password, only new password is needed */
+export class OnlyPasswordDto {
+  @IsNotEmpty()
+  @Length(8, 200)
   password: string;
 }
 
 export class RegisterData extends LoginData {
-  @MinLength(2)
+  @Length(2, 100)
   name: string;
 }
 
@@ -26,7 +32,7 @@ export class UpdatePasswordData {
   @IsNotEmpty()
   oldPassword: string;
 
-  @MinLength(8)
+  @Length(8, 200)
   newPassword: string;
 }
 
