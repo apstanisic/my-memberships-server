@@ -1,12 +1,12 @@
 import {
   Controller,
+  ForbiddenException,
   Get,
   Param,
   UseGuards,
-  ForbiddenException,
-  NotFoundException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { DbLoggerService } from '../core/logger/db-logger.service';
 import { Log } from '../core/logger/log.entity';
@@ -15,10 +15,8 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PgResult } from '../core/pagination/pagination.types';
 import { UUID } from '../core/types';
 import { ValidUUID } from '../core/uuid.pipe';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { CompanyService } from './company.service';
-import { GetCompany } from './get-company.pipe';
 import { Company } from './company.entity';
+import { GetCompany } from './get-company.pipe';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/logs')
