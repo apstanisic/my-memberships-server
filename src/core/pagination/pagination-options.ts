@@ -1,16 +1,15 @@
-import { Type } from 'class-transformer';
 import {
-  IsOptional,
+  IsArray,
   IsBase64,
   IsIn,
   IsInt,
-  IsArray,
+  IsOptional,
   IsString,
 } from 'class-validator';
+import { parseNumber } from '../helpers';
 import { IsBetween } from '../is-between';
 import { OrmWhere, Struct } from '../types';
-import { limitField, orderByField, cursorField } from './pagination.types';
-import { parseNumber } from '../helpers';
+import { cursorField, limitField, orderByField } from './pagination.types';
 
 /** Params that user can provide. T is for OrmWhere */
 export class PaginationParams<T = any> {

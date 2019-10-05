@@ -39,6 +39,7 @@
     "dotenv": "^8.1.0",
     "faker": "^4.1.0",
     "global": "^4.4.0",
+    "handlebars": "^4.4.2",
     "minio": "^7.0.12",
     "moment": "^2.24.0",
     "mongodb": "^3.3.2",

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { join as pathJoin } from 'path';
+import { Injectable } from '@nestjs/common';
 import { StorageService } from './storage.service';
 import { ImageSizes } from '../types';
 import { generateAllImageSizes } from './sharp';
