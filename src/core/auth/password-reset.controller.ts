@@ -13,13 +13,14 @@ import { UsersService } from '../../user/user.service';
 import { ValidEmail } from '../validate-email.pipe';
 import { AuthMailService } from './auth-mail.service';
 import { OnlyPasswordDto } from './auth.dto';
+import { PasswordResetService } from './password-reset.service';
 
 /** Controller for password reseting */
 @Controller('auth')
 export class PasswordResetController {
   constructor(
-    private readonly usersService: UsersService,
     private readonly authMailService: AuthMailService,
+    private readonly passwordResetService: PasswordResetService,
   ) {}
 
   /**
@@ -33,7 +34,6 @@ export class PasswordResetController {
     @Param('email', ValidEmail) email: string,
   ): Promise<{ message: string }> {
     this.authMailService.sendResetPasswordEmail(email);
-
     return { message: 'Password reset email is sent. ' };
   }
 
@@ -47,26 +47,6 @@ export class PasswordResetController {
     @Param('token') token: string,
     @Body() { password }: OnlyPasswordDto,
   ): Promise<User> {
-    if (!user.compareToken(token)) throw new ForbiddenException();
-
-    const expired = moment(user.tokenCreatedAt)
-      .add(2, 'hours')
-      .isBefore(moment());
-
-    if (expired) {
-      throw new BadRequestException(
-        'Link is not valid. Link is valid for 2 hours',
-      );
-    }
-
-    user.password = password;
-    user.disableSecureToken();
-    user = await this.usersService.mutate(user, {
-      user,
-      reason: 'Password reset',
-      domain: user.id,
-    });
-
-    return user;
+    return this.passwordResetService.resetPassword(user, token, password);
   }
 }

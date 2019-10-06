@@ -70,13 +70,13 @@ export class Log<T extends WithId = any> {
   @Column({ type: 'string', nullable: true })
   domainId?: UUID;
 
+  /** Temp value only used for getting id if there is not old value. */
+  private _newValue?: T;
+
   /** This will generate difference between new and old values. */
-  set newValue(newValue: T | undefined) {
-    this.changes = diff(this.initialValue, newValue);
-    // TODO Update prettier to support 3.7 ts
-    if (!this.entityId && newValue && newValue.id) {
-      this.entityId = newValue.id;
-    }
+  set newValue(value: T | undefined) {
+    this.changes = diff(this.initialValue, value);
+    this._newValue = value;
   }
 
   /** Remove unnecesary data from user. */
@@ -85,8 +85,11 @@ export class Log<T extends WithId = any> {
     this.executedBy = plainToClass(BasicUserInfo, this.executedBy);
     // Remove excluded properties, and set entity id
     this.initialValue = classToClass(this.initialValue);
+    // Get entity id from provided values.
     if (this.initialValue && this.initialValue.id) {
       this.entityId = this.initialValue.id;
+    } else if (this._newValue && this._newValue.id) {
+      this.entityId = this._newValue.id;
     }
   }
 }

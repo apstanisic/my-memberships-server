@@ -13,7 +13,6 @@ export class CompanyService extends BaseService<Company> {
   constructor(
     @InjectRepository(Company) repository: Repository<Company>,
     private readonly roleService: RoleService,
-    @Optional() protected readonly dbLoggerService?: DbLoggerService<Company>,
   ) {
     super(repository);
   }

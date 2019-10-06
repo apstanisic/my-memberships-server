@@ -74,6 +74,7 @@ export class AuthMailService {
     } catch (error) {}
   }
 
+  /** Send email to confirm account to user */
   async sendConfirmationEmail(email: string, token: string): Promise<void> {
     const appUrl = this.configService.get('API_URL');
     const confirmUrl = `${appUrl}/auth/confirm-account/${email}/${token}`;

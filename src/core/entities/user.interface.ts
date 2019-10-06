@@ -13,6 +13,7 @@ export interface IUser {
   checkPassword: (password: string) => Promise<boolean> | boolean;
 }
 
+/** User will always have this fields when returned. Avatar is optional */
 export class BasicUserInfo {
   id: string;
   name: string;

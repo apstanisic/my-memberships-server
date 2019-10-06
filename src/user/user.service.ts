@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Role } from '../core/access-control/roles.entity';
-import { RegisterData } from '../core/auth/auth.dto';
+import { RegisterUserDto } from '../core/auth/auth.dto';
 import { BaseService } from '../core/base.service';
 import { StorageImagesService } from '../core/storage/storage-images.service';
 import { User } from './user.entity';
@@ -27,7 +27,7 @@ export class UsersService extends BaseService<User> {
    * @override Overides BaseServiceMethod for more specific for user.
    * @todo Delete should remove personal info for GDPR
    */
-  async create({ email, password, name }: RegisterData): Promise<User> {
+  async create({ email, password, name }: RegisterUserDto): Promise<User> {
     const userExist = await this.repository.findOne({ email });
     if (userExist) throw new BadRequestException('User exists');
 

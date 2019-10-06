@@ -11,6 +11,7 @@ import {
 import { Type, Transform } from 'class-transformer';
 import { Workhours } from './workhours';
 
+/** Common data for both creating and updating locations. */
 class LocationDto {
   /** This location address */
   @IsString()
@@ -48,12 +49,13 @@ class LocationDto {
   long?: number;
 }
 
+/** Data when creating location. It extends common properties. */
 export class CreateLocationDto extends LocationDto {
-  /** This location address */
   @IsDefined()
   address: string;
 }
 
+/** Data when updating location. It extends common properties. */
 export class UpdateLocationDto extends LocationDto {
   @IsOptional()
   address: string;

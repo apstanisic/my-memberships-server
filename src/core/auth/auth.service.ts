@@ -1,11 +1,17 @@
+import {
+  BadRequestException,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
-import { classToClass } from 'class-transformer';
+import { classToClass, plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
-import { UsersService } from '../../user/user.service';
-import { JwtPayload } from './jwt.strategy';
-import { SignInResponse } from './auth.dto';
 import { User } from '../../user/user.entity';
+import { UsersService } from '../../user/user.service';
+import { BasicUserInfo } from '../entities/user.interface';
+import { SignInResponse, RegisterUserDto } from './auth.dto';
+import { JwtPayload } from './jwt.strategy';
+import { AuthMailService } from './auth-mail.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +20,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly authMailService: AuthMailService,
   ) {}
 
   /** Try to sign in user */
@@ -34,5 +41,34 @@ export class AuthService {
   /** Generate new token when user logs in */
   createJwt(email: string): string {
     return this.jwtService.sign({ email });
+  }
+
+  /** Register new user, and return him and login token */
+  async registerNewUser(data: RegisterUserDto): Promise<SignInResponse> {
+    const user = await this.usersService.create(data);
+    const token = this.createJwt(data.email);
+
+    if (!user.secureToken) throw new ForbiddenException();
+    await this.authMailService.sendConfirmationEmail(
+      user.email,
+      user.secureToken,
+    );
+
+    // For some reason user is not transformed without class to class
+    return { token, user: classToClass(user) };
+  }
+
+  async confirmAccount(email: string, token: string): Promise<BasicUserInfo> {
+    const user = await this.usersService.findOne({ email });
+    if (user.secureToken !== token) throw new BadRequestException();
+    user.confirmed = true;
+    user.secureToken = undefined;
+    user.tokenCreatedAt = undefined;
+    await this.usersService.mutate(user, {
+      user,
+      domain: user.id,
+      reason: 'Confirm account.',
+    });
+    return plainToClass(BasicUserInfo, user);
   }
 }
