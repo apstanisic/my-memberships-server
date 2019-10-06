@@ -1,15 +1,6 @@
 import { Column, ManyToOne } from 'typeorm';
 import { User } from '../../user/user.entity';
-
-class UserInfo {
-  id: string;
-
-  name: string;
-
-  email: string;
-
-  avatar?: string;
-}
+import { BasicUserInfo } from './user.interface';
 
 /**
  * This entity is designed to be embedded
@@ -45,5 +36,5 @@ export class DeleteColumns extends WithoutUserActionColumns {
  */
 export class NoRelActionColumns extends WithoutUserActionColumns {
   @Column(type => User)
-  by?: UserInfo;
+  by?: BasicUserInfo;
 }

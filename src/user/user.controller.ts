@@ -13,7 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { validImage } from '../company/company-images/multer-options';
-import { LoginData, UpdatePasswordData } from '../core/auth/auth.dto';
+import { LoginUserDto, UpdatePasswordDto } from '../core/auth/auth.dto';
 import { StorageService } from '../core/storage/storage.service';
 import { ValidUUID } from '../core/uuid.pipe';
 import { GetUser } from './get-user.decorator';
@@ -31,7 +31,7 @@ export class UserController {
   /** Update user password */
   @Put('password')
   @UseGuards(AuthGuard('jwt'))
-  async changePassword(@Body() data: UpdatePasswordData): Promise<User> {
+  async changePassword(@Body() data: UpdatePasswordDto): Promise<User> {
     const { email, oldPassword, newPassword } = data;
 
     const user = await this.usersService.findForLogin(email, oldPassword);
@@ -83,7 +83,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async deleteUser(
     @GetUser() loggedUser: User,
-    @Body() { email, password }: LoginData,
+    @Body() { email, password }: LoginUserDto,
   ): Promise<User> {
     const user = await this.usersService.findForLogin(email, password);
     if (user.id !== loggedUser.id) throw new ForbiddenException();

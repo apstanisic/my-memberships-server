@@ -2,7 +2,7 @@ import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 import { BaseUser } from '../entities/base-user.entity';
 
 /** Data provided for login */
-export class LoginData {
+export class LoginUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
@@ -19,13 +19,13 @@ export class OnlyPasswordDto {
   password: string;
 }
 
-export class RegisterData extends LoginData {
+export class RegisterUserDto extends LoginUserDto {
   @Length(2, 100)
   name: string;
 }
 
 /** Data that is provided when changing password */
-export class UpdatePasswordData {
+export class UpdatePasswordDto {
   @IsEmail()
   email: string;
 
@@ -39,6 +39,5 @@ export class UpdatePasswordData {
 /** Server response for successful login */
 export class SignInResponse {
   token: string;
-
   user: BaseUser;
 }
