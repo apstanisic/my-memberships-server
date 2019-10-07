@@ -4,11 +4,13 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../../user/user.service';
 import { AuthService } from './auth.service';
 import { User } from '../../user/user.entity';
+import { AuthMailService } from './auth-mail.service';
 
 const testUser = new User();
 testUser.email = 'testemail@email.com';
 
 const jwtMock = jest.fn(() => ({ sign: (value: any): string => value }));
+const mailMock = jest.fn().mockResolvedValue(testUser);
 const findMock = jest.fn().mockResolvedValue(testUser);
 const findOneMock = jest.fn().mockResolvedValue(testUser);
 const userMock = jest.fn(() => ({
@@ -24,6 +26,7 @@ describe('AuthService', () => {
       providers: [
         { provide: UsersService, useFactory: userMock },
         { provide: JwtService, useFactory: jwtMock },
+        { provide: AuthMailService, useFactory: mailMock },
         AuthService,
       ],
     }).compile();

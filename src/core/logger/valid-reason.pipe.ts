@@ -8,10 +8,10 @@ import { Validator } from 'class-validator';
  *   method(@Body('id', ValidReason) reason: string) {}
  */
 @Injectable()
-export class ValidReason implements PipeTransform<any, string> {
+export class ValidReason implements PipeTransform<any, string | undefined> {
   private validator = new Validator();
 
-  transform(value?: any): string {
+  transform(value?: any): string | undefined {
     if (value === undefined) return value;
 
     if (!this.validator.isString(value)) {

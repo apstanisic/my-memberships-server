@@ -22,7 +22,7 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PgResult } from '../core/pagination/pagination.types';
 import { UUID } from '../core/types';
 import { ValidUUID } from '../core/uuid.pipe';
-import { ValidReason } from '../core/valid-reason.pipe';
+import { ValidReason } from '../core/logger/valid-reason.pipe';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { CompanyRolesService } from './company-roles.service';
