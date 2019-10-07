@@ -12,7 +12,7 @@ import { Arrival } from './arrivals.entity';
 import { Location } from '../locations/location.entity';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
-import { ValidReason } from '../core/valid-reason.pipe';
+import { ValidReason } from '../core/logger/valid-reason.pipe';
 
 /**
  * Keep track of arrivals in subscriptions and locations.

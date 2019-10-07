@@ -34,9 +34,7 @@ export type FindManyParams<T> = Omit<FindManyOptions<T>, 'where'>;
  * service should catch her and pass error that can be shown
  * to users.
  */
-export abstract class BaseService<
-  T extends WithId = any
-> extends BaseFindService<T> {
+export class BaseService<T extends WithId = any> extends BaseFindService<T> {
   /** Accepts repository for accessing data, and loger service for logging */
   constructor(
     repository: Repository<T>,
