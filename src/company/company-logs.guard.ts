@@ -8,7 +8,7 @@ import { CompanyService } from './company.service';
 
 /** Check if param for company is provided, get that company, or throw */
 @Injectable()
-export class ValidCompanyGuard implements CanActivate {
+export class CompanyLogsGuard implements CanActivate {
   constructor(private readonly companyService: CompanyService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -16,12 +16,9 @@ export class ValidCompanyGuard implements CanActivate {
     if (!req || !req.params || !req.params.companyId) {
       throw new BadRequestException();
     }
-    if (req && req.params && req.params.companyId) {
-      const company = await this.companyService.findOne(req.params.companyId);
-      req.company = company;
-      return true;
-    }
-
-    return false;
+    const company = await this.companyService.findOne(req.params.companyId);
+    if (company.tier !== 'pro' && company.tier !== 'enterprise') return false;
+    req.company = company;
+    return true;
   }
 }
