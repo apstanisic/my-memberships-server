@@ -17,7 +17,7 @@ import { UUID } from '../core/types';
 import { ValidUUID } from '../core/uuid.pipe';
 import { GetCompany } from './company.decorator';
 import { Company } from './company.entity';
-import { ValidCompanyGuard } from './valid-company.guard';
+import { CompanyLogsGuard } from './company-logs.guard';
 
 /** For GetCompany we have to use Company | any because ValidationPipe will
  * throw an error. It will check initial string, compare it to type of Company
@@ -25,7 +25,7 @@ import { ValidCompanyGuard } from './valid-company.guard';
  * And we can't disable ValidationPipe because it's used in many places,
  * even in this controller.
  */
-@UseGuards(AuthGuard('jwt'), PermissionsGuard, ValidCompanyGuard)
+@UseGuards(AuthGuard('jwt'), PermissionsGuard, CompanyLogsGuard)
 @Controller('companies/:companyId/logs')
 export class CompanyLogsController {
   constructor(private readonly dbLogger: DbLoggerService) {}
@@ -37,7 +37,6 @@ export class CompanyLogsController {
     @GetPagination() params: PaginationParams,
     @GetCompany() company: Company,
   ): PgResult<Log> {
-    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, { domainId: company.id });
   }
 
@@ -49,7 +48,6 @@ export class CompanyLogsController {
     @GetCompany() company: Company,
     @Param('entityId', ValidUUID) entityId: UUID,
   ): PgResult<Log> {
-    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, { entityId, domainId: company.id });
   }
 
@@ -62,7 +60,6 @@ export class CompanyLogsController {
     @GetCompany() company: Company,
     @Param('userId', ValidUUID) userId: UUID,
   ): PgResult<Log> {
-    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       executedBy: {
@@ -82,7 +79,6 @@ export class CompanyLogsController {
     @GetCompany() company: Company,
     @Param('locationId', ValidUUID) locationId: UUID,
   ): PgResult<Log> {
-    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       // This should be location id.
@@ -97,14 +93,9 @@ export class CompanyLogsController {
     @Param('logId', ValidUUID) logId: UUID,
     @GetCompany() company: Company,
   ): Promise<Log> {
-    if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.findOne({
       id: logId,
       domainId: company.id,
     });
-  }
-
-  private canAccessLogs(company: Company): boolean {
-    return company.tier === 'free' || company.tier === 'basic';
   }
 }
