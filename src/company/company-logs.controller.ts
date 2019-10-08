@@ -15,10 +15,17 @@ import { GetPagination } from '../core/pagination/pagination.decorator';
 import { PgResult } from '../core/pagination/pagination.types';
 import { UUID } from '../core/types';
 import { ValidUUID } from '../core/uuid.pipe';
+import { GetCompany } from './company.decorator';
 import { Company } from './company.entity';
-import { GetCompany } from './get-company.pipe';
+import { ValidCompanyGuard } from './valid-company.guard';
 
-@UseGuards(AuthGuard('jwt'), PermissionsGuard)
+/** For GetCompany we have to use Company | any because ValidationPipe will
+ * throw an error. It will check initial string, compare it to type of Company
+ * and throw error because they don't match. Currently we can't change order.
+ * And we can't disable ValidationPipe because it's used in many places,
+ * even in this controller.
+ */
+@UseGuards(AuthGuard('jwt'), PermissionsGuard, ValidCompanyGuard)
 @Controller('companies/:companyId/logs')
 export class CompanyLogsController {
   constructor(private readonly dbLogger: DbLoggerService) {}
@@ -28,7 +35,7 @@ export class CompanyLogsController {
   @Get()
   getLogs(
     @GetPagination() params: PaginationParams,
-    @Param('companyId', GetCompany) company: Company,
+    @GetCompany() company: Company,
   ): PgResult<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.paginate(params, { domainId: company.id });
@@ -39,7 +46,7 @@ export class CompanyLogsController {
   @Get('items/:entityId')
   getLogsOnSpecificEntity(
     @GetPagination() params: PaginationParams,
-    @Param('companyId', GetCompany) company: Company,
+    @GetCompany() company: Company,
     @Param('entityId', ValidUUID) entityId: UUID,
   ): PgResult<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
@@ -52,7 +59,7 @@ export class CompanyLogsController {
   @Get('users/:userId')
   getLogsByUser(
     @GetPagination() params: PaginationParams,
-    @Param('companyId', GetCompany) company: Company,
+    @GetCompany() company: Company,
     @Param('userId', ValidUUID) userId: UUID,
   ): PgResult<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
@@ -72,7 +79,7 @@ export class CompanyLogsController {
   @IfAllowed('read')
   getLogsInLocation(
     @GetPagination() params: PaginationParams,
-    @Param('companyId', GetCompany) company: Company,
+    @GetCompany() company: Company,
     @Param('locationId', ValidUUID) locationId: UUID,
   ): PgResult<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
@@ -88,7 +95,7 @@ export class CompanyLogsController {
   @Get(':logId')
   async getLogById(
     @Param('logId', ValidUUID) logId: UUID,
-    @Param('companyId', GetCompany) company: Company,
+    @GetCompany() company: Company,
   ): Promise<Log> {
     if (this.canAccessLogs(company)) throw new ForbiddenException();
     return this.dbLogger.findOne({
