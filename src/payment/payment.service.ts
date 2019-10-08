@@ -1,53 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { CompanyService } from '../company/company.service';
-import { Company } from '../company/company.entity';
+import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
+import { Tier, Company } from '../company/company.entity';
 
 @Injectable()
 export class PaymentService {
   constructor(private readonly companyService: CompanyService) {}
 
-  /** Add credit to company */
-  async addCredit(
-    company: Company,
+  /** Add or substract credit from company */
+  async changeCredit(
+    companyId: UUID,
     amount: number,
     user: User,
   ): Promise<number> {
+    const company = await this.companyService.findOne(companyId);
     const newCredit = company.credit + amount;
     await this.companyService.update(
       company,
       { credit: newCredit },
-      { user, reason: 'Sub credit' },
-    );
-    return company.credit;
-  }
-
-  /** Substract credit from company */
-  async substractCredit(
-    company: Company,
-    amount: number,
-    user: User,
-  ): Promise<number> {
-    const newCredit = company.credit - amount;
-    await this.companyService.update(
-      company,
-      { credit: newCredit },
-      { user, reason: 'Sub credit' },
+      { user, reason: 'Change credit' },
     );
     return company.credit;
   }
 
   /** Set credit for company */
-  async setCredit(
-    company: Company,
+  async replaceCredit(
+    companyId: UUID,
     amount: number,
     user: User,
   ): Promise<number> {
+    const company = await this.companyService.findOne(companyId);
     await this.companyService.update(
       company,
       { credit: amount },
       { user, reason: 'Set credit' },
     );
     return company.credit;
+  }
+
+  /** Change companies tier */
+  async changeTier(companyId: UUID, tier: Tier): Promise<Company> {
+    const company = await this.companyService.findOne(companyId);
+    return this.companyService.update(company, { tier });
   }
 }
