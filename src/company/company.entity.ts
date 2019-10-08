@@ -19,6 +19,8 @@ import { User } from '../user/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
 import { Role } from '../core/access-control/roles.entity';
 
+export type Tier = 'free' | 'basic' | 'pro' | 'enterprise' | 'banned';
+
 /**
  * Company can be deleted only if there is no more
  * valid subscriptions
@@ -92,7 +94,7 @@ export class Company extends BaseEntity {
 
   /** @TODO Implement this */
   @Exclude()
-  tier: 'free' | 'basic' | 'pro' | 'enterprise' | 'banned' = 'pro';
+  tier: Tier = 'pro';
 
   /** Path to images of company. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })
