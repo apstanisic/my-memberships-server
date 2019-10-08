@@ -9,10 +9,10 @@ import { User } from './user.entity';
  *    method(@Param('id', GetUserPipe) user: User) {}
  */
 @Injectable()
-export class GetUserPipe implements PipeTransform<string> {
+export class GetUserPipe implements PipeTransform<string, Promise<User>> {
   constructor(private readonly usersService: UsersService) {}
 
-  async transform(value: any): Promise<User> {
+  async transform(value?: any): Promise<User> {
     const validator = new Validator();
     let user: User;
 

@@ -91,7 +91,8 @@ export class Company extends BaseEntity {
   roles: Role[];
 
   /** @TODO Implement this */
-  tier: 'free' | 'basic' | 'pro' | 'enterprise' = 'pro';
+  @Exclude()
+  tier: 'free' | 'basic' | 'pro' | 'enterprise' | 'banned' = 'pro';
 
   /** Path to images of company. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })
