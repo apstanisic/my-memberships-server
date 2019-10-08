@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyImagesService } from './company-images.service';
-import { StorageService } from '../../core/storage/storage.service';
 import { StorageImagesService } from '../../core/storage/storage-images.service';
 
 describe('CompanyImagesService', () => {

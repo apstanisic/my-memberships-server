@@ -1,28 +1,29 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { ForbiddenException, Injectable, PipeTransform } from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { CompanyService } from './company.service';
 import { Company } from './company.entity';
+import { CompanyService } from './company.service';
 
 /* */
 /**
  * Pipe to get page for pagination
  * @example
- *   method(@Param('id', ValidUUID) id: string) {}
+ *   method(@Param('id', GetCompany) company: Company) {}
  */
 @Injectable()
-export class GetCompany implements PipeTransform<any, Promise<Company>> {
+export class GetCompany implements PipeTransform<any> {
   constructor(private readonly service: CompanyService) {}
 
   private validator = new Validator();
 
-  transform(value?: any): Promise<Company> {
+  async transform(value: any): Promise<Company> {
     if (!this.validator.isString(value)) {
-      throw new BadRequestException('Invalid type.');
+      throw new ForbiddenException('Invalid type.');
     }
 
     if (!this.validator.isUUID(value)) {
-      throw new BadRequestException('Invalid ID.');
+      throw new ForbiddenException('Invalid ID.');
     }
-    return this.service.findOne(value);
+    const company = await this.service.findOne(value);
+    return company;
   }
 }
