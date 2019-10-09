@@ -1,6 +1,5 @@
 import { Exclude } from 'class-transformer';
 import {
-  ArrayMaxSize,
   IsEmail,
   IsIn,
   IsInt,
@@ -10,16 +9,16 @@ import {
   Length,
 } from 'class-validator';
 import { Column, Entity, Index, ManyToOne, OneToMany } from 'typeorm';
+import { Role } from '../core/access-control/roles.entity';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Image } from '../core/types';
 import { Location } from '../locations/location.entity';
+import { PaymentRecord } from '../payment/payment-record.entity';
+import { availableTiers, Tier } from '../payment/payment-tiers.list';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { User } from '../user/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
-import { Role } from '../core/access-control/roles.entity';
-
-export type Tier = 'free' | 'basic' | 'pro' | 'enterprise' | 'banned';
 
 /**
  * Company can be deleted only if there is no more
@@ -94,11 +93,15 @@ export class Company extends BaseEntity {
 
   /** @TODO Implement this */
   @Exclude()
+  @IsIn([...availableTiers])
   tier: Tier = 'pro';
 
   /** Path to images of company. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })
   @IsString({ each: true })
-  @ArrayMaxSize(5)
   images: Image[];
+
+  // All payments for this company
+  @OneToMany(type => PaymentRecord, record => record.company)
+  payments: PaymentRecord;
 }

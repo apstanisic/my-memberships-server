@@ -5,10 +5,14 @@ import * as moment from 'moment';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
 import { PlanChanges } from './pricing-plan.dto';
-import { PlanName } from './plans.list';
+import { Tier } from '../payment/payment-tiers.list';
 
 @Entity()
 export class PricingPlan extends BaseEntity {
+  private constructor() {
+    super();
+  }
+
   static async fromOld(
     pp: PricingPlan,
     changes: PlanChanges,
@@ -20,35 +24,41 @@ export class PricingPlan extends BaseEntity {
       .toDate();
 
     newPlan.creditPrice = changes.creditPrice;
-    if (changes.name) newPlan.name = changes.name;
+    if (changes.name) newPlan.tier = changes.name;
     if (changes.autoRenew) newPlan.autoRenew = changes.autoRenew;
 
     await newPlan.validate();
     return newPlan;
   }
 
+  /** How much credit it removes. */
   @Column()
   @IsPositive()
   @IsInt()
   creditPrice: number;
 
+  /** Company on which this plan applies */
   @ManyToOne(type => Company, company => company.plans)
   company: Company;
 
+  /** Company Id on which this plan applies */
   @Column()
   companyId: string;
 
+  /** From when is this plan active */
   @Column({ precision: 3 })
   @IsDate()
   from: Date;
 
+  /** To when is this plan active */
   @Column({ precision: 3 })
   @IsDate()
   to: Date;
 
   @Column()
-  name: PlanName;
+  tier: Tier;
 
+  /** Should plan auto-renew */
   @Column({ default: false })
   autoRenew: boolean;
 }

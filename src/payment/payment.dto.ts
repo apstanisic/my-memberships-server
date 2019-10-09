@@ -1,12 +1,18 @@
 import { IsInt, IsUUID, IsIn } from 'class-validator';
 import { IsBetween } from '../core/is-between';
-import { Tier } from '../company/company.entity';
+import { Tier } from './payment-tiers.list';
 
 /** Params provided when adding or subtracting company credit */
 export class ChangeCreditDto {
+  /** How much was it paid */
+  @IsInt()
+  @IsBetween(0, 100000)
+  price: number;
+
+  /** How much credit was it added */
   @IsInt()
   @IsBetween(-100000, 100000)
-  amount: number;
+  credit: number;
 
   @IsUUID()
   companyId: string;
