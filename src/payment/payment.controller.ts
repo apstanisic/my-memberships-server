@@ -16,20 +16,20 @@ export class PaymentController {
   @IfAllowed()
   @Post('')
   setCredit(
-    @Body() { amount, companyId }: ChangeCreditDto,
+    @Body() { price, companyId }: ChangeCreditDto,
     @GetUser() user: User,
   ): Promise<number> {
-    return this.paymentService.replaceCredit(companyId, amount, user);
+    return this.paymentService.replaceCredit(companyId, price, user);
   }
 
   /** adds or subtracts credit with provided amount */
   @IfAllowed()
   @Put('')
   changeCredit(
-    @Body() { amount, companyId }: ChangeCreditDto,
+    @Body() { price, companyId, credit }: ChangeCreditDto,
     @GetUser() user: User,
   ): Promise<number> {
-    return this.paymentService.changeCredit(companyId, amount, user);
+    return this.paymentService.changeCredit({ companyId, price, user, credit });
   }
 
   /** Change company tier */
