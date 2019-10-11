@@ -1,6 +1,6 @@
 import { IsInt, IsUUID, IsIn } from 'class-validator';
 import { IsBetween } from '../core/is-between';
-import { Tier } from './payment-tiers.list';
+import { Tier } from '../company/payment-tiers.list';
 
 /** Params provided when adding or subtracting company credit */
 export class ChangeCreditDto {
@@ -16,13 +16,4 @@ export class ChangeCreditDto {
 
   @IsUUID()
   companyId: string;
-}
-
-/** Params provided when changing company tier */
-export class ChangeTierDto {
-  @IsUUID()
-  companyId: string;
-
-  @IsIn(['free', 'basic', 'pro', 'enterprise', 'banned'])
-  tier: Tier;
 }

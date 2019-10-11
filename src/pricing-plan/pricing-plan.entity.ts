@@ -4,27 +4,24 @@ import { classToClass } from 'class-transformer';
 import * as moment from 'moment';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
-import { PlanChanges } from './pricing-plan.dto';
-import { Tier } from '../payment/payment-tiers.list';
+import { PlanChangesDto } from './pricing-plan.dto';
+import { Tier } from '../company/payment-tiers.list';
 
 @Entity()
 export class PricingPlan extends BaseEntity {
-  private constructor() {
-    super();
-  }
-
-  static async fromOld(
+  /** Create new pricing plan from old. */
+  static async extendFrom(
     pp: PricingPlan,
-    changes: PlanChanges,
+    changes: PlanChangesDto,
   ): Promise<PricingPlan> {
     const newPlan = classToClass(pp);
-    newPlan.from = pp.to;
-    newPlan.to = moment(newPlan.from)
+    newPlan.startsAt = pp.expiresAt;
+    newPlan.expiresAt = moment(newPlan.startsAt)
       .add(changes.duration)
       .toDate();
 
-    newPlan.creditPrice = changes.creditPrice;
-    if (changes.name) newPlan.tier = changes.name;
+    newPlan.creditCost = changes.creditPrice;
+    if (changes.tier) newPlan.tier = changes.tier;
     if (changes.autoRenew) newPlan.autoRenew = changes.autoRenew;
 
     await newPlan.validate();
@@ -35,7 +32,7 @@ export class PricingPlan extends BaseEntity {
   @Column()
   @IsPositive()
   @IsInt()
-  creditPrice: number;
+  creditCost: number;
 
   /** Company on which this plan applies */
   @ManyToOne(type => Company, company => company.plans)
@@ -46,15 +43,16 @@ export class PricingPlan extends BaseEntity {
   companyId: string;
 
   /** From when is this plan active */
-  @Column({ precision: 3 })
+  @Column({ precision: 3, default: new Date() })
   @IsDate()
-  from: Date;
+  startsAt: Date;
 
   /** To when is this plan active */
   @Column({ precision: 3 })
   @IsDate()
-  to: Date;
+  expiresAt: Date;
 
+  /** Tier this user has access to when this plan active */
   @Column()
   tier: Tier;
 

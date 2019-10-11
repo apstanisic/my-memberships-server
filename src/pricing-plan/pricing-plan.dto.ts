@@ -1,9 +1,23 @@
 import * as moment from 'moment';
-import { Tier } from '../payment/payment-tiers.list';
+import { Tier } from '../company/payment-tiers.list';
+import { UUID } from '../core/types';
 
-export interface PlanChanges {
+export interface PlanChangesDto {
   duration: moment.Duration;
   creditPrice: number;
   autoRenew?: boolean;
-  name?: Tier;
+  tier?: Tier;
 }
+
+export interface PlanWithCompanyDto extends PlanChangesDto {
+  companyId: UUID;
+}
+
+/** Params provided when changing company tier */
+// export class ChangeTierDto {
+//   @IsUUID()
+//   companyId: string;
+
+//   @IsIn(['free', 'basic', 'pro', 'enterprise', 'banned'])
+//   tier: Tier;
+// }
