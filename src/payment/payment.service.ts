@@ -7,7 +7,7 @@ import { BaseService } from '../core/base.service';
 import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 import { PaymentRecord } from './payment-record.entity';
-import { Tier } from './payment-tiers.list';
+import { Tier } from '../company/payment-tiers.list';
 
 interface ChangeCreditParams {
   companyId: UUID;
@@ -61,11 +61,5 @@ export class PaymentService extends BaseService<PaymentRecord> {
       { user, reason: 'Set credit' },
     );
     return company.credit;
-  }
-
-  /** Change companies tier */
-  async changeTier(companyId: UUID, tier: Tier): Promise<Company> {
-    const company = await this.companyService.findOne(companyId);
-    return this.companyService.update(company, { tier });
   }
 }

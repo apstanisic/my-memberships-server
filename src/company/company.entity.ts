@@ -14,7 +14,7 @@ import { BaseEntity } from '../core/entities/base.entity';
 import { Image } from '../core/types';
 import { Location } from '../locations/location.entity';
 import { PaymentRecord } from '../payment/payment-record.entity';
-import { availableTiers, Tier } from '../payment/payment-tiers.list';
+import { availableTiers, Tier } from './payment-tiers.list';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { User } from '../user/user.entity';
@@ -92,9 +92,10 @@ export class Company extends BaseEntity {
   roles: Role[];
 
   /** @TODO Implement this */
+  @Column({ default: 'free' })
   @Exclude()
   @IsIn([...availableTiers])
-  tier: Tier = 'pro';
+  tier: Tier;
 
   /** Path to images of company. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })

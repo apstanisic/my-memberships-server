@@ -2,7 +2,7 @@ import { Controller, UseGuards, Body, Post, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { ChangeCreditDto, ChangeTierDto } from './payment.dto';
+import { ChangeCreditDto } from './payment.dto';
 import { PaymentService } from './payment.service';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
@@ -30,12 +30,5 @@ export class PaymentController {
     @GetUser() user: User,
   ): Promise<number> {
     return this.paymentService.changeCredit({ companyId, price, user, credit });
-  }
-
-  /** Change company tier */
-  @IfAllowed()
-  @Post('tier')
-  changeTier(@Body() { companyId, tier }: ChangeTierDto): any {
-    return this.paymentService.changeTier(companyId, tier);
   }
 }

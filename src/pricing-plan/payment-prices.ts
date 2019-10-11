@@ -1,4 +1,4 @@
-import { Tier } from './payment-tiers.list';
+import { Tier } from '../company/payment-tiers.list';
 
 /** How much does each tier cost per month */
 export const tierPrices: Record<Tier, number> = {
