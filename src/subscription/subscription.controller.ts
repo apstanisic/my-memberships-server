@@ -26,7 +26,6 @@ import {
 import { Subscription } from './subscription.entity';
 import { SubscriptionService } from './subscription.service';
 import { CompanyService } from '../company/company.service';
-import { GetCompany } from '../company/get-company.pipe';
 import { Company } from '../company/company.entity';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -62,9 +61,10 @@ export class SubscriptionController {
   @Post()
   async create(
     @Body() subscription: CreateSubscriptionDto,
-    @Param('companyId', GetCompany) company: Company,
+    @Param('companyId', ValidUUID) companyId: UUID,
     @GetUser() user: User,
   ): Promise<Subscription> {
+    const company = await this.companyService.findOne(companyId);
     return this.service.createSubscription({ user, company, subscription });
   }
 
