@@ -4,31 +4,13 @@ import { classToClass } from 'class-transformer';
 import * as moment from 'moment';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
-import { PlanChangesDto } from './pricing-plan.dto';
+import { ExtendPricingPlanDto } from './pricing-plan.dto';
 import { Tier } from '../company/payment-tiers.list';
+import { getEndTime } from '../core/add-duration';
 
 @Entity()
 export class PricingPlan extends BaseEntity {
-  /** Create new pricing plan from old. */
-  static async extendFrom(
-    pp: PricingPlan,
-    changes: PlanChangesDto,
-  ): Promise<PricingPlan> {
-    const newPlan = classToClass(pp);
-    newPlan.startsAt = pp.expiresAt;
-    newPlan.expiresAt = moment(newPlan.startsAt)
-      .add(changes.duration)
-      .toDate();
-
-    newPlan.creditCost = changes.creditPrice;
-    if (changes.tier) newPlan.tier = changes.tier;
-    if (changes.autoRenew) newPlan.autoRenew = changes.autoRenew;
-
-    await newPlan.validate();
-    return newPlan;
-  }
-
-  /** How much credit it removes. */
+  /** How much credit it subtracted. */
   @Column()
   @IsPositive()
   @IsInt()
@@ -47,13 +29,13 @@ export class PricingPlan extends BaseEntity {
   @IsDate()
   startsAt: Date;
 
-  /** To when is this plan active */
-  @Column({ precision: 3 })
+  /** To when is this plan active. Default is one month */
+  @Column({ precision: 3, default: getEndTime(moment.duration(1, 'month')) })
   @IsDate()
   expiresAt: Date;
 
   /** Tier this user has access to when this plan active */
-  @Column()
+  @Column({ default: 'free' })
   tier: Tier;
 
   /** Should plan auto-renew */
