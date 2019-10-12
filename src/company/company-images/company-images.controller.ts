@@ -1,14 +1,17 @@
 import {
   Controller,
   Delete,
+  ForbiddenException,
   Param,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
-  ForbiddenException,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
+import { PermissionsGuard } from '../../core/access-control/permissions.guard';
 import { UUID } from '../../core/types';
 import { ValidUUID } from '../../core/uuid.pipe';
 import { Location } from '../../locations/location.entity';
@@ -18,10 +21,9 @@ import { User } from '../../user/user.entity';
 import { Company } from '../company.entity';
 import { CompanyService } from '../company.service';
 import { CompanyImagesService } from './company-images.service';
-import { GetCompany } from '../get-company.pipe';
 import { validImage } from './multer-options';
 
-// @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+@UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId')
 export class CompanyImagesController {
   constructor(
@@ -36,9 +38,10 @@ export class CompanyImagesController {
   @Post('images')
   async addImageToCompany(
     @UploadedFile() file: any,
-    @Param('companyId', GetCompany) company: Company,
+    @Param('companyId', ValidUUID) companyId: UUID,
     @GetUser() user: User,
   ): Promise<Company> {
+    const company = await this.companyService.findOne(companyId);
     if (!this.companyImageService.canAddImageToCompany(company)) {
       throw new ForbiddenException('Max quota reached.');
     }
@@ -57,10 +60,11 @@ export class CompanyImagesController {
   /** Remove image of company */
   @Delete('images/:imageId')
   async removeImageFromCompany(
-    @Param('companyId', GetCompany) company: Company,
+    @Param('companyId', ValidUUID) companyId: UUID,
     @Param('imageId', ValidUUID) imageId: UUID,
     @GetUser() user: User,
   ): Promise<Company> {
+    const company = await this.companyService.findOne(companyId);
     company.images = await this.companyImageService.removeImage(
       imageId,
       company.images,
