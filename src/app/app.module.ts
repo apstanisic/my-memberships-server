@@ -8,6 +8,8 @@ import { SubscriptionModule } from '../subscription/subscription.module';
 import { LocationsModule } from '../locations/locations.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CoreModule } from '../core/core.module';
+import { PaymentModule } from '../payment/payment.module';
+import { PricingPlanModule } from '../pricing-plan/pricing-plan.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { CoreModule } from '../core/core.module';
     CompanyModule,
     SubscriptionModule,
     ArrivalsModule,
+    PaymentModule,
+    PricingPlanModule,
   ],
   controllers: [AppController],
   providers: [AppService],

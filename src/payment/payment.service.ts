@@ -35,7 +35,7 @@ export class PaymentService extends BaseService<PaymentRecord> {
     const company = await this.companyService.findOne(companyId);
     // Create payment record
     await this.create(
-      { company, price, creditAdded: credit },
+      { company, price, creditAdded: credit, appAdmin: user },
       { user, reason: 'Change credit', domain: company.id },
     );
 
@@ -48,18 +48,18 @@ export class PaymentService extends BaseService<PaymentRecord> {
     return company.credit;
   }
 
-  /** Set credit for company */
-  async replaceCredit(
-    companyId: UUID,
-    amount: number,
-    user: User,
-  ): Promise<number> {
-    const company = await this.companyService.findOne(companyId);
-    await this.companyService.update(
-      company,
-      { credit: amount },
-      { user, reason: 'Set credit' },
-    );
-    return company.credit;
-  }
+  // /** Set credit for company */
+  // async replaceCredit(
+  //   companyId: UUID,
+  //   amount: number,
+  //   user: User,
+  // ): Promise<number> {
+  //   const company = await this.companyService.findOne(companyId);
+  //   await this.companyService.update(
+  //     company,
+  //     { credit: amount },
+  //     { user, reason: 'Set credit' },
+  //   );
+  //   return company.credit;
+  // }
 }

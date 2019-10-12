@@ -1,8 +1,9 @@
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
+import { User } from '../user/user.entity';
 
-/** Every payment is recorded */
+/** Record of payment */
 @Entity()
 export class PaymentRecord extends BaseEntity {
   /** Price this credit is paid */
@@ -16,4 +17,8 @@ export class PaymentRecord extends BaseEntity {
   /** Company to which this credit is added */
   @ManyToOne(type => Company, company => company.payments)
   company: Company;
+
+  /** App admin who executed this record */
+  @ManyToOne(type => User)
+  appAdmin: User;
 }

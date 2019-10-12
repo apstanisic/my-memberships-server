@@ -4,7 +4,7 @@ import { classToClass } from 'class-transformer';
 import * as moment from 'moment';
 import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
-import { ExtendPricingPlanDto } from './pricing-plan.dto';
+import { ExtendActivePlanDto } from './pricing-plan.dto';
 import { Tier } from '../company/payment-tiers.list';
 import { getEndTime } from '../core/add-duration';
 

@@ -10,6 +10,7 @@ p, app_admin, /app/payment/*, (read)|(write)
 
 p, app_admin, /companies,  (read)|(write)
 p, app_admin, /companies/*,  (read)|(write)
+
 p, app_admin, /users,  (read)|(write)
 p, app_admin, /users/*,  (read)|(write)
 

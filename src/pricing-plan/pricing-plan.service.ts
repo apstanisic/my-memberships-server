@@ -12,7 +12,7 @@ import { BaseService } from '../core/base.service';
 import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 import { tierPrices } from './payment-prices';
-import { ExtendPricingPlanDto, NewPricingPlanDto } from './pricing-plan.dto';
+import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';
 
 /** Only one plan can be active at the same time */
@@ -32,7 +32,7 @@ export class PricingPlanService extends BaseService<PricingPlan> {
    */
   async extendPlan(
     companyId: UUID,
-    changes: ExtendPricingPlanDto,
+    changes: ExtendActivePlanDto,
     logUser: User,
   ): Promise<PricingPlan> {
     const oldPlan = await this.findOne(
