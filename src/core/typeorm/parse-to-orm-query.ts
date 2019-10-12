@@ -7,6 +7,7 @@ import {
   Equal,
   Like,
   In,
+  FindOperator,
 } from 'typeorm';
 import { convertToObject } from '../helpers';
 import { ParsedOrmWhere, Struct } from '../types';
@@ -68,9 +69,15 @@ export function parseQuery<T = any>(
           }
         } catch (error) {}
         break;
-      // If it isn't provided, assume equal
+      // If it isn't provided, check if value is instance of FindOperator,
+      // that means that somewhere else in the app this value was parsed,
+      // and just save it, othervise assume equal
       default:
-        typeOrmQuery[name] = Equal(value);
+        if (value instanceof FindOperator) {
+          typeOrmQuery[name] = value;
+        } else {
+          typeOrmQuery[name] = Equal(value);
+        }
         break;
       // This option can be abused. Better use manually,
       // then to let someone bypass parsing query

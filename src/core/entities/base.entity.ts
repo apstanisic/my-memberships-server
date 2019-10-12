@@ -46,24 +46,13 @@ export abstract class BaseEntity {
   async validate(): Promise<void> {
     let errors = await validate(this);
     // Exclude some private fields. Those fields are excluded when transformed.
-    errors = errors.map(({ target, ...other }) => ({
-      ...other,
-      target: classToClass(this),
-    }));
 
     if (errors.length > 0) {
+      errors = errors.map(({ target, ...other }) => ({
+        ...other,
+        target: classToClass(this),
+      }));
       throw new BadRequestException(errors);
     }
   }
-
-  // // For Access Control
-  // @Column({ type: 'simple-array' })
-  // acPath: string[];
-
-  // metadata() {
-  //   return {
-  //     canBeSoftDeleted: true,
-  //     canBeHardDeleted: true,
-  //   };
-  // }
 }

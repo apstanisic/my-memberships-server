@@ -17,6 +17,7 @@ import { DeleteColumns } from '../core/entities/deleted-columns.entity';
 import { SoftDelete } from '../core/entities/soft-delete.interface';
 import { IsBetween } from '../core/is-between';
 import { Arrival } from '../arrivals/arrivals.entity';
+import { getEndTime } from '../core/add-duration';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity implements SoftDelete {
@@ -114,10 +115,6 @@ export class Subscription extends BaseEntity implements SoftDelete {
     timeFrom: moment.Moment = moment(),
   ): void {
     this.startsAt = timeFrom.toDate();
-    this.expiresAt = timeFrom
-      .add(duration)
-      .subtract(1, 'day')
-      .endOf('day')
-      .toDate();
+    this.expiresAt = getEndTime(duration, timeFrom);
   }
 }

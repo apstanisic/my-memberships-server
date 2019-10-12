@@ -1,23 +1,35 @@
-import * as moment from 'moment';
-import { Tier } from '../company/payment-tiers.list';
-import { UUID } from '../core/types';
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsPositive,
+} from 'class-validator';
+import { availableTiers, Tier } from '../company/payment-tiers.list';
 
-export interface PlanChangesDto {
-  duration: moment.Duration;
-  creditPrice: number;
+export class ExtendPricingPlanDto {
+  /** Duration in months. Default 1 month */
+  @IsOptional()
+  @IsInt()
+  duration: number = 1;
+
+  @IsOptional()
+  @IsBoolean()
   autoRenew?: boolean;
+
+  @IsOptional()
+  @IsIn([...availableTiers])
   tier?: Tier;
 }
 
-export interface PlanWithCompanyDto extends PlanChangesDto {
-  companyId: UUID;
+export class NewPricingPlanDto {
+  @IsInt()
+  @IsPositive()
+  duration: number = 1;
+
+  @IsBoolean()
+  autoRenew: boolean = false;
+
+  @IsIn([...availableTiers])
+  tier: Tier = 'basic';
 }
-
-/** Params provided when changing company tier */
-// export class ChangeTierDto {
-//   @IsUUID()
-//   companyId: string;
-
-//   @IsIn(['free', 'basic', 'pro', 'enterprise', 'banned'])
-//   tier: Tier;
-// }
