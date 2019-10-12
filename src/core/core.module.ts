@@ -5,6 +5,7 @@ import { AccessControlModule } from './access-control/access-control.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { StorageModule } from './storage/storage.module';
+import { CronModule } from './cron/cron.module';
 
 /** Available modules */
 type AvailableModules =
@@ -13,14 +14,19 @@ type AvailableModules =
   | 'AccessControl'
   | 'Auth'
   | 'Log'
-  | 'Storage';
+  | 'Storage'
+  | 'Cron';
 
 /** Params for dynamic module */
 interface ForRootParams {
   ignore: AvailableModules[];
 }
 
-/** CoreModule with bundled common modules. Every module is global. */
+/**
+ * CoreModule with bundled common modules.
+ * Every module is global, so if you only need 1 or 2 modules,
+ * just import them manually.
+ */
 @Module({})
 export class CoreModule {
   static forRoot(params?: ForRootParams): DynamicModule {
@@ -36,6 +42,7 @@ export class CoreModule {
     if (shouldInclude('Config')) imports.push(ConfigModule);
     if (shouldInclude('Log')) imports.push(LoggerModule);
     if (shouldInclude('Storage')) imports.push(StorageModule);
+    if (shouldInclude('Cron')) imports.push(CronModule);
 
     return {
       imports,
