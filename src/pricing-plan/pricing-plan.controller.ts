@@ -5,7 +5,7 @@ import { UUID } from '../core/types';
 import { ValidUUID } from '../core/uuid.pipe';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
-import { ExtendPricingPlanDto, NewPricingPlanDto } from './pricing-plan.dto';
+import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plan.service';
 
@@ -29,7 +29,7 @@ export class PricingPlanController {
   async extendCurrentPlan(
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetUser() user: User,
-    planData: ExtendPricingPlanDto,
+    planData: ExtendActivePlanDto,
   ): Promise<PricingPlan> {
     return this.pricingPlanService.extendPlan(companyId, planData, user);
   }
