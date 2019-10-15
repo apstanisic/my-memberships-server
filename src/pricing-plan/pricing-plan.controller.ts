@@ -26,12 +26,16 @@ export class PricingPlanController {
 
   /** Create new plan that start after currently active plan ends */
   @Post('extend')
-  async extendCurrentPlan(
+  async continueAfterOldPlan(
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetUser() user: User,
     planData: ExtendActivePlanDto,
   ): Promise<PricingPlan> {
-    return this.pricingPlanService.extendPlan(companyId, planData, user);
+    return this.pricingPlanService.continueAfterOldPlan(
+      companyId,
+      planData,
+      user,
+    );
   }
 
   /** Remove active plan. User can manually remove plan if he/she wants */
