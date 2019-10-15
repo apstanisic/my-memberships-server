@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
-import { Company } from '../company/company.entity';
 import { CompanyService } from '../company/company.service';
 import { getEndTime } from '../core/add-duration';
 import { BaseService } from '../core/base.service';
@@ -30,7 +29,7 @@ export class PricingPlanService extends BaseService<PricingPlan> {
    * If you want for plan to start now, use this.newPlan.
    * There must be currently active plan for this to work.
    */
-  async extendPlan(
+  async continueAfterOldPlan(
     companyId: UUID,
     changes: ExtendActivePlanDto,
     logUser: User,
@@ -100,15 +99,6 @@ export class PricingPlanService extends BaseService<PricingPlan> {
       { user: logUser, reason: 'New pricing plan' },
     );
     return savedPlan;
-  }
-
-  /** Revert company to free tier */
-  async revertToFreeTier(companyId: UUID, logUser: User): Promise<Company> {
-    return this.companyService.updateWhere(
-      { id: companyId },
-      { tier: 'free' },
-      { user: logUser, reason: 'Revert to free tier' },
-    );
   }
 
   /** Remove currently active plan. Credit will not be returned to user */
