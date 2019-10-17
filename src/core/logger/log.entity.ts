@@ -13,7 +13,8 @@ import { IUser, BasicUserInfo } from '../entities/user.interface';
 
 /**
  * This entity is using MongoDb. TypeOrm currently supports only this NoSql db.
- * It's better then to store in Sql.
+ * It's better then to store in Sql. This class can't extend BaseEntity because
+ * it does not have primary field.
  */
 @Entity()
 export class Log<T extends WithId = any> {

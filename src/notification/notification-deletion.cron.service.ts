@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CronJob } from 'cron';
 import * as moment from 'moment';
-import { LessThan, Repository, FindConditions, DeleteResult } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { BaseService } from '../core/base.service';
 import { CronService } from '../core/cron/cron.service';
 import { Notification } from './notification.entity';
 import { UUID } from '../core/types';
+import { NotificationService } from './notification.service';
 
 interface AddNotificationParams {
   title: string;
@@ -15,27 +16,15 @@ interface AddNotificationParams {
 }
 
 @Injectable()
-export class NotificationService extends BaseService<Notification> {
+export class NotificationCronService {
   /** Cron job */
+  private cronJob: CronJob;
 
   constructor(
-    @InjectRepository(Notification) repository: Repository<Notification>,
+    private readonly notificationService: NotificationService,
     private readonly cronService: CronService,
   ) {
-    super(repository);
-  }
-
-  /** Delete many notifications. Expose deleteMany because of cron job */
-  deleteMany(criteria: FindConditions<Notification>): Promise<DeleteResult> {
-    return this.repository.delete(criteria);
-  }
-
-  async addNotification({
-    title,
-    body,
-    userId,
-  }: AddNotificationParams): Promise<Notification> {
-    return this.create({ body, title, userId });
+    this.startWaitToDelete();
   }
 
   /** Deletes old notifications after six months. This should be done in cron */
@@ -44,6 +33,17 @@ export class NotificationService extends BaseService<Notification> {
       .subtract(6, 'months')
       .toDate();
 
-    await this.repository.delete({ createdAt: LessThan(sixMonthsBefore) });
+    await this.notificationService.deleteMany({
+      createdAt: LessThan(sixMonthsBefore),
+    });
+  }
+
+  /** Initialize cron job that deletes old notifications */
+  private startWaitToDelete(): void {
+    // Every night at 3
+    this.cronJob = this.cronService.startJob(
+      '0 3 * * *',
+      this.deleteOldNotifications,
+    );
   }
 }

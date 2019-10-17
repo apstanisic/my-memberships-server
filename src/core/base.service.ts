@@ -43,7 +43,7 @@ export class BaseService<T extends WithId = any> extends BaseFindService<T> {
     super(repository);
   }
 
-  /** Terminal logger */
+  /** Terminal logger. All extending classes can use it */
   protected logger = new Logger();
 
   /** Validator */
