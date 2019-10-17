@@ -17,7 +17,7 @@ export class NotificationController {
     @GetUser() user: User,
   ): Promise<Notification> {
     return this.notificationService.updateWhere(
-      { id, user },
+      { id, userId: user.id },
       { seenAt: new Date() },
     );
   }
@@ -28,6 +28,6 @@ export class NotificationController {
     @Param('id', ValidUUID) id: UUID,
     @GetUser() user: User,
   ): Promise<Notification> {
-    return this.notificationService.deleteWhere({ id, user });
+    return this.notificationService.deleteWhere({ id, userId: user.id });
   }
 }

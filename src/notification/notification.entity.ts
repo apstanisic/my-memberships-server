@@ -1,18 +1,31 @@
-import { Column, ManyToOne, Entity } from 'typeorm';
-import { BaseEntity } from '../core/entities/base.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 
 @Entity()
-export class Notification extends BaseEntity {
+export class Notification {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column()
   title: string;
 
-  @Column({ type: 'text' })
-  body: string;
+  @Column({ type: 'text', nullable: true })
+  body?: string;
 
   @ManyToOne(type => User)
-  user: User;
+  @Column({ type: 'string' })
+  userId: UUID;
 
   @Column({ precision: 3 })
   seenAt?: Date;
+
+  @CreateDateColumn({ precision: 3 })
+  createdAt: Date;
 }
