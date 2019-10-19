@@ -71,11 +71,11 @@ export class CompanyArrivalsController {
 
   /** Remove arrival. Admins can cancel arrival if needed */
   @IfAllowed()
-  @Post(':aid')
+  @Post(':arivalId')
   async deleteArrival(
-    @Param('cid', ValidUUID) companyId: string,
-    @Param('lid', ValidUUID) locationId: string,
-    @Param('aid', ValidUUID) arrivalId: string,
+    @Param('companyId', ValidUUID) companyId: string,
+    @Param('locationId', ValidUUID) locationId: string,
+    @Param('arivalId', ValidUUID) arrivalId: string,
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
