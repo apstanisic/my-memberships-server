@@ -1,9 +1,9 @@
 import { Controller, Put, Param, Delete } from '@nestjs/common';
 import { NotificationService } from './notification.service';
-import { ValidUUID } from '../core/uuid.pipe';
-import { UUID } from '../core/types';
-import { GetUser } from '../user/get-user.decorator';
-import { User } from '../user/user.entity';
+import { ValidUUID } from '../uuid.pipe';
+import { UUID } from '../types';
+import { GetUser } from '../../user/get-user.decorator';
+import { User } from '../../user/user.entity';
 import { Notification } from './notification.entity';
 
 @Controller('notifications')

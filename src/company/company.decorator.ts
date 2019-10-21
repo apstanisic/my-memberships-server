@@ -1,4 +1,9 @@
-import { createParamDecorator, UnauthorizedException } from '@nestjs/common';
+import {
+  createParamDecorator,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { Company } from './company.entity';
 
 /**
  * Get company. This decorator can only be called after ValidCompanyGuard
@@ -8,5 +13,8 @@ import { createParamDecorator, UnauthorizedException } from '@nestjs/common';
  */
 export const GetCompany = createParamDecorator((data: string, req) => {
   if (!req.company) throw new UnauthorizedException();
+  if ((req.company as Company).tier === 'banned') {
+    throw new ForbiddenException('You are banned');
+  }
   return req.company;
 });

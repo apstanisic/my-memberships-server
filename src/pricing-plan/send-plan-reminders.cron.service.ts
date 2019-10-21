@@ -2,22 +2,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as moment from 'moment';
 import { Between } from 'typeorm';
 import { CronService } from '../core/cron/cron.service';
-import { NotificationService } from '../notification/notification.service';
+import { Notification } from '../core/notification/notification.entity';
+import { NotificationService } from '../core/notification/notification.service';
 import { PricingPlanService } from './pricing-plan.service';
-import { Notification } from '../notification/notification.entity';
 
+/** Remind owner that their plan soon expires */
 @Injectable()
-export class CheckPlansCronService {
+export class SendPlanRemindersCronService {
   constructor(
     private readonly cronService: CronService,
     private readonly notificationService: NotificationService,
     private readonly pricingPlanService: PricingPlanService,
   ) {
-    this.startNotifying();
+    this.startCronService();
   }
 
   /** Check every night at 4 for plans that need notification. */
-  startNotifying(): void {
+  private startCronService(): void {
     new Logger().log('Start checking plans', 'Pricing Plan');
     this.cronService.startJob('0 4 * * *', async () => {
       await this.expireInADay();
@@ -28,11 +29,14 @@ export class CheckPlansCronService {
   /**
    * Implementation of creating notification.
    * Check for plans that expire between privided dates,
-   * and send them notification.
+   * not auto renewable, and send them notification.
    */
-  async notify(start: Date, end: Date): Promise<Notification[]> {
+  private async sendNotifications(
+    start: Date,
+    end: Date,
+  ): Promise<Notification[]> {
     const plans = await this.pricingPlanService.find(
-      { expiresAt: Between(start, end) },
+      { expiresAt: Between(start, end), autoRenew: false },
       { relations: ['company'] },
     );
 
@@ -46,7 +50,7 @@ export class CheckPlansCronService {
   }
 
   /** Notify owner which company expires in a week */
-  async expireInAWeek(): Promise<Notification[]> {
+  private async expireInAWeek(): Promise<Notification[]> {
     const nextWeek = moment()
       .add(1, 'week')
       .toDate();
@@ -55,15 +59,15 @@ export class CheckPlansCronService {
       .add(6, 'days')
       .toDate();
 
-    return this.notify(inSixDays, nextWeek);
+    return this.sendNotifications(inSixDays, nextWeek);
   }
 
   /** Notify owner which company expires in a day */
-  async expireInADay(): Promise<Notification[]> {
+  private async expireInADay(): Promise<Notification[]> {
     const tomorrow = moment()
       .add(1, 'day')
       .toDate();
 
-    return this.notify(new Date(), tomorrow);
+    return this.sendNotifications(new Date(), tomorrow);
   }
 }

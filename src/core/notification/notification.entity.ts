@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UUID } from '../core/types';
-import { User } from '../user/user.entity';
+import { UUID } from '../types';
+import { User } from '../../user/user.entity';
 
 @Entity()
 export class Notification {
@@ -20,6 +20,8 @@ export class Notification {
   body?: string;
 
   @ManyToOne(type => User)
+  user: User;
+
   @Column({ type: 'string' })
   userId: UUID;
 

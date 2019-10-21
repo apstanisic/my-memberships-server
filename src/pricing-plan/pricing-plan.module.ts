@@ -4,11 +4,11 @@ import { CompanyModule } from '../company/company.module';
 import { PricingPlanController } from './pricing-plan.controller';
 import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plan.service';
-import { CheckPlansCronService } from './check-plans.cron.service';
+import { SendPlanRemindersCronService } from './send-plan-reminders.cron.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PricingPlan]), CompanyModule],
-  providers: [PricingPlanService, CheckPlansCronService],
+  providers: [PricingPlanService, SendPlanRemindersCronService],
   controllers: [PricingPlanController],
 })
 export class PricingPlanModule {}

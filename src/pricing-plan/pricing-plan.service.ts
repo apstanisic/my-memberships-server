@@ -13,6 +13,13 @@ import { User } from '../user/user.entity';
 import { tierPrices } from './payment-prices';
 import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';
+import { Company } from '../company/company.entity';
+
+interface ContinueAfterOldPlanParams {
+  companyId: UUID;
+  changes: ExtendActivePlanDto;
+  logUser: User;
+}
 
 /** Only one plan can be active at the same time */
 @Injectable()
@@ -28,12 +35,14 @@ export class PricingPlanService extends BaseService<PricingPlan> {
    * Extend current pricing plan. This plan starts after old expires.
    * If you want for plan to start now, use this.newPlan.
    * There must be currently active plan for this to work.
+   * It will use plan that last expires if there are to plan that
+   * are still valid.
    */
-  async continueAfterOldPlan(
-    companyId: UUID,
-    changes: ExtendActivePlanDto,
-    logUser: User,
-  ): Promise<PricingPlan> {
+  async continueAfterOldPlan({
+    changes,
+    companyId,
+    logUser,
+  }: ContinueAfterOldPlanParams): Promise<PricingPlan> {
     const oldPlan = await this.findOne(
       { companyId, expiresAt: MoreThan(new Date()) },
       { order: { expiresAt: 'DESC' }, relations: ['company'] },

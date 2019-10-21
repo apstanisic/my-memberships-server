@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
@@ -44,6 +45,10 @@ export class CompaniesController {
     @Body() data: Partial<Company>,
     @GetUser() user: User,
   ): Promise<Company> {
+    const amountOfCompanies = await this.service.count({ owner: user });
+    if (amountOfCompanies > 5) {
+      throw new ForbiddenException('You can have 5 companies max.');
+    }
     return this.service.createCompany(data, user, {
       user,
       reason: 'Create company.',

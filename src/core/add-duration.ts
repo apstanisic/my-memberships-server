@@ -7,7 +7,7 @@ import * as moment from 'moment';
  * If number provided for duration, assume it's days.
  */
 export function getEndTime(
-  duration: moment.Duration | number,
+  duration: moment.Duration | number = moment.duration(1, 'month'),
   from: Date | moment.Moment = moment(),
 ): Date {
   // Always convert to moment
@@ -17,5 +17,8 @@ export function getEndTime(
   } else {
     momentFrom.add(duration);
   }
-  return momentFrom.subtract(1, 'day').toDate();
+  return momentFrom
+    .subtract(1, 'day')
+    .endOf('day')
+    .toDate();
 }

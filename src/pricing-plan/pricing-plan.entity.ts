@@ -30,7 +30,7 @@ export class PricingPlan extends BaseEntity {
   startsAt: Date;
 
   /** To when is this plan active. Default is one month */
-  @Column({ precision: 3, default: getEndTime(moment.duration(1, 'month')) })
+  @Column({ precision: 3, default: getEndTime(1) })
   @IsDate()
   expiresAt: Date;
 
@@ -38,7 +38,11 @@ export class PricingPlan extends BaseEntity {
   @Column({ default: 'free' })
   tier: Tier;
 
-  /** Should plan auto-renew */
+  /** Should plan be auto renewed */
   @Column({ default: false })
   autoRenew: boolean;
+
+  /** Is this latest plan, plan that company currently uses */
+  @Column({ default: true })
+  inUse: boolean;
 }
