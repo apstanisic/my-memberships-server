@@ -50,6 +50,7 @@ export class AutoRenewPlansCronService {
       plansToExtend.map(async plan => {
         const newer = await this.checkForNewerPlan(plan.companyId);
         if (newer) {
+          // Switch to newer plan
           await this.pricingPlanService.update(newer, { inUse: true });
           await this.pricingPlanService.update(plan, { inUse: false });
         } else {

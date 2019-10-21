@@ -22,7 +22,7 @@ export class Notification {
   @ManyToOne(type => User)
   user: User;
 
-  @Column({ type: 'string' })
+  @Column()
   userId: UUID;
 
   @Column({ precision: 3 })

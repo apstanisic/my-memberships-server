@@ -56,7 +56,7 @@ export class Subscription extends BaseEntity implements SoftDelete {
 
   /** This entity serves as a subscription and as voucher */
   @Column({ default: 'membership' })
-  type: 'membership' | 'voucher' | 'unlimited';
+  type: string;
 
   @OneToMany(type => Arrival, arrival => arrival.subscription)
   arrivals: Arrival[];
