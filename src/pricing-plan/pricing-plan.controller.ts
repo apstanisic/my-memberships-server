@@ -31,11 +31,11 @@ export class PricingPlanController {
     @GetUser() user: User,
     planData: ExtendActivePlanDto,
   ): Promise<PricingPlan> {
-    return this.pricingPlanService.continueAfterOldPlan(
+    return this.pricingPlanService.continueAfterOldPlan({
       companyId,
-      planData,
-      user,
-    );
+      logUser: user,
+      changes: planData,
+    });
   }
 
   /** Remove active plan. User can manually remove plan if he/she wants */

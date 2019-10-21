@@ -90,3 +90,8 @@ export function parseNumber(value?: any): number | undefined {
 
   // swit
 }
+
+/** Simple shortcut for current date */
+export function now(): Date {
+  return new Date();
+}

@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { StorageModule } from './storage/storage.module';
 import { CronModule } from './cron/cron.module';
+import { NotificationModule } from './notification/notification.module';
 
 /** Available modules */
 type AvailableModules =
@@ -15,6 +16,7 @@ type AvailableModules =
   | 'Auth'
   | 'Log'
   | 'Storage'
+  | 'Notification'
   | 'Cron';
 
 /** Params for dynamic module */
@@ -43,6 +45,7 @@ export class CoreModule {
     if (shouldInclude('Log')) imports.push(LoggerModule);
     if (shouldInclude('Storage')) imports.push(StorageModule);
     if (shouldInclude('Cron')) imports.push(CronModule);
+    if (shouldInclude('Notification')) imports.push(NotificationModule);
 
     return {
       imports,

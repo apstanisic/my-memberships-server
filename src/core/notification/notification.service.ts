@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CronJob } from 'cron';
-import * as moment from 'moment';
-import { LessThan, Repository, FindConditions, DeleteResult } from 'typeorm';
-import { BaseService } from '../core/base.service';
-import { CronService } from '../core/cron/cron.service';
+import { DeleteResult, FindConditions, Repository } from 'typeorm';
+import { BaseService } from '../base.service';
+import { UUID } from '../types';
 import { Notification } from './notification.entity';
-import { UUID } from '../core/types';
 
 interface AddNotificationParams {
   title: string;
@@ -20,7 +17,6 @@ export class NotificationService extends BaseService<Notification> {
 
   constructor(
     @InjectRepository(Notification) repository: Repository<Notification>,
-    private readonly cronService: CronService,
   ) {
     super(repository);
   }
@@ -30,20 +26,12 @@ export class NotificationService extends BaseService<Notification> {
     return this.repository.delete(criteria);
   }
 
+  /** Create new notification */
   async addNotification({
     title,
     body,
     userId,
   }: AddNotificationParams): Promise<Notification> {
     return this.create({ body, title, userId });
-  }
-
-  /** Deletes old notifications after six months. This should be done in cron */
-  private async deleteOldNotifications(): Promise<void> {
-    const sixMonthsBefore = moment()
-      .subtract(6, 'months')
-      .toDate();
-
-    await this.repository.delete({ createdAt: LessThan(sixMonthsBefore) });
   }
 }
