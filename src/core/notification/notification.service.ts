@@ -13,8 +13,6 @@ interface AddNotificationParams {
 
 @Injectable()
 export class NotificationService extends BaseService<Notification> {
-  /** Cron job */
-
   constructor(
     @InjectRepository(Notification) repository: Repository<Notification>,
   ) {
