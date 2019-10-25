@@ -5,6 +5,7 @@ import { BaseEntity } from '../core/entities/base.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { Location } from '../locations/location.entity';
 import { User } from '../user/user.entity';
+import { Company } from '../company/company.entity';
 
 /**
  * There is seperate address, lat and long for each arrival
@@ -31,6 +32,14 @@ export class Arrival extends BaseEntity {
   /** Get only Id from location */
   @Column({ nullable: true })
   locationId?: string;
+
+  /** Shortcut for geting company */
+  @ManyToOne(type => Company)
+  company: Company;
+
+  /** Company Id */
+  @Column()
+  companyId: string;
 
   /** When did person arrive */
   @Column({ update: false, default: new Date(), precision: 3 })

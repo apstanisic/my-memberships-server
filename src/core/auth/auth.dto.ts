@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, Length, IsUUID } from 'class-validator';
 import { BaseUser } from '../entities/base-user.entity';
 
 /** Data provided for login */
@@ -17,6 +17,14 @@ export class OnlyPasswordDto {
   @IsNotEmpty()
   @Length(8, 200)
   password: string;
+}
+
+export class ResetPasswordDto {
+  @Length(8, 200)
+  password: string;
+
+  @IsUUID()
+  token: string;
 }
 
 export class RegisterUserDto extends LoginUserDto {

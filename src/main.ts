@@ -5,7 +5,7 @@ import { AppModule } from './app/app.module';
 declare const module: any;
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,7 +19,7 @@ async function bootstrap(): Promise<void> {
   // Globally strip all @Exclude() properties
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  await app.listen(3000);
+  await app.listen(3030);
 
   if (module.hot) {
     module.hot.accept();
