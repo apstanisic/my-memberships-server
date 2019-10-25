@@ -35,7 +35,10 @@ export class AuthService {
     if (!payload || !this.validator.isEmail(payload.email)) {
       throw new BadRequestException();
     }
-    return this.usersService.findOne({ email: payload.email });
+    return this.usersService.findOne(
+      { email: payload.email },
+      { relations: ['roles'] },
+    );
   }
 
   /** Generate new token when user logs in */

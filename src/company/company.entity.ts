@@ -58,7 +58,7 @@ export class Company extends BaseEntity {
   description: string;
 
   /** Company's main phone numbers */
-  @Column({ type: 'simple-array' })
+  @Column({ type: 'simple-json' })
   @IsNotEmpty()
   @IsString({ each: true })
   @Length(8, 30, { each: true })

@@ -20,7 +20,7 @@ import { Arrival } from '../arrivals/arrivals.entity';
 import { getEndTime } from '../core/add-duration';
 
 @Entity('subscriptions')
-export class Subscription extends BaseEntity implements SoftDelete {
+export class Subscription extends BaseEntity {
   /* Company where subscription is valid */
   @ManyToOne(type => Company, company => company.subscriptions)
   company: Company;
@@ -87,15 +87,15 @@ export class Subscription extends BaseEntity implements SoftDelete {
   }
 
   /** Disables this subscription. It contains reason, who and when. */
-  @Column(type => DeleteColumns)
-  deleted: DeleteColumns;
+  // @Column(type => DeleteColumns)
+  // deleted: DeleteColumns;
 
   /** Check if subscription is still valid */
   @BeforeUpdate()
   isValid(): void {
-    if (this.deleted.at && this.active) {
-      this.active = false;
-    }
+    // if (this.deleted.at && this.active) {
+    //   this.active = false;
+    // }
 
     if (moment(this.expiresAt).isBefore(moment.now()) && this.active) {
       this.active = false;

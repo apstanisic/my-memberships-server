@@ -32,6 +32,14 @@ export class CompaniesController {
     return this.service.paginate(params);
   }
 
+  /** Get companies that logged user has roles */
+  @Get('user')
+  @UseGuards(AuthGuard('jwt'))
+  getUsersCompanies(@GetUser() user: User): Promise<Company[]> {
+    const companies = user.roles.map(role => role.domain);
+    return this.service.findByIds(companies);
+  }
+
   /** Get company by id */
   @Get(':id')
   findById(@Param('id') id: string): Promise<Company> {

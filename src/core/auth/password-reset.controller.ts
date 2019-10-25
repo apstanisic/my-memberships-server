@@ -12,7 +12,7 @@ import { User } from '../../user/user.entity';
 import { UsersService } from '../../user/user.service';
 import { ValidEmail } from '../validate-email.pipe';
 import { AuthMailService } from './auth-mail.service';
-import { OnlyPasswordDto } from './auth.dto';
+import { OnlyPasswordDto, ResetPasswordDto } from './auth.dto';
 import { PasswordResetService } from './password-reset.service';
 
 /** Controller for password reseting */
@@ -44,8 +44,7 @@ export class PasswordResetController {
   @Post('reset-password/:email/:token')
   async resetPassword(
     @Param('email', GetUserPipe) user: User,
-    @Param('token') token: string,
-    @Body() { password }: OnlyPasswordDto,
+    @Body() { password, token }: ResetPasswordDto,
   ): Promise<User> {
     return this.passwordResetService.resetPassword(user, token, password);
   }

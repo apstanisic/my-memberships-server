@@ -10,7 +10,7 @@ import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plan.service';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-@Controller('companies/:companyId/pricing-plan')
+@Controller('companies/:companyId/pricing-plans')
 export class PricingPlanController {
   constructor(private readonly pricingPlanService: PricingPlanService) {}
 

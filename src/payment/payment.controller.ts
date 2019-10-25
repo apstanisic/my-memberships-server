@@ -1,4 +1,10 @@
-import { Body, Controller, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Put,
+  UseGuards,
+  NotImplementedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
@@ -30,5 +36,9 @@ export class PaymentController {
     @GetUser() user: User,
   ): Promise<number> {
     return this.paymentService.changeCredit({ companyId, price, user, credit });
+  }
+
+  getCompanyPayments(): void {
+    throw new NotImplementedException();
   }
 }
