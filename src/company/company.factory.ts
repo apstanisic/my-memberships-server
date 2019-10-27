@@ -13,6 +13,6 @@ export function generateCompany(users: User[]): Company {
   company.category = Faker.random.arrayElement(companiesCategories as any);
   company.locations = Array(4).map(() => generateLocation([company]));
   company.owner = Faker.random.arrayElement(users);
-
+  company.tier = 'enterprise';
   return company;
 }

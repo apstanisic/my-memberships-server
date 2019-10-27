@@ -36,6 +36,8 @@ export class PaginationParams<T = any> {
 
     params.limit = parseNumber(query[limitField]);
 
+    console.log(query[cursorField]);
+
     if (typeof query[cursorField] === 'string') {
       params.cursor = query[cursorField];
     }
@@ -48,7 +50,8 @@ export class PaginationParams<T = any> {
   limit?: number;
 
   @IsOptional()
-  @IsBase64()
+  @IsString()
+  // @IsBase64()
   cursor?: string;
 
   @IsOptional()

@@ -30,22 +30,23 @@ export class Paginator<T extends WithId> {
   /* How much entities to return */
   private limit: number = 12;
 
+  /** Select order */
   private order: 'ASC' | 'DESC' = 'DESC';
 
   /** Column that should be orderd */
-  private orderColumn: string = 'createdAt';
+  private orderColumnName: string = 'createdAt';
 
   /** Cursor provided from request. If null that means that it's first page */
   private cursor?: string;
+
+  /** Is user requesting previous or next page */
+  private direction: 'prev' | 'next' = 'next';
 
   /** All relations that repo should fetch */
   private relations: string[] = [];
 
   /** Query from request. If filter is not provided, use this */
   private requestQuery: OrmWhere<T>;
-
-  /** Should paginator parse query to TypeOrm format */
-  // private shouldParseQuery?: boolean = true;
 
   constructor(repo: Repository<T>) {
     this.repo = repo;
@@ -62,16 +63,25 @@ export class Paginator<T extends WithId> {
     this.cursor = params.cursor;
     this.requestQuery = params.where;
     this.relations = params.relations;
-    // this.shouldParseQuery = params.shouldParse;
   }
 
   /* Execute query */
   async execute(filter?: OrmWhere<T>): PgResult<T> {
     let cursorQuery;
     if (this.cursor) {
-      cursorQuery = new ParseCursor(this.cursor).query;
+      // If cursor exist, then it's not first page
+      // INVALID
+      // this.isFirstPage = false;
+      const cursor = new ParseCursor(this.cursor, this.order);
+      cursorQuery = cursor.query;
+      this.direction = cursor.direction;
     } else {
       cursorQuery = {};
+    }
+
+    // Reverse order if prev page
+    if (this.direction === 'prev') {
+      this.order = this.order === 'ASC' ? 'DESC' : 'ASC';
     }
 
     // If filter is not provided,
@@ -81,15 +91,12 @@ export class Paginator<T extends WithId> {
       throw new BadRequestException('Filter is string');
     }
 
-    // let where = this.shouldParseQuery
-    //   ? parseQuery(whereQuery)
-    //   : convertToObject(whereQuery);
     let where = convertToObject(whereQuery);
     where = { ...where, ...cursorQuery };
 
     const result = await this.repo.find({
       where,
-      order: { [this.orderColumn]: this.order, id: this.order },
+      order: { [this.orderColumnName]: this.order, id: this.order },
       take: this.limit + 1,
       relations: this.relations,
     } as FindManyOptions<T>);
@@ -100,39 +107,58 @@ export class Paginator<T extends WithId> {
   /** Result will contain one item more to check if there's next page */
   private parseResponse(result: T[]): PaginatorResponse {
     const response = new PaginatorResponse<T>();
-    const isLastPage = this.limit >= result.length;
+    let responseData = result;
+    // Can we fetch next batch
+    // If amount of results are same or smaller then limit, then end reached.
+    // We are fetching one record more for this
+    const endReached = this.limit >= result.length;
+    // Remove item that was used for checking if it reached end
+    let isFirstPage = false;
+    let isLastPage = false;
+    if (endReached) {
+      // If user requested next page, that means it react last item
+      if (this.direction === 'next') {
+        isLastPage = true;
+      } else {
+        // othervise he reached first item
+        isFirstPage = true;
+      }
+    } else {
+      responseData.pop();
+    }
+    // If cursor is not provided then it's first page
+    if (this.cursor === undefined) {
+      isFirstPage = true;
+    }
+    // If previous page reverse order
+    if (this.direction === 'prev') {
+      responseData = responseData.reverse();
+    }
 
     let next;
-    let endsAt;
+    let previous;
     /** If it is not last page generate cursor for next page */
-    if (!isLastPage && result.length > 0) {
-      const nextEntity = result.pop() as T;
-      next = new GenerateCursor(nextEntity, this.orderColumn).cursor;
-      /* Generate last cursor for this page */
-      endsAt = new GenerateCursor(result[result.length - 1], this.orderColumn)
+    if (!isLastPage) {
+      const lastItem = result[result.length - 1];
+      next = new GenerateCursor(lastItem, 'next', this.orderColumnName).cursor;
+    }
+    if (!isFirstPage) {
+      const firstItem = result[0];
+      previous = new GenerateCursor(firstItem, 'prev', this.orderColumnName)
         .cursor;
     }
 
     /* retur response */
     response.pagination = {
       isLastPage,
+      isFirstPage,
+      // endsAt,
+      previous,
       next,
-      endsAt,
-      startsAt: this.cursor,
+      perPage: this.limit,
       amount: result.length,
     };
-    response.data = result;
+    response.data = responseData;
     return response;
   }
 }
-
-// For testing, send non base64 cursor
-// nextFF: next
-//   ? Buffer.from(next as string, 'base64').toString('ascii')
-//   : null,
-// endsAtFF: endsAt
-//   ? Buffer.from(endsAt as string, 'base64').toString('ascii')
-//   : null,
-// startsAtFF: this.cursor
-//   ? Buffer.from(this.cursor as string, 'base64').toString('ascii')
-//   : null,

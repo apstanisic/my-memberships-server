@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 import { PermissionsGuard } from '../core/access-control/permissions.guard';
@@ -8,6 +8,7 @@ import { PgResult } from '../core/pagination/pagination.types';
 import { ValidUUID } from '../core/uuid.pipe';
 import { Arrival } from './arrivals.entity';
 import { ArrivalsService } from './arrivals.service';
+import { IdArrayDto } from '../core/id-array.dto';
 
 /**
  * Access arrivals directly by company.
@@ -27,6 +28,11 @@ export class CompanyArrivalsController {
   ): PgResult<Arrival> {
     // const location = await this.validLocation(companyId);
     return this.arrivalsService.paginate(params, { companyId });
+  }
+
+  @Get('ids')
+  async getByIds(@Query() query: IdArrayDto): Promise<Arrival[]> {
+    return this.arrivalsService.findByIds(query.ids);
   }
 
   @Get(':arrivalId')

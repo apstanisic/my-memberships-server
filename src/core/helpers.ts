@@ -26,14 +26,14 @@ export function wait(time: number): Promise<void> {
 }
 
 /**
- * Convert string, null or undefined to object
+ * Convert any value to object
+ * If value is string, null or undefined return empty object
  * It will convert JSON string to object literal.
- * For nullable values will return empty object.
  * Always returns new object
  */
 export function convertToObject<T = any>(
   query: Struct<T> | string | null | undefined,
-): Struct<T> {
+): Struct {
   if (typeof query === 'object') return { ...query };
   if (query === null || query === undefined) return {};
 

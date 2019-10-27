@@ -22,6 +22,7 @@ export function generateLocation(companies: Company[]): Location {
   location.phoneNumber = Faker.phone.phoneNumber();
   location.workingHours = workhours;
   location.company = Faker.random.arrayElement(companies);
+  location.images = [];
 
   return location;
 }

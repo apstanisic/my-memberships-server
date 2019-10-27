@@ -5,18 +5,22 @@
 export class PaginatorResponse<T = any> {
   constructor() {
     // There must be pagination object
-    this.pagination = { amount: 0, isLastPage: true };
+    this.pagination = {
+      amount: 0,
+      perPage: 12,
+      isFirstPage: true,
+      isLastPage: true,
+    };
   }
 
   /** Pagination metadata */
   pagination: {
     amount: number;
+    perPage: number;
     isLastPage: boolean;
-    startsAt?: string;
-    endsAt?: string;
+    isFirstPage?: boolean;
     next?: string;
     previous?: string;
-    [key: string]: any;
   };
 
   /** Retrived data */

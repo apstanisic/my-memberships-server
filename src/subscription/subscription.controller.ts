@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   ForbiddenException,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
@@ -27,6 +28,7 @@ import { Subscription } from './subscription.entity';
 import { SubscriptionService } from './subscription.service';
 import { CompanyService } from '../company/company.service';
 import { Company } from '../company/company.entity';
+import { IdArrayDto } from '../core/id-array.dto';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')
@@ -44,6 +46,11 @@ export class SubscriptionController {
     @Param('companyId', ValidUUID) companyId: UUID,
   ): PgResult<Subscription> {
     return this.service.paginate(pg, { companyId });
+  }
+
+  @Get('ids')
+  async getUsersByIds(@Query() query: IdArrayDto): Promise<Subscription[]> {
+    return this.service.findByIds(query.ids, { relations: ['owner'] });
   }
 
   /** Get subscription by id */
