@@ -33,7 +33,7 @@ export class Paginator<T extends WithId> {
   /** Select order */
   private order: 'ASC' | 'DESC' = 'DESC';
 
-  /** Column that should be orderd */
+  /** Column that should be ordered. Only using createdAt for now */
   private orderColumnName: string = 'createdAt';
 
   /** Cursor provided from request. If null that means that it's first page */
