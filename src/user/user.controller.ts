@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -20,8 +21,11 @@ import { GetUser } from './get-user.decorator';
 import { UpdateUserInfo } from './update-user.dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
+import { Role } from '../core/access-control/roles.entity';
+import { IdArrayDto } from '../core/id-array.dto';
 
 @Controller('auth')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(
     private readonly usersService: UsersService,
@@ -30,7 +34,6 @@ export class UserController {
 
   /** Update user password */
   @Put('password')
-  @UseGuards(AuthGuard('jwt'))
   async changePassword(@Body() data: UpdatePasswordDto): Promise<User> {
     const { email, oldPassword, newPassword } = data;
 
@@ -46,7 +49,6 @@ export class UserController {
   /** Update user avatar */
   @UseInterceptors(FileInterceptor('file', validImage))
   @Put('avatar')
-  @UseGuards(AuthGuard('jwt'))
   async addProfilePicture(
     @UploadedFile() file: any,
     @GetUser() user: User,
@@ -56,14 +58,12 @@ export class UserController {
 
   /** Remove user avatar */
   @Delete('avatar')
-  @UseGuards(AuthGuard('jwt'))
   async removeProfilePicture(@GetUser() user: User): Promise<User> {
     return this.usersService.removeAvatar(user);
   }
 
   /** Update user info */
   @Put()
-  @UseGuards(AuthGuard('jwt'))
   async updateUserInfo(
     @Body() updateData: UpdateUserInfo,
     @GetUser() user: User,
@@ -73,14 +73,12 @@ export class UserController {
 
   /** Get logged user info */
   @Get('account')
-  @UseGuards(AuthGuard('jwt'))
   getAccount(@GetUser() user: User): User {
     return user;
   }
 
   /** Delete user */
   @Delete('account')
-  @UseGuards(AuthGuard('jwt'))
   async deleteUser(
     @GetUser() loggedUser: User,
     @Body() { email, password }: LoginUserDto,
@@ -90,7 +88,18 @@ export class UserController {
     return this.usersService.delete(user, { user });
   }
 
-  /** Get general user info by id */
+  @Get('account/roles')
+  getUsersRoles(@GetUser() { roles }: User): Role[] {
+    return roles;
+  }
+
+  /** Get many users with provided ids */
+  @Get('users/ids')
+  async getUsersByIds(@Query() query: IdArrayDto): Promise<User[]> {
+    return this.usersService.findByIds(query.ids);
+  }
+
+  /** Get general user info by id. Still needs to be logged in for now */
   @Get('users/:id')
   GetUser(@Param('id', ValidUUID) id: string): Promise<User> {
     return this.usersService.findOne(id);

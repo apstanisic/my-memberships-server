@@ -13,7 +13,7 @@ async function convert(query: any, url?: string): Promise<PaginationParams> {
   const options = PaginationParams.fromRequest(query);
   options.currentUrl = url;
   const errors = await validate(options);
-  if (errors.length > 0) throw new BadRequestException();
+  if (errors.length > 0) throw new BadRequestException(errors);
   return options;
 }
 

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IfAllowed } from '../core/access-control/if-allowed.decorator';
@@ -20,6 +21,7 @@ import { User } from '../user/user.entity';
 import { Location } from './location.entity';
 import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
 import { LocationsService } from './locations.service';
+import { IdArrayDto } from '../core/id-array.dto';
 
 /**
  * Controller for managing locations
@@ -36,6 +38,11 @@ export class LocationsController {
     @GetPagination() params: PaginationParams,
   ): PgResult<Location> {
     return this.locationsService.paginate(params, { companyId });
+  }
+
+  @Get('ids')
+  async getUsersByIds(@Query() query: IdArrayDto): Promise<Location[]> {
+    return this.locationsService.findByIds(query.ids);
   }
 
   /** Get location by id */

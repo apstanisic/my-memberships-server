@@ -25,6 +25,10 @@ export class Location extends BaseEntity {
   @Column()
   companyId: string;
 
+  /** Name of location */
+  @Column({ nullable: true })
+  name?: string;
+
   /** Arrivals at this location */
   @OneToMany(type => Arrival, arrival => arrival.location)
   arrivals: Arrival[];

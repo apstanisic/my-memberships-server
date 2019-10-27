@@ -1,8 +1,8 @@
-import { ManyToOne, Entity, Column } from 'typeorm';
-import { IsIn, IsString, IsOptional, Length } from 'class-validator';
+import { IsIn, IsOptional, IsString, Length } from 'class-validator';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../../user/user.entity';
-import { RoleName, availableRoles } from './roles.list';
 import { BaseEntity } from '../entities/base.entity';
+import { availableRoles, RoleName } from './roles.list';
 
 /**
  * To add admin for company f32 to user

@@ -36,8 +36,8 @@ export class CompaniesController {
   @Get('user')
   @UseGuards(AuthGuard('jwt'))
   getUsersCompanies(@GetUser() user: User): Promise<Company[]> {
-    const companies = user.roles.map(role => role.domain);
-    return this.service.findByIds(companies);
+    const companyIds = user.roles.map(role => role.domain);
+    return this.service.findByIds(companyIds);
   }
 
   /** Get company by id */

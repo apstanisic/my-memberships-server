@@ -52,6 +52,10 @@ export abstract class BaseEntity {
         ...other,
         target: classToClass(this),
       }));
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(errors);
+      }
+
       throw new BadRequestException(errors);
     }
   }

@@ -14,6 +14,7 @@ export function generateArrival(companies: Company[]): Arrival {
   arrival.arrivedAt = new Date();
   arrival.subscription = random(company.subscriptions);
   arrival.location = random(company.locations);
+  arrival.company = company;
 
   return arrival;
 }
