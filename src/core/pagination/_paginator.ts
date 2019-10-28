@@ -1,10 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { FindManyOptions, Repository } from 'typeorm';
+import * as queryString from 'query-string';
 import { convertToObject } from '../helpers';
 import { OrmWhere, WithId } from '../types';
 import { PaginationParams } from './pagination-options';
-import { PaginatorResponse, PgResult } from './pagination.types';
+import { PaginatorResponse, PgResult, cursorField } from './pagination.types';
 import { GenerateCursor } from './_generate-cursor';
 import { ParseCursor } from './_parse-cursor';
 
@@ -45,6 +46,9 @@ export class Paginator<T extends WithId> {
   /** All relations that repo should fetch */
   private relations: string[] = [];
 
+  /** Url of current request */
+  private requestUrl?: string;
+
   /** Query from request. If filter is not provided, use this */
   private requestQuery: OrmWhere<T>;
 
@@ -63,6 +67,7 @@ export class Paginator<T extends WithId> {
     this.cursor = params.cursor;
     this.requestQuery = params.where;
     this.relations = params.relations;
+    this.requestUrl = params.currentUrl;
   }
 
   /* Execute query */
@@ -137,7 +142,9 @@ export class Paginator<T extends WithId> {
 
     let next;
     let previous;
-    /** If it is not last page generate cursor for next page */
+    let nextUrl;
+    let previousUrl;
+
     if (!isLastPage) {
       const lastItem = result[result.length - 1];
       next = new GenerateCursor(lastItem, 'next', this.orderColumnName).cursor;
@@ -148,6 +155,20 @@ export class Paginator<T extends WithId> {
         .cursor;
     }
 
+    // const nextUrl = this.requestUrl ? this.requestUrl.replace(this.cursor, )
+    if (!isLastPage && next && this.requestUrl) {
+      const { query, url } = queryString.parseUrl(this.requestUrl);
+      query[cursorField] = next;
+      // nextUrl = queryString.stringify(query);
+      nextUrl = `${url}?${queryString.stringify(query)}`;
+    }
+
+    if (!isFirstPage && previous && this.requestUrl) {
+      const { query, url } = queryString.parseUrl(this.requestUrl);
+      query[cursorField] = previous;
+      previousUrl = `${url}?${queryString.stringify(query)}`;
+    }
+
     /* retur response */
     response.pagination = {
       isLastPage,
@@ -155,6 +176,8 @@ export class Paginator<T extends WithId> {
       // endsAt,
       previous,
       next,
+      nextUrl,
+      previousUrl,
       perPage: this.limit,
       amount: result.length,
     };

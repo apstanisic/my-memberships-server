@@ -21,6 +21,8 @@ export class PaginatorResponse<T = any> {
     isFirstPage?: boolean;
     next?: string;
     previous?: string;
+    nextUrl?: string;
+    previousUrl?: string;
   };
 
   /** Retrived data */
