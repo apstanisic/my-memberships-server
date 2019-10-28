@@ -28,9 +28,7 @@ export class GenerateCursor<T extends WithId = any> {
     //   `${this.entity.id};${this.column};${value};${this.direction}`,
     //   'ascii',
     // ).toString('base64');
-    this.cursor = encodeURI(
-      `${this.entity.id};${this.column};${value};${this.direction}`,
-    );
+    this.cursor = `${this.entity.id};${this.column};${value};${this.direction}`;
     // this.cursor = encodeURI(this.cursor);
     //
   }
