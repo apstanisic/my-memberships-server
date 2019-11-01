@@ -5,8 +5,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { IfAllowed, PermissionsGuard } from 'nestjs-extra';
+import { AuthGuard, IfAllowed, PermissionsGuard } from 'nestjs-extra';
 // import { IfAllowed } from '../core/access-control/if-allowed.decorator';
 // import { PermissionsGuard } from '../core/access-control/permissions.guard';
 import { GetUser } from '../user/get-user.decorator';

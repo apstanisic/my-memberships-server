@@ -1,6 +1,5 @@
 import { Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
+import { AuthGuard, PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
 // import { PermissionsGuard } from '../core/access-control/permissions.guard';
 // import { UUID } from '../core/types';
 // import { ValidUUID } from '../core/uuid.pipe';

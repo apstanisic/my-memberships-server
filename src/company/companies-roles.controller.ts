@@ -9,8 +9,8 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
+  AuthGuard,
   CreateRoleDto,
   GetPagination,
   IfAllowed,
