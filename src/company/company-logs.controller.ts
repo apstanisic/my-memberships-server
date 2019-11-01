@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
+  AuthGuard,
   DbLoggerService,
   GetPagination,
   IfAllowed,
@@ -12,15 +12,6 @@ import {
   ValidUUID,
 } from 'nestjs-extra';
 import { CompanyLogsGuard } from './company-logs.guard';
-// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-// import { PermissionsGuard } from '../core/access-control/permissions.guard';
-// import { DbLoggerService } from '../core/logger/db-logger.service';
-// import { Log } from '../core/logger/log.entity';
-// import { PaginationParams } from '../core/pagination/pagination-options';
-// import { GetPagination } from '../core/pagination/pagination.decorator';
-// import { PgResult } from '../core/pagination/pagination.types';
-// import { UUID } from '../core/types';
-// import { ValidUUID } from '../core/uuid.pipe';
 import { GetCompany } from './company.decorator';
 import { Company } from './company.entity';
 

@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { readFileSync } from 'fs';
 import { CONFIG_OPTIONS, CoreModule } from 'nestjs-extra';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompanyModule } from '../company/company.module';
-import { storageOptions } from '../config/image-config';
+import {
+  allRoles,
+  casbinModel,
+  casbinPolicies,
+} from '../config/access-control-config';
+import { appEntities } from '../config/db-config';
 import { LocationsModule } from '../locations/locations.module';
 // import { CoreModule } from '../core/core.module';
 import { PaymentModule } from '../payment/payment.module';
@@ -12,27 +17,22 @@ import { SubscriptionModule } from '../subscription/subscription.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { allEntities } from '../config/db-config';
-import {
-  casbinModel,
-  casbinPolicies,
-  allRoles,
-} from '../config/access-control-config';
+
+const env = readFileSync('.env');
 
 @Module({
   imports: [
-    // CoreModule.forRoot({ UserModule, ignore: [] }),
     CoreModule.forRoot({
       ignore: [],
-      storage: storageOptions,
-      db: { entities: allEntities },
+      storage: {},
+      db: { entities: appEntities, usingAccessControl: true },
+      config: { configs: env },
       accessControl: {
         model: casbinModel,
         policies: casbinPolicies,
         availableRoles: allRoles,
       },
     }),
-    // TypeOrmModule.forRoot(),
     UserModule,
     LocationsModule,
     CompanyModule,
@@ -42,13 +42,7 @@ import {
     PricingPlanModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: CONFIG_OPTIONS,
-      useFactory: async (): Promise<string> => '',
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {
   // forRoot(): DynamicModule {
