@@ -6,31 +6,36 @@ import {
   Get,
   Param,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  IdArrayDto,
+  LoginUserDto,
+  Role,
+  StorageService,
+  UpdatePasswordDto,
+  ValidUUID,
+} from 'nestjs-extra';
 import { validImage } from '../company/company-images/multer-options';
-import { LoginUserDto, UpdatePasswordDto } from '../core/auth/auth.dto';
-import { StorageService } from '../core/storage/storage.service';
-import { ValidUUID } from '../core/uuid.pipe';
+// import { LoginUserDto, UpdatePasswordDto } from '../core/auth/auth.dto';
+// import { StorageService } from '../core/storage/storage.service';
+// import { ValidUUID } from '../core/uuid.pipe';
 import { GetUser } from './get-user.decorator';
 import { UpdateUserInfo } from './update-user.dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
-import { Role } from '../core/access-control/roles.entity';
-import { IdArrayDto } from '../core/id-array.dto';
+// import { Role } from '../core/access-control/roles.entity';
+// import { IdArrayDto } from '../core/id-array.dto';
 
 @Controller('auth')
 @UseGuards(AuthGuard('jwt'))
 export class UserController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly storageService: StorageService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   /** Update user password */
   @Put('password')

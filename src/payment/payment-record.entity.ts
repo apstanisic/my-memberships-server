@@ -1,5 +1,6 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../core/entities/base.entity';
+import { BaseEntity } from 'nestjs-extra';
+import { Column, Entity, ManyToOne } from 'typeorm';
+// import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
 import { User } from '../user/user.entity';
 

@@ -1,5 +1,6 @@
 import { IsInt, IsUUID } from 'class-validator';
-import { IsBetween } from '../core/is-between';
+import { IsBetween } from 'nestjs-extra';
+// import { IsBetween } from '../core/is-between';
 
 /** Params provided when adding or subtracting company credit */
 export class ChangeCreditDto {

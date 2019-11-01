@@ -6,18 +6,28 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
-  ForbiddenException,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PgResult } from '../core/pagination/pagination.types';
-import { UUID } from '../core/types';
-import { ValidUUID } from '../core/uuid.pipe';
+import {
+  GetPagination,
+  IdArrayDto,
+  IfAllowed,
+  PaginationParams,
+  PermissionsGuard,
+  PgResult,
+  UUID,
+  ValidUUID,
+} from 'nestjs-extra';
+import { CompanyService } from '../company/company.service';
+// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+// import { PermissionsGuard } from '../core/access-control/permissions.guard';
+// import { PaginationParams } from '../core/pagination/pagination-options';
+// import { GetPagination } from '../core/pagination/pagination.decorator';
+// import { PgResult } from '../core/pagination/pagination.types';
+// import { UUID } from '../core/types';
+// import { ValidUUID } from '../core/uuid.pipe';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import {
@@ -26,9 +36,7 @@ import {
 } from './subscription.dto';
 import { Subscription } from './subscription.entity';
 import { SubscriptionService } from './subscription.service';
-import { CompanyService } from '../company/company.service';
-import { Company } from '../company/company.entity';
-import { IdArrayDto } from '../core/id-array.dto';
+// import { IdArrayDto } from '../core/id-array.dto';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('companies/:companyId/subscriptions')

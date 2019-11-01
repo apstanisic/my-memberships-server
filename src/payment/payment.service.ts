@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { Company } from '../company/company.entity';
 import { CompanyService } from '../company/company.service';
-import { BaseService } from '../core/base.service';
-import { UUID } from '../core/types';
+// import { BaseService } from '../core/base.service';
+// import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 import { PaymentRecord } from './payment-record.entity';
-import { Tier } from '../company/payment-tiers.list';
 
 interface ChangeCreditParams {
   companyId: UUID;

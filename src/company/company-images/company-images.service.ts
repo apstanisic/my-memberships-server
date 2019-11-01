@@ -1,10 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as Faker from 'faker';
 import * as moment from 'moment';
-import { StorageImagesService } from '../../core/storage/storage-images.service';
-import { Image, UUID } from '../../core/types';
-import { Company } from '../company.entity';
+import { Image, StorageImagesService, UUID } from 'nestjs-extra';
 import { Location } from '../../locations/location.entity';
+// import { StorageImagesService } from '../../core/storage/storage-images.service';
+// import { Image, UUID } from '../../core/types';
+import { Company } from '../company.entity';
 
 @Injectable()
 export class CompanyImagesService {
@@ -14,11 +15,13 @@ export class CompanyImagesService {
     const images = [...initialImages];
     const uuid = Faker.random.uuid();
     const name = `${moment().format('YYYY/MM/DD')}/${uuid}`;
-    const imagePaths = await this.storageImagesService.addImage(file, name);
+    const [sizes, prefix] = await this.storageImagesService.addImage(file);
 
     const image: Image = {
-      ...imagePaths,
-      ...{ id: uuid, position: initialImages.length },
+      sizes,
+      prefix,
+      id: uuid,
+      position: initialImages.length,
     };
 
     images.push(image);
@@ -34,7 +37,7 @@ export class CompanyImagesService {
     const image = images.find(img => img.id === imageId);
     if (!image) return images;
 
-    await this.storageImagesService.removeImage(image);
+    await this.storageImagesService.removeImageByPrefix(image);
 
     // Remove deleted image from array, and then fix array positions.
     return images

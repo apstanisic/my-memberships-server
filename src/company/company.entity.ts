@@ -8,17 +8,18 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { BaseEntity, Image, Role } from 'nestjs-extra';
 import { Column, Entity, Index, ManyToOne, OneToMany } from 'typeorm';
-import { Role } from '../core/access-control/roles.entity';
-import { BaseEntity } from '../core/entities/base.entity';
-import { Image } from '../core/types';
+// import { Role } from '../core/access-control/roles.entity';
+// import { BaseEntity } from '../core/entities/base.entity';
+// import { Image } from '../core/types';
 import { Location } from '../locations/location.entity';
 import { PaymentRecord } from '../payment/payment-record.entity';
-import { availableTiers, Tier } from './payment-tiers.list';
 import { PricingPlan } from '../pricing-plan/pricing-plan.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { User } from '../user/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
+import { availableTiers, Tier } from './payment-tiers.list';
 
 /**
  * Company can be deleted only if there is no more

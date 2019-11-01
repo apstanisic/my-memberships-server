@@ -1,17 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as moment from 'moment';
+import { CronService, NotificationService, UUID } from 'nestjs-extra';
 import { Between, MoreThan } from 'typeorm';
 import { CompanyService } from '../company/company.service';
-import { CronService } from '../core/cron/cron.service';
+// import { CronService } from '../core/cron/cron.service';
 import { tierPrices } from './payment-prices';
 import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plan.service';
-import { NotificationService } from '../core/notification/notification.service';
-import { UUID } from '../core/types';
+// import { NotificationService } from '../core/notification/notification.service';
+// import { UUID } from '../core/types';
 
 @Injectable()
 export class AutoRenewPlansCronService {

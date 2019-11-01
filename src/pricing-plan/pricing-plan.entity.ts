@@ -1,12 +1,10 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
-import { IsInt, IsPositive, IsDate } from 'class-validator';
-import { classToClass } from 'class-transformer';
-import * as moment from 'moment';
-import { BaseEntity } from '../core/entities/base.entity';
+import { IsDate, IsInt, IsPositive } from 'class-validator';
+import { getEndTime, BaseEntity } from 'nestjs-extra';
+import { Column, Entity, ManyToOne } from 'typeorm';
+// import { BaseEntity } from '../core/entities/base.entity';
 import { Company } from '../company/company.entity';
-import { ExtendActivePlanDto } from './pricing-plan.dto';
 import { Tier } from '../company/payment-tiers.list';
-import { getEndTime } from '../core/add-duration';
+// import { getEndTime } from '../core/add-duration';
 
 @Entity()
 export class PricingPlan extends BaseEntity {

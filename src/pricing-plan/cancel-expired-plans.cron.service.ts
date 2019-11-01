@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { CronService } from 'nestjs-extra';
 import { LessThan, MoreThan } from 'typeorm';
 import { Company } from '../company/company.entity';
 import { CompanyService } from '../company/company.service';
-import { CronService } from '../core/cron/cron.service';
+// import { CronService } from '../core/cron/cron.service';
 import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plan.service';
 

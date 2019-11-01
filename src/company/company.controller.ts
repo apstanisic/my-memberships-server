@@ -2,19 +2,26 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
   Put,
   UseGuards,
-  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PgResult } from '../core/pagination/pagination.types';
+import {
+  GetPagination,
+  IfAllowed,
+  PaginationParams,
+  PermissionsGuard,
+  PgResult,
+} from 'nestjs-extra';
+// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+// import { PermissionsGuard } from '../core/access-control/permissions.guard';
+// import { PaginationParams } from '../core/pagination/pagination-options';
+// import { GetPagination } from '../core/pagination/pagination.decorator';
+// import { PgResult } from '../core/pagination/pagination.types';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { UpdateCompanyDto } from './company.dto';

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService } from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { BaseService } from '../core/base.service';
-import { Arrival } from './arrivals.entity';
 import { Location } from '../locations/location.entity';
 import { Subscription } from '../subscription/subscription.entity';
 import { User } from '../user/user.entity';
+import { Arrival } from './arrivals.entity';
 
 @Injectable()
 export class ArrivalsService extends BaseService<Arrival> {

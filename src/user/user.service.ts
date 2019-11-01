@@ -5,18 +5,25 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  BaseService,
+  RegisterUserDto,
+  Role,
+  StorageImagesService,
+  RoleService,
+} from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { Role } from '../core/access-control/roles.entity';
-import { RegisterUserDto } from '../core/auth/auth.dto';
-import { BaseService } from '../core/base.service';
-import { StorageImagesService } from '../core/storage/storage-images.service';
+// import { Role } from '../core/access-control/roles.entity';
+// import { RegisterUserDto } from '../core/auth/auth.dto';
+// import { BaseService } from '../core/base.service';
+// import { StorageImagesService } from '../core/storage/storage-images.service';
 import { User } from './user.entity';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
   constructor(
     @InjectRepository(User) repository: Repository<User>,
-    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    private readonly roleService: RoleService,
     private readonly storageImagesService: StorageImagesService,
   ) {
     super(repository);
@@ -42,8 +49,8 @@ export class UsersService extends BaseService<User> {
       const defaultRole = new Role();
       defaultRole.domain = savedUser.id;
       defaultRole.name = 'user';
-      defaultRole.user = savedUser;
-      await this.roleRepository.save(defaultRole);
+      defaultRole.userId = savedUser.id;
+      await this.roleService.create(defaultRole);
 
       return savedUser;
     } catch (error) {
@@ -70,9 +77,9 @@ export class UsersService extends BaseService<User> {
     }
 
     const name = `avatars/${user.id}`;
-    const image = await this.storageImagesService.addImage(newAvatar, name);
+    const [sizes, prefix] = await this.storageImagesService.addImage(newAvatar);
 
-    user.avatar = image;
+    user.avatar = sizes;
     const updatedUser = await this.mutate(user, {
       user,
       reason: 'Add avatar',
@@ -85,7 +92,7 @@ export class UsersService extends BaseService<User> {
   /** Remove avatar image from storage and from entity */
   async removeAvatar(user: User): Promise<User> {
     if (!user.avatar) return user;
-    await this.storageImagesService.removeImage(user.avatar);
+    await this.storageImagesService.removeImageBySizes(user.avatar);
 
     delete user.avatar;
     const updatedUser = await this.mutate(user, {
