@@ -1,18 +1,19 @@
-import { Entity, Column, OneToMany } from 'typeorm';
-import { Length, IsOptional } from 'class-validator';
 import { Exclude } from 'class-transformer';
-import { Subscription } from '../subscription/subscription.entity';
-import { BaseUser } from '../core/entities/base-user.entity';
+import { IsOptional, Length } from 'class-validator';
+import { BaseUser, IUser, Role, BaseUserWithRoles } from 'nestjs-extra';
+import { Column, Entity, OneToMany } from 'typeorm';
+// import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../company/company.entity';
-import { Role } from '../core/access-control/roles.entity';
+import { Subscription } from '../subscription/subscription.entity';
+// import { Role } from '../core/access-control/roles.entity';
 
 /** User Entity */
 @Entity('users')
-export class User extends BaseUser {
+export class User extends BaseUserWithRoles {
   /** All roles user have */
-  @OneToMany(type => Role, role => role.user, { eager: true })
-  @Exclude()
-  roles: Role[];
+  // @OneToMany(type => Role, role => role.user, { eager: true })
+  // @Exclude()
+  // roles: Role[];
 
   /* Every subscription user have or had in the past */
   @OneToMany(type => Subscription, subscription => subscription.owner)

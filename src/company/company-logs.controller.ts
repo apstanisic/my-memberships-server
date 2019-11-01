@@ -1,23 +1,28 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { DbLoggerService } from '../core/logger/db-logger.service';
-import { Log } from '../core/logger/log.entity';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PgResult } from '../core/pagination/pagination.types';
-import { UUID } from '../core/types';
-import { ValidUUID } from '../core/uuid.pipe';
+import {
+  DbLoggerService,
+  GetPagination,
+  IfAllowed,
+  Log,
+  PaginationParams,
+  PermissionsGuard,
+  PgResult,
+  UUID,
+  ValidUUID,
+} from 'nestjs-extra';
+import { CompanyLogsGuard } from './company-logs.guard';
+// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
+// import { PermissionsGuard } from '../core/access-control/permissions.guard';
+// import { DbLoggerService } from '../core/logger/db-logger.service';
+// import { Log } from '../core/logger/log.entity';
+// import { PaginationParams } from '../core/pagination/pagination-options';
+// import { GetPagination } from '../core/pagination/pagination.decorator';
+// import { PgResult } from '../core/pagination/pagination.types';
+// import { UUID } from '../core/types';
+// import { ValidUUID } from '../core/uuid.pipe';
 import { GetCompany } from './company.decorator';
 import { Company } from './company.entity';
-import { CompanyLogsGuard } from './company-logs.guard';
 
 /** For GetCompany we have to use Company | any because ValidationPipe will
  * throw an error. It will check initial string, compare it to type of Company

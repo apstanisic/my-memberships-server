@@ -4,16 +4,16 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService, getEndTime, UUID } from 'nestjs-extra';
 import { MoreThan, Repository } from 'typeorm';
 import { CompanyService } from '../company/company.service';
-import { getEndTime } from '../core/add-duration';
-import { BaseService } from '../core/base.service';
-import { UUID } from '../core/types';
+// import { getEndTime } from '../core/add-duration';
+// import { BaseService } from '../core/base.service';
+// import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 import { tierPrices } from './payment-prices';
 import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';
-import { Company } from '../company/company.entity';
 
 interface ContinueAfterOldPlanParams {
   companyId: UUID;

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccessControlModule } from '../core/access-control/access-control.module';
+import { RoleModule } from 'nestjs-extra';
 import { LocationsModule } from '../locations/locations.module';
 import { CompaniesRolesController } from './companies-roles.controller';
 import { CompanyImagesController } from './company-images/company-images.controller';
@@ -13,11 +13,7 @@ import { Company } from './company.entity';
 import { CompanyService } from './company.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Company]),
-    LocationsModule,
-    AccessControlModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Company]), LocationsModule, RoleModule],
   controllers: [
     CompaniesController,
     CompaniesRolesController,

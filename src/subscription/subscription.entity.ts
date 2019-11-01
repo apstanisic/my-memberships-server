@@ -1,23 +1,24 @@
+import { Expose } from 'class-transformer';
 import { IsDate } from 'class-validator';
+import * as moment from 'moment';
+import { BaseEntity, getEndTime, IsBetween } from 'nestjs-extra';
 import {
+  BeforeUpdate,
   Column,
   Entity,
-  ManyToOne,
   Index,
+  ManyToOne,
   OneToMany,
   RelationId,
-  BeforeUpdate,
 } from 'typeorm';
-import * as moment from 'moment';
-import { Exclude, Expose } from 'class-transformer';
-import { User } from '../user/user.entity';
-import { Company } from '../company/company.entity';
-import { BaseEntity } from '../core/entities/base.entity';
-import { DeleteColumns } from '../core/entities/deleted-columns.entity';
-import { SoftDelete } from '../core/entities/soft-delete.interface';
-import { IsBetween } from '../core/is-between';
+// import { BaseEntity } from '../core/entities/base.entity';
+// import { DeleteColumns } from '../core/entities/deleted-columns.entity';
+// import { SoftDelete } from '../core/entities/soft-delete.interface';
+// import { IsBetween } from '../core/is-between';
 import { Arrival } from '../arrivals/arrivals.entity';
-import { getEndTime } from '../core/add-duration';
+import { Company } from '../company/company.entity';
+import { User } from '../user/user.entity';
+// import { getEndTime } from '../core/add-duration';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {

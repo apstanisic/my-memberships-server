@@ -1,17 +1,18 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import {
-  IsEmail,
-  IsString,
-  IsOptional,
-  Length,
-  IsNumber,
   ArrayMaxSize,
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
 } from 'class-validator';
-import { Company } from '../company/company.entity';
+import { BaseEntity, Image } from 'nestjs-extra';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Arrival } from '../arrivals/arrivals.entity';
-import { BaseEntity } from '../core/entities/base.entity';
+import { Company } from '../company/company.entity';
+// import { BaseEntity } from '../core/entities/base.entity';
 import { Workhours } from './workhours';
-import { Image } from '../core/types';
+// import { Image } from '../core/types';
 
 // In future maybe add number that represents position in
 // globe, so it's less expensive to find near places

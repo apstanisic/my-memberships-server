@@ -2,27 +2,28 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Post,
   Put,
   UseGuards,
-  ForbiddenException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { RoleService } from '../core/access-control/role.service';
-import { CreateRoleDto, UpdateRoleDto } from '../core/access-control/roles.dto';
-import { Role } from '../core/access-control/roles.entity';
-import { RoleName } from '../core/access-control/roles.list';
-import { ValidRole } from '../core/access-control/valid-role.pipe';
-import { PaginationParams } from '../core/pagination/pagination-options';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PgResult } from '../core/pagination/pagination.types';
-import { UUID } from '../core/types';
-import { ValidUUID } from '../core/uuid.pipe';
-import { ValidReason } from '../core/logger/valid-reason.pipe';
+import {
+  CreateRoleDto,
+  GetPagination,
+  IfAllowed,
+  PaginationParams,
+  PermissionsGuard,
+  PgResult,
+  Role,
+  RoleService,
+  UpdateRoleDto,
+  UUID,
+  ValidReason,
+  ValidUUID,
+} from 'nestjs-extra';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { CompanyRolesService } from './company-roles.service';
@@ -74,7 +75,7 @@ export class CompaniesRolesController {
   @IfAllowed('read')
   @Get('name/:roleName')
   findAllWhoHaveARoleInCompany(
-    @Param('roleName', ValidRole) roleName: RoleName,
+    @Param('roleName') roleName: string,
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetPagination() pg: PaginationParams,
   ): PgResult<Role> {

@@ -1,12 +1,13 @@
-import { Injectable, ForbiddenException, Optional } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService, LogMetadata, RoleService } from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { Company } from './company.entity';
-import { BaseService } from '../core/base.service';
+// import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
-import { RoleService } from '../core/access-control/role.service';
-import { LogMetadata } from '../core/logger/log-metadata';
-import { DbLoggerService } from '../core/logger/db-logger.service';
+import { Company } from './company.entity';
+// import { RoleService } from '../core/access-control/role.service';
+// import { LogMetadata } from '../core/logger/log-metadata';
+// import { DbLoggerService } from '../core/logger/db-logger.service';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
@@ -50,7 +51,7 @@ export class CompanyService extends BaseService<Company> {
   ): Promise<Company> {
     const company = await this.create({ ...entity, owner });
     await this.roleService.create({
-      user: owner,
+      userId: owner.id,
       name: 'owner',
       domain: company.id,
     });

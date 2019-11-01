@@ -1,21 +1,23 @@
-import { AuthGuard } from '@nestjs/passport';
 import {
   Controller,
+  ForbiddenException,
   Get,
   Param,
   UseGuards,
-  ForbiddenException,
 } from '@nestjs/common';
-import { ArrivalsService } from './arrivals.service';
-import { ValidUUID } from '../core/uuid.pipe';
-import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-import { GetPagination } from '../core/pagination/pagination.decorator';
-import { PaginationParams } from '../core/pagination/pagination-options';
+import { AuthGuard } from '@nestjs/passport';
+import {
+  GetPagination,
+  IfAllowed,
+  PaginationParams,
+  PermissionsGuard,
+  PgResult,
+  ValidUUID,
+} from 'nestjs-extra';
 import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { Arrival } from './arrivals.entity';
-import { PgResult } from '../core/pagination/pagination.types';
+import { ArrivalsService } from './arrivals.service';
 
 /**
  * Get arrivals for users requests.

@@ -23,7 +23,7 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": ["error"],
+    "prettier/prettier": ["warn"],
     "import/prefer-default-export": "off", // NestJs prefers
     "no-unused-vars": "off", // Sometimes import is used only for typedef
     "no-useless-constructor": "off", // Can be used for DI

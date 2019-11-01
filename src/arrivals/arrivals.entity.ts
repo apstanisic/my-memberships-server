@@ -1,11 +1,11 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import * as moment from 'moment';
 import { Expose } from 'class-transformer';
-import { BaseEntity } from '../core/entities/base.entity';
-import { Subscription } from '../subscription/subscription.entity';
-import { Location } from '../locations/location.entity';
-import { User } from '../user/user.entity';
+import * as moment from 'moment';
+import { BaseEntity } from 'nestjs-extra';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Company } from '../company/company.entity';
+import { Location } from '../locations/location.entity';
+import { Subscription } from '../subscription/subscription.entity';
+import { User } from '../user/user.entity';
 
 /**
  * There is seperate address, lat and long for each arrival

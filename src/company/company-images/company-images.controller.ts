@@ -10,10 +10,16 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
-import { PermissionsGuard } from '../../core/access-control/permissions.guard';
-import { UUID } from '../../core/types';
-import { ValidUUID } from '../../core/uuid.pipe';
+import {
+  IfAllowed,
+  PermissionsGuard,
+  UUID,
+  ValidUUID,
+} from 'nestjs-extra';
+// import { IfAllowed } from '../../core/access-control/if-allowed.decorator';
+// import { PermissionsGuard } from '../../core/access-control/permissions.guard';
+// import { UUID } from '../../core/types';
+// import { ValidUUID } from '../../core/uuid.pipe';
 import { Location } from '../../locations/location.entity';
 import { LocationsService } from '../../locations/locations.service';
 import { GetUser } from '../../user/get-user.decorator';

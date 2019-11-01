@@ -1,8 +1,9 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BaseService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { BaseService } from '../core/base.service';
-import { UUID } from '../core/types';
+// import { BaseService } from '../core/base.service';
+// import { UUID } from '../core/types';
 import { User } from '../user/user.entity';
 import { Location } from './location.entity';
 import { CreateLocationDto } from './locations.dto';

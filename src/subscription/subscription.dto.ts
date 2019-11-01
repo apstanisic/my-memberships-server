@@ -7,7 +7,7 @@ import {
   IsUUID,
   IsOptional,
 } from 'class-validator';
-import { UUID } from '../core/types';
+import { UUID } from 'nestjs-extra';
 
 class SubscriptionDto {
   @Type(() => Date)

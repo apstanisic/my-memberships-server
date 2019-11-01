@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { StorageImagesService } from 'nestjs-extra';
 import { CompanyImagesService } from './company-images.service';
-import { StorageImagesService } from '../../core/storage/storage-images.service';
 
 describe('CompanyImagesService', () => {
   let service: CompanyImagesService;
