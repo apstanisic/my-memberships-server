@@ -5,10 +5,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard, IfAllowed, PermissionsGuard } from 'nestjs-extra';
-// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-// import { PermissionsGuard } from '../core/access-control/permissions.guard';
-import { GetUser } from '../user/get-user.decorator';
+import { AuthGuard, PermissionsGuard, GetUser } from 'nestjs-extra';
 import { User } from '../user/user.entity';
 import { ChangeCreditDto } from './payment.dto';
 import { PaymentService } from './payment.service';
@@ -18,18 +15,7 @@ import { PaymentService } from './payment.service';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  /** replace old credit value with provided amount */
-  // @IfAllowed()
-  // @Post('')
-  // setCredit(
-  //   @Body() { price, companyId }: ChangeCreditDto,
-  //   @GetUser() user: User,
-  // ): Promise<number> {
-  //   return this.paymentService.replaceCredit(companyId, price, user);
-  // }
-
   /** adds or subtracts credit with provided amount */
-  @IfAllowed()
   @Put('')
   async changeCredit(
     @Body() { price, companyId, credit }: ChangeCreditDto,

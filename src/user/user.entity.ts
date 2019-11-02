@@ -10,11 +10,6 @@ import { Subscription } from '../subscription/subscription.entity';
 /** User Entity */
 @Entity('users')
 export class User extends BaseUserWithRoles {
-  /** All roles user have */
-  // @OneToMany(type => Role, role => role.user, { eager: true })
-  // @Exclude()
-  // roles: Role[];
-
   /* Every subscription user have or had in the past */
   @OneToMany(type => Subscription, subscription => subscription.owner)
   subscriptions: Subscription[];

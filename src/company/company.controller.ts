@@ -12,12 +12,11 @@ import {
 import {
   AuthGuard,
   GetPagination,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
+  GetUser,
 } from 'nestjs-extra';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { UpdateCompanyDto } from './company.dto';
 import { Company } from './company.entity';
@@ -67,14 +66,12 @@ export class CompaniesController {
 
   /** Remove company */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @IfAllowed()
   @Delete(':id')
   remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
     return this.service.delete(id, { user, domain: id });
   }
 
   /** Update company */
-  @IfAllowed()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Put(':id')
   async update(

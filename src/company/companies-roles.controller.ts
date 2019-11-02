@@ -13,7 +13,6 @@ import {
   AuthGuard,
   CreateRoleDto,
   GetPagination,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
@@ -23,8 +22,8 @@ import {
   UUID,
   ValidReason,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { CompanyRolesService } from './company-roles.service';
 import { CompanyService } from './company.service';
@@ -52,7 +51,6 @@ export class CompaniesRolesController {
   ) {}
 
   /** Get roles for this company */
-  @IfAllowed('read')
   @Get('')
   find(
     @Param('companyId', ValidUUID) companyId: UUID,
@@ -62,7 +60,6 @@ export class CompaniesRolesController {
   }
 
   /** Get all roles this user have in company */
-  @IfAllowed('read')
   @Get('users/:userId')
   findUsersRoles(
     @Param('companyId', ValidUUID) companyId: UUID,
@@ -72,7 +69,6 @@ export class CompaniesRolesController {
   }
 
   /** Get all users that have given role in this company */
-  @IfAllowed('read')
   @Get('name/:roleName')
   findAllWhoHaveARoleInCompany(
     @Param('roleName') roleName: string,
@@ -86,7 +82,6 @@ export class CompaniesRolesController {
   }
 
   /** Get role by id */
-  @IfAllowed('read')
   @Get(':roleId')
   findRoleById(
     @Param('companyId', ValidUUID) companyId: UUID,
@@ -96,7 +91,6 @@ export class CompaniesRolesController {
   }
 
   /** Create new role */
-  @IfAllowed()
   @Post('')
   async addNewRole(
     @Param('companyId', ValidUUID) companyId: UUID,
@@ -118,7 +112,6 @@ export class CompaniesRolesController {
   }
 
   /** Change role */
-  @IfAllowed()
   @Put(':roleId')
   async changeRole(
     @Param('companyId', ValidUUID) companyId: UUID,
@@ -135,7 +128,6 @@ export class CompaniesRolesController {
   }
 
   /** Delete role by Id that belongs to this company */
-  @IfAllowed()
   @Delete(':roleId')
   async deleteRole(
     @Param('companyId', ValidUUID) companyId: UUID,

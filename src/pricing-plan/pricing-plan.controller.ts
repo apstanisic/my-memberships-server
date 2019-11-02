@@ -1,9 +1,14 @@
 import { Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard, PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
+import {
+  AuthGuard,
+  PermissionsGuard,
+  UUID,
+  ValidUUID,
+  GetUser,
+} from 'nestjs-extra';
 // import { PermissionsGuard } from '../core/access-control/permissions.guard';
 // import { UUID } from '../core/types';
 // import { ValidUUID } from '../core/uuid.pipe';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';

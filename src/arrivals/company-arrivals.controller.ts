@@ -3,7 +3,6 @@ import {
   AuthGuard,
   GetPagination,
   IdArrayDto,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
@@ -23,7 +22,6 @@ export class CompanyArrivalsController {
   constructor(private readonly arrivalsService: ArrivalsService) {}
 
   @Get('')
-  @IfAllowed('read')
   async find(
     @Param('companyId', ValidUUID) companyId: string,
     @GetPagination() params: PaginationParams,
@@ -38,7 +36,6 @@ export class CompanyArrivalsController {
   }
 
   @Get(':arrivalId')
-  @IfAllowed('read')
   async findById(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('arrivalId', ValidUUID) arrivalId: string,

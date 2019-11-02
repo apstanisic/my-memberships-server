@@ -13,19 +13,13 @@ import {
   AuthGuard,
   GetPagination,
   IdArrayDto,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
-// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-// import { PermissionsGuard } from '../core/access-control/permissions.guard';
-// import { PaginationParams } from '../core/pagination/pagination-options';
-// import { GetPagination } from '../core/pagination/pagination.decorator';
-// import { PgResult } from '../core/pagination/pagination.types';
-// import { ValidUUID } from '../core/uuid.pipe';
-import { GetUser } from '../user/get-user.decorator';
+
 import { User } from '../user/user.entity';
 import { Location } from './location.entity';
 import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
@@ -64,7 +58,6 @@ export class LocationsController {
   }
 
   /** Add new location */
-  @IfAllowed()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Post()
   async create(
@@ -76,7 +69,6 @@ export class LocationsController {
   }
 
   /** Update location */
-  @IfAllowed()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Put(':id')
   async update(
@@ -92,7 +84,6 @@ export class LocationsController {
   }
 
   /** Delete location */
-  @IfAllowed()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Delete(':id')
   async delete(

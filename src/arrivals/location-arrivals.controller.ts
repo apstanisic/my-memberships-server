@@ -2,16 +2,15 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   AuthGuard,
   GetPagination,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
   ValidReason,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
 import { Location } from '../locations/location.entity';
 import { LocationsService } from '../locations/locations.service';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { Arrival } from './arrivals.entity';
 import { ArrivalsService } from './arrivals.service';
@@ -37,7 +36,6 @@ export class LocationArrivalsController {
    * First check if location belongs to parent company.
    */
   @Get('')
-  @IfAllowed('read')
   async find(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('locationId', ValidUUID) locationId: string,
@@ -48,7 +46,6 @@ export class LocationArrivalsController {
   }
 
   @Get(':arrivalId')
-  @IfAllowed('read')
   async findById(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('locationId', ValidUUID) locationId: string,
@@ -59,7 +56,6 @@ export class LocationArrivalsController {
   }
 
   /** Add new arrival. */
-  @IfAllowed()
   @Post('')
   async newArrival(
     @Param('companyId', ValidUUID) companyId: string,
@@ -72,7 +68,6 @@ export class LocationArrivalsController {
   }
 
   /** Remove arrival. Admins can cancel arrival if needed */
-  @IfAllowed()
   @Post(':arivalId')
   async deleteArrival(
     @Param('companyId', ValidUUID) companyId: string,
