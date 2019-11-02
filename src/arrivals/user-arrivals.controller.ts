@@ -8,13 +8,12 @@ import {
 import {
   AuthGuard,
   GetPagination,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { Arrival } from './arrivals.entity';
 import { ArrivalsService } from './arrivals.service';
@@ -26,7 +25,6 @@ import { ArrivalsService } from './arrivals.service';
  * @method find Filters and paginates arrivals.
  * @method findById Find arrival by Id.
  */
-@IfAllowed('read')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('users/:userId/subscriptions/:subscriptionId/arrivals')
 export class UserArrivalsController {

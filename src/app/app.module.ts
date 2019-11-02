@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { readFileSync } from 'fs';
-import { CONFIG_OPTIONS, CoreModule } from 'nestjs-extra';
+import { CoreModule } from 'nestjs-extra';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompanyModule } from '../company/company.module';
 import {
@@ -23,15 +23,16 @@ const env = readFileSync('.env');
 @Module({
   imports: [
     CoreModule.forRoot({
-      ignore: [],
       storage: {},
-      db: { entities: appEntities, usingAccessControl: true },
+      db: { entities: appEntities },
       config: { configs: env },
       accessControl: {
         model: casbinModel,
         policies: casbinPolicies,
         availableRoles: allRoles,
       },
+      dbLog: true,
+      notifications: true,
     }),
     UserModule,
     LocationsModule,

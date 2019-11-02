@@ -2,7 +2,6 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   AuthGuard,
   GetPagination,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
@@ -18,7 +17,6 @@ export class UserSubscriptionController {
   constructor(private readonly service: SubscriptionService) {}
 
   /* Get subscriptions, filtered and paginated */
-  @IfAllowed('read')
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get()
   get(
@@ -29,7 +27,6 @@ export class UserSubscriptionController {
   }
 
   /** Get subscription by id */
-  @IfAllowed('read')
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Get(':id')
   findById(

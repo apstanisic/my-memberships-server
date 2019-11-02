@@ -13,22 +13,14 @@ import {
   AuthGuard,
   GetPagination,
   IdArrayDto,
-  IfAllowed,
   PaginationParams,
   PermissionsGuard,
   PgResult,
   UUID,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
 import { CompanyService } from '../company/company.service';
-// import { IfAllowed } from '../core/access-control/if-allowed.decorator';
-// import { PermissionsGuard } from '../core/access-control/permissions.guard';
-// import { PaginationParams } from '../core/pagination/pagination-options';
-// import { GetPagination } from '../core/pagination/pagination.decorator';
-// import { PgResult } from '../core/pagination/pagination.types';
-// import { UUID } from '../core/types';
-// import { ValidUUID } from '../core/uuid.pipe';
-import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import {
   CreateSubscriptionDto,
@@ -47,7 +39,6 @@ export class SubscriptionController {
   ) {}
 
   /** Get subscriptions, filtered and paginated */
-  @IfAllowed('read')
   @Get('')
   get(
     @GetPagination() pg: PaginationParams,
@@ -62,7 +53,6 @@ export class SubscriptionController {
   }
 
   /** Get subscription by id */
-  @IfAllowed('read')
   @Get(':id')
   findById(
     @Param('id', ValidUUID) id: UUID,
@@ -72,7 +62,6 @@ export class SubscriptionController {
   }
 
   /** Create new subscription */
-  @IfAllowed()
   @Post()
   async create(
     @Body() subscription: CreateSubscriptionDto,
@@ -84,7 +73,6 @@ export class SubscriptionController {
   }
 
   /** Update subscription */
-  @IfAllowed()
   @Put(':id')
   async update(
     @Param('id', ValidUUID) id: UUID,
@@ -96,7 +84,6 @@ export class SubscriptionController {
   }
 
   /** Remove subscription */
-  @IfAllowed()
   @Delete(':id')
   remove(
     @Param('id', ValidUUID) id: UUID,

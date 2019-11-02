@@ -39,7 +39,9 @@
     "no-empty": "off", // Sometimes I don't care about errors
     "@typescript-eslint/explicit-function-return-type": "error", // force return type for security
     "lines-between-class-members": "off", // Some classes are small, and don't need space
-    "no-param-reassign": "off" // Need to mutate entities
+    "no-param-reassign": "off", // Need to mutate entities
+    "import/no-extraneous-dependencies": "off", // Easier to develop core module
+    "import/no-unresolved": "off"
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

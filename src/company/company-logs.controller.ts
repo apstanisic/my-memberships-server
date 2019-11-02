@@ -3,8 +3,7 @@ import {
   AuthGuard,
   DbLoggerService,
   GetPagination,
-  IfAllowed,
-  Log,
+  DbLog,
   PaginationParams,
   PermissionsGuard,
   PgResult,
@@ -27,35 +26,32 @@ export class CompanyLogsController {
   constructor(private readonly dbLogger: DbLoggerService) {}
 
   /** Get paginated logs */
-  @IfAllowed('read')
   @Get()
   getLogs(
     @GetPagination() params: PaginationParams,
     @GetCompany() company: Company,
-  ): PgResult<Log> {
+  ): PgResult<DbLog> {
     return this.dbLogger.paginate(params, { domainId: company.id });
   }
 
   /** Get paginated logs for specific entity (location, subscription...) */
-  @IfAllowed('read')
   @Get('items/:entityId')
   getLogsOnSpecificEntity(
     @GetPagination() params: PaginationParams,
     @GetCompany() company: Company,
     @Param('entityId', ValidUUID) entityId: UUID,
-  ): PgResult<Log> {
+  ): PgResult<DbLog> {
     return this.dbLogger.paginate(params, { entityId, domainId: company.id });
   }
 
   /** Get actions from specific user */
   /** @todo Test if executedBy: {id: id} works */
-  @IfAllowed('read')
   @Get('users/:userId')
   getLogsByUser(
     @GetPagination() params: PaginationParams,
     @GetCompany() company: Company,
     @Param('userId', ValidUUID) userId: UUID,
-  ): PgResult<Log> {
+  ): PgResult<DbLog> {
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       executedBy: {
@@ -69,12 +65,11 @@ export class CompanyLogsController {
    * @TODO this does not work. It has to have specific column.
    */
   // @Get('location/:locationId')
-  @IfAllowed('read')
   getLogsInLocation(
     @GetPagination() params: PaginationParams,
     @GetCompany() company: Company,
     @Param('locationId', ValidUUID) locationId: UUID,
-  ): PgResult<Log> {
+  ): PgResult<DbLog> {
     return this.dbLogger.paginate(params, {
       domainId: company.id,
       // This should be location id.
@@ -83,12 +78,11 @@ export class CompanyLogsController {
   }
 
   /** Get paginated logs */
-  @IfAllowed('read')
   @Get(':logId')
   async getLogById(
     @Param('logId', ValidUUID) logId: UUID,
     @GetCompany() company: Company,
-  ): Promise<Log> {
+  ): Promise<DbLog> {
     return this.dbLogger.findOne({
       id: logId,
       domainId: company.id,

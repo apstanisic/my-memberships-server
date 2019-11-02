@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService, LogMetadata, RoleService } from 'nestjs-extra';
+import { BaseService, DbLogMetadata, RoleService } from 'nestjs-extra';
 import { Repository } from 'typeorm';
 // import { BaseService } from '../core/base.service';
 import { User } from '../user/user.entity';
@@ -21,7 +21,7 @@ export class CompanyService extends BaseService<Company> {
   /** Company can only be deleted if there are not active subscriptions */
   async delete(
     companyOrId: Company | string,
-    meta: LogMetadata,
+    meta: DbLogMetadata,
   ): Promise<Company> {
     let company;
     if (typeof companyOrId === 'string') {
@@ -47,7 +47,7 @@ export class CompanyService extends BaseService<Company> {
   async createCompany(
     entity: Partial<Company>,
     owner: User,
-    meta?: LogMetadata,
+    meta?: DbLogMetadata,
   ): Promise<Company> {
     const company = await this.create({ ...entity, owner });
     await this.roleService.create({

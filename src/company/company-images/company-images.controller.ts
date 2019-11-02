@@ -11,14 +11,13 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   AuthGuard,
-  IfAllowed,
   PermissionsGuard,
   UUID,
   ValidUUID,
+  GetUser,
 } from 'nestjs-extra';
 import { Location } from '../../locations/location.entity';
 import { LocationsService } from '../../locations/locations.service';
-import { GetUser } from '../../user/get-user.decorator';
 import { User } from '../../user/user.entity';
 import { Company } from '../company.entity';
 import { CompanyService } from '../company.service';
@@ -36,7 +35,6 @@ export class CompanyImagesController {
 
   /** Add new image of a company */
   @UseInterceptors(FileInterceptor('file', validImage))
-  @IfAllowed()
   @Post('images')
   async addImageToCompany(
     @UploadedFile() file: any,
