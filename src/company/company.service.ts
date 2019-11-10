@@ -57,7 +57,7 @@ export class CompanyService extends BaseService<Company> {
     });
 
     if (this.dbLoggerService && meta) {
-      const log = this.dbLoggerService!.generateLog({
+      const log = this.dbLoggerService?.generateLog({
         meta: { ...meta, domain: company.id },
       });
       await this.dbLoggerService.store(log, 'create', company);

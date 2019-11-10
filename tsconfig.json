@@ -17,7 +17,8 @@
     "noImplicitReturns": true,
     "allowUnreachableCode": false,
     "resolveJsonModule": true,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "noUnusedLocals": true
     // "allowJs": true
   },
   "exclude": ["node_modules", "dist"],
