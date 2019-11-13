@@ -6,8 +6,6 @@ services:
     restart: unless-stopped
     ports:
       - 6379:6379
-    networks:
-      - my_subs_network
 
   db:
     image: postgres:11-alpine
@@ -20,8 +18,16 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
-    networks:
-      - my_subs_network
+
+  storage:
+    image: minio/minio
+    command: minio gateway s3 ${STORAGE_HOST}
+    restart: unless-stopped
+    environment:
+      MINIO_ACCESS_KEY: ${STORAGE_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${STORAGE_SECRET_KEY}
+    ports:
+      - 9000:9000
 
   log-db:
     image: mongo:4
@@ -34,8 +40,3 @@ services:
       # MONGO_INITDB_ROOT_PASSWORD: ${LOG_DB_PASSWORD}
     volumes:
       - ./volumes/log-database:/data/db
-    networks:
-      - my_subs_network
-
-networks:
-  my_subs_network:
