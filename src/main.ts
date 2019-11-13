@@ -19,7 +19,7 @@ async function bootstrap(): Promise<void> {
   // Globally strip all @Exclude() properties
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  await app.listen(3030);
+  await app.listen(4000);
 
   if (module.hot) {
     module.hot.accept();
