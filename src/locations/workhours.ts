@@ -4,29 +4,29 @@ import { IsString, IsNotEmpty } from 'class-validator';
 export class Workhours {
   @IsNotEmpty()
   @IsString()
-  monday: string;
+  monday?: string;
 
   @IsNotEmpty()
   @IsString()
-  tuesday: string;
+  tuesday?: string;
 
   @IsNotEmpty()
   @IsString()
-  wednesday: string;
+  wednesday?: string;
 
   @IsNotEmpty()
   @IsString()
-  thursday: string;
+  thursday?: string;
 
   @IsNotEmpty()
   @IsString()
-  friday: string;
+  friday?: string;
 
   @IsNotEmpty()
   @IsString()
-  saturday: string;
+  saturday?: string;
 
   @IsNotEmpty()
   @IsString()
-  sunday: string;
+  sunday?: string;
 }

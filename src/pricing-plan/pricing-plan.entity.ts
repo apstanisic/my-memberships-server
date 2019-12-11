@@ -15,7 +15,10 @@ export class PricingPlan extends BaseEntity {
   creditCost: number;
 
   /** Company on which this plan applies */
-  @ManyToOne(type => Company, company => company.plans)
+  @ManyToOne(
+    type => Company,
+    company => company.plans,
+  )
   company: Company;
 
   /** Company Id on which this plan applies */

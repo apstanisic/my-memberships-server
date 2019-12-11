@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   AuthGuard,
@@ -23,6 +24,7 @@ import {
   ValidReason,
   ValidUUID,
   GetUser,
+  IdArrayDto,
 } from 'nestjs-extra';
 import { User } from '../user/user.entity';
 import { CompanyRolesService } from './company-roles.service';
@@ -57,6 +59,16 @@ export class CompaniesRolesController {
     @GetPagination() pg: PaginationParams,
   ): PgResult<Role> {
     return this.rolesService.paginate(pg, { domain: companyId });
+  }
+
+  @Get('ids')
+  async getRolesByIds(
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @Query() query: IdArrayDto,
+  ): Promise<Role[]> {
+    return this.rolesService.findByIds(query.ids, {
+      where: { domain: companyId },
+    });
   }
 
   /** Get all roles this user have in company */

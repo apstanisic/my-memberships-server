@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService, getEndTime, UUID } from 'nestjs-extra';
@@ -51,6 +52,9 @@ export class PricingPlanService extends BaseService<PricingPlan> {
       changes.autoRenew !== undefined ? changes.autoRenew : oldPlan.autoRenew;
     const { company } = oldPlan;
     const tier = changes.tier || oldPlan.tier;
+
+    if (!company || !tier) throw new InternalServerErrorException();
+
     // Credit cost is how many months * tier price
     const cost = changes.duration * tierPrices[tier];
     // Throw if company is banned

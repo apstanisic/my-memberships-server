@@ -1,10 +1,12 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Company } from './company.entity';
 
 @Injectable()
 export class CompanyRolesService {
   canAddRole(company: Company): boolean {
-    const rolesAmount = company.roles.length;
+    const rolesAmount = company.roles?.length;
+
+    if (rolesAmount === undefined) throw new InternalServerErrorException();
 
     if (company.tier === 'free' && rolesAmount >= 5) {
       return false;

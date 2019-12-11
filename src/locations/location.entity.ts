@@ -18,8 +18,15 @@ import { Workhours } from './workhours';
 // globe, so it's less expensive to find near places
 @Entity('locations')
 export class Location extends BaseEntity {
+  constructor() {
+    super();
+    this.images = [];
+  }
   /** Company that is owner of this location */
-  @ManyToOne(type => Company, company => company.locations)
+  @ManyToOne(
+    type => Company,
+    company => company.locations,
+  )
   company: Company;
 
   /** Id of company that is owner of this location */
@@ -27,11 +34,15 @@ export class Location extends BaseEntity {
   companyId: string;
 
   /** Name of location */
+  @Length(3, 100)
   @Column({ nullable: true })
   name?: string;
 
   /** Arrivals at this location */
-  @OneToMany(type => Arrival, arrival => arrival.location)
+  @OneToMany(
+    type => Arrival,
+    arrival => arrival.location,
+  )
   arrivals: Arrival[];
 
   /** This location address */
@@ -71,7 +82,7 @@ export class Location extends BaseEntity {
 
   /** Path to images of this location. Currently 5 images max */
   @Column({ type: 'simple-json', default: [] })
-  @IsString({ each: true })
+  // @IsString({ each: true })
   @ArrayMaxSize(5)
   images: Image[];
 }

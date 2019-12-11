@@ -16,7 +16,10 @@ export class PaymentRecord extends BaseEntity {
   creditAdded: number;
 
   /** Company to which this credit is added */
-  @ManyToOne(type => Company, company => company.payments)
+  @ManyToOne(
+    type => Company,
+    company => company.payments,
+  )
   company: Company;
 
   /** App admin who executed this record */
