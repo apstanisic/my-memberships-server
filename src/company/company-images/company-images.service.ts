@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as Faker from 'faker';
 import * as moment from 'moment';
 import { Image, StorageImagesService, UUID } from 'nestjs-extra';
@@ -14,7 +14,7 @@ export class CompanyImagesService {
   async addImage(file: any, initialImages: Image[]): Promise<Image[]> {
     const images = [...initialImages];
     const uuid = Faker.random.uuid();
-    const name = `${moment().format('YYYY/MM/DD')}/${uuid}`;
+    // const name = `${moment().format('YYYY/MM/DD')}/${uuid}`;
     const [sizes, prefix] = await this.storageImagesService.addImage(file);
 
     const image: Image = {
@@ -62,6 +62,10 @@ export class CompanyImagesService {
   canAddImageToLocation(location: Location): any {
     const amountOfImages = location.images.length;
     const { company } = location;
+
+    if (!company) {
+      throw new InternalServerErrorException('Location does not have company.');
+    }
 
     if (company.tier === 'free' && amountOfImages >= 2) return false;
     if (company.tier === 'basic' && amountOfImages >= 5) return false;

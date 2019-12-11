@@ -12,18 +12,19 @@ import {
 import {
   AuthGuard,
   GetPagination,
+  GetUser,
   IdArrayDto,
   PaginationParams,
   PermissionsGuard,
   PgResult,
+  UUID,
   ValidUUID,
-  GetUser,
 } from 'nestjs-extra';
-
 import { User } from '../user/user.entity';
 import { Location } from './location.entity';
 import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
 import { LocationsService } from './locations.service';
+
 // import { IdArrayDto } from '../core/id-array.dto';
 
 /**
@@ -44,8 +45,11 @@ export class LocationsController {
   }
 
   @Get('ids')
-  async getUsersByIds(@Query() query: IdArrayDto): Promise<Location[]> {
-    return this.locationsService.findByIds(query.ids);
+  async getLocationsByIds(
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @Query() query: IdArrayDto,
+  ): Promise<Location[]> {
+    return this.locationsService.findByIds(query.ids, { where: { companyId } });
   }
 
   /** Get location by id */
@@ -68,12 +72,14 @@ export class LocationsController {
     return this.locationsService.createLocation({ companyId, location, user });
   }
 
-  /** Update location */
+  /**
+   * Update location
+   */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Put(':id')
   async update(
-    @Param('companyId', ValidUUID) companyId: string,
-    @Param('id', ValidUUID) id: string,
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @Param('id', ValidUUID) id: UUID,
     @Body() updateData: UpdateLocationDto,
     @GetUser() user: User,
   ): Promise<Location> {
@@ -83,11 +89,13 @@ export class LocationsController {
     });
   }
 
-  /** Delete location */
+  /**
+   * Delete location
+   */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Delete(':id')
   async delete(
-    @Param('companyId', ValidUUID) companyId: string,
+    @Param('companyId', ValidUUID) companyId: UUID,
     @Param('id', ValidUUID) id: string,
     @GetUser() user: User,
   ): Promise<Location> {

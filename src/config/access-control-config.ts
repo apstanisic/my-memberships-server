@@ -17,7 +17,7 @@ e = some(where (p.eft == allow))
 m = r.sub == p.sub && validDomain(r.dom, r.obj) && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)
 `;
 
-export const casbinPolicies = `
+export const policies = `
 p, app_owner, /*,  (read)|(write)
 p, app_admin, /app/payment, (read)|(write)
 p, app_admin, /app/payment/*, (read)|(write)

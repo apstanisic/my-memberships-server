@@ -12,14 +12,15 @@ import {
 import {
   AuthGuard,
   GetPagination,
+  GetUser,
   IdArrayDto,
   PaginationParams,
   PermissionsGuard,
   PgResult,
   UUID,
   ValidUUID,
-  GetUser,
 } from 'nestjs-extra';
+import { Like } from 'typeorm';
 import { CompanyService } from '../company/company.service';
 import { User } from '../user/user.entity';
 import {
@@ -47,9 +48,31 @@ export class SubscriptionController {
     return this.service.paginate(pg, { companyId });
   }
 
+  /** @Todo this should not fetch owner automaticly */
   @Get('ids')
-  async getUsersByIds(@Query() query: IdArrayDto): Promise<Subscription[]> {
-    return this.service.findByIds(query.ids, { relations: ['owner'] });
+  async getSubsByIds(
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @Query() query: IdArrayDto,
+  ): Promise<Subscription[]> {
+    return this.service.findByIds(query.ids, {
+      relations: ['owner'],
+      where: { companyId },
+    });
+  }
+
+  /** Get users that have valid subscription from this company */
+  @Get('active-users')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserFromCompany(
+    @Param('companyId', ValidUUID) companyId: UUID,
+    @GetPagination() pg: PaginationParams,
+  ): Promise<{ data: User[] }> {
+    const subs = await this.service.paginate(
+      { ...pg, relations: ['owner'] },
+      { companyId, active: true },
+    );
+
+    return { data: subs.data.map(sub => sub.owner) };
   }
 
   /** Get subscription by id */

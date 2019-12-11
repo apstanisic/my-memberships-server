@@ -13,6 +13,10 @@ import { Workhours } from './workhours';
 
 /** Common data for both creating and updating locations. */
 class LocationDto {
+  /** Location's name */
+  @Length(3, 100)
+  name?: string;
+
   /** This location address */
   @IsString()
   @Length(4, 200)
@@ -53,10 +57,16 @@ class LocationDto {
 export class CreateLocationDto extends LocationDto {
   @IsDefined()
   address: string;
+
+  @IsDefined()
+  name: string;
 }
 
 /** Data when updating location. It extends common properties. */
 export class UpdateLocationDto extends LocationDto {
   @IsOptional()
   address: string;
+
+  @IsOptional()
+  name: string;
 }

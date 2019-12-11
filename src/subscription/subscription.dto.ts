@@ -6,6 +6,7 @@ import {
   IsDefined,
   IsUUID,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 import { UUID } from 'nestjs-extra';
 
@@ -25,6 +26,9 @@ class SubscriptionDto {
   @IsInt()
   @IsPositive()
   allowedUses: number;
+
+  @IsBoolean()
+  active: boolean;
 }
 
 export class CreateSubscriptionDto extends SubscriptionDto {

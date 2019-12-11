@@ -15,10 +15,10 @@
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
     "noImplicitReturns": true,
-    "allowUnreachableCode": false,
+    // "allowUnreachableCode": false,
     "resolveJsonModule": true,
-    "preserveConstEnums": true,
-    "noUnusedLocals": true
+    "preserveConstEnums": true
+    // "noUnusedLocals": true
     // "allowJs": true
   },
   "exclude": ["node_modules", "dist"],

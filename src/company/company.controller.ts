@@ -12,20 +12,31 @@ import {
 import {
   AuthGuard,
   GetPagination,
+  GetUser,
   PaginationParams,
   PermissionsGuard,
   PgResult,
-  GetUser,
+  RoleService,
+  UUID,
+  ValidUUID,
 } from 'nestjs-extra';
 import { User } from '../user/user.entity';
 import { UpdateCompanyDto } from './company.dto';
 import { Company } from './company.entity';
 import { CompanyService } from './company.service';
 
-/** Companies Controller */
+/**
+ * Companies Controller
+ * @method getUsersCompanies is not CRUD
+ * It's used to get companies for currently logged user
+ * All other methods are basic crud
+ */
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly service: CompanyService) {}
+  constructor(
+    private readonly service: CompanyService,
+    private readonly roleService: RoleService,
+  ) {}
 
   /** Get companies, filtered and paginated */
   @Get()
@@ -33,17 +44,18 @@ export class CompaniesController {
     return this.service.paginate(params);
   }
 
-  /** Get companies that logged user has roles */
+  /** Get companies that logged user has roles in */
   @Get('user')
   @UseGuards(AuthGuard('jwt'))
-  getUsersCompanies(@GetUser() user: User): Promise<Company[]> {
-    const companyIds = user.roles.map(role => role.domain);
+  async getUsersCompanies(@GetUser() user: User): Promise<Company[]> {
+    const roles = await this.roleService.find({ userId: user.id });
+    const companyIds = roles.map(role => role.domain);
     return this.service.findByIds(companyIds);
   }
 
   /** Get company by id */
   @Get(':id')
-  findById(@Param('id') id: string): Promise<Company> {
+  findById(@Param('id', ValidUUID) id: UUID): Promise<Company> {
     return this.service.findOne(id);
   }
 
@@ -67,15 +79,18 @@ export class CompaniesController {
   /** Remove company */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @GetUser() user: User): Promise<Company> {
-    return this.service.delete(id, { user, domain: id });
+  remove(
+    @Param('id', ValidUUID) id: UUID,
+    @GetUser() user: User,
+  ): Promise<Company> {
+    return this.service.deleteCompany(id, { user, domain: id });
   }
 
   /** Update company */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ValidUUID) id: UUID,
     @Body() updateData: UpdateCompanyDto,
     @GetUser() user: User,
   ): Promise<Company> {

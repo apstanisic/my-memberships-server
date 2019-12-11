@@ -11,19 +11,17 @@ import {
   OneToMany,
   RelationId,
 } from 'typeorm';
-// import { BaseEntity } from '../core/entities/base.entity';
-// import { DeleteColumns } from '../core/entities/deleted-columns.entity';
-// import { SoftDelete } from '../core/entities/soft-delete.interface';
-// import { IsBetween } from '../core/is-between';
 import { Arrival } from '../arrivals/arrivals.entity';
 import { Company } from '../company/company.entity';
 import { User } from '../user/user.entity';
-// import { getEndTime } from '../core/add-duration';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {
   /* Company where subscription is valid */
-  @ManyToOne(type => Company, company => company.subscriptions)
+  @ManyToOne(
+    type => Company,
+    company => company.subscriptions,
+  )
   company: Company;
 
   /** Company id  */
@@ -31,7 +29,10 @@ export class Subscription extends BaseEntity {
   companyId: string;
 
   /** Subscription owner */
-  @ManyToOne(type => User, user => user.subscriptions)
+  @ManyToOne(
+    type => User,
+    user => user.subscriptions,
+  )
   owner: User;
 
   /** Subscription owner id  */
@@ -43,7 +44,7 @@ export class Subscription extends BaseEntity {
   @IsDate()
   startsAt: Date;
 
-  /* Date to which subscription is valid. Has index couse it's offten sorted */
+  /* Date to which subscription is valid. Has index because it's often sorted */
   @Column({ precision: 3, nullable: true })
   @Index()
   @IsDate()
@@ -59,7 +60,10 @@ export class Subscription extends BaseEntity {
   @Column({ default: 'membership' })
   type: string;
 
-  @OneToMany(type => Arrival, arrival => arrival.subscription)
+  @OneToMany(
+    type => Arrival,
+    arrival => arrival.subscription,
+  )
   arrivals: Arrival[];
 
   @RelationId((sub: Subscription) => sub.arrivals)
@@ -84,7 +88,7 @@ export class Subscription extends BaseEntity {
   /** How much time is this sub used */
   @Expose()
   get usedAmount(): number {
-    return this.arrivalIds.length;
+    return this.arrivalIds?.length ?? 0;
   }
 
   /** Disables this subscription. It contains reason, who and when. */
@@ -94,10 +98,6 @@ export class Subscription extends BaseEntity {
   /** Check if subscription is still valid */
   @BeforeUpdate()
   isValid(): void {
-    // if (this.deleted.at && this.active) {
-    //   this.active = false;
-    // }
-
     if (moment(this.expiresAt).isBefore(moment.now()) && this.active) {
       this.active = false;
     }

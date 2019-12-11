@@ -19,7 +19,7 @@ export class CompanyService extends BaseService<Company> {
   }
 
   /** Company can only be deleted if there are not active subscriptions */
-  async delete(
+  async deleteCompany(
     companyOrId: Company | string,
     meta: DbLogMetadata,
   ): Promise<Company> {
@@ -31,7 +31,7 @@ export class CompanyService extends BaseService<Company> {
     } else {
       company = companyOrId;
     }
-    if (company.subscriptions.some(sub => sub.isValid())) {
+    if (company.subscriptions?.some((sub): boolean => sub.active)) {
       throw new ForbiddenException('You still have valid subscriptions.');
     }
     // return this.repository.remove(company);

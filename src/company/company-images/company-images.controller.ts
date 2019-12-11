@@ -11,10 +11,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   AuthGuard,
+  GetUser,
   PermissionsGuard,
   UUID,
   ValidUUID,
-  GetUser,
 } from 'nestjs-extra';
 import { Location } from '../../locations/location.entity';
 import { LocationsService } from '../../locations/locations.service';

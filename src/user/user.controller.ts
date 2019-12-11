@@ -7,15 +7,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard, IdArrayDto, ValidUUID, GetUser } from 'nestjs-extra';
-// import { LoginUserDto, UpdatePasswordDto } from '../core/auth/auth.dto';
-// import { StorageService } from '../core/storage/storage.service';
-// import { ValidUUID } from '../core/uuid.pipe';
+import { AuthGuard, GetUser, IdArrayDto, ValidUUID } from 'nestjs-extra';
 import { UpdateUserInfo } from './update-user.dto';
 import { User } from './user.entity';
 import { UsersService } from './user.service';
-// import { Role } from '../core/access-control/roles.entity';
-// import { IdArrayDto } from '../core/id-array.dto';
 
 @Controller('auth')
 @UseGuards(AuthGuard('jwt'))
@@ -39,7 +34,7 @@ export class UserController {
 
   /** Get general user info by id. Still needs to be logged in for now */
   @Get('users/:id')
-  GetUser(@Param('id', ValidUUID) id: string): Promise<User> {
+  getUser(@Param('id', ValidUUID) id: string): Promise<User> {
     return this.usersService.findOne(id);
   }
 }

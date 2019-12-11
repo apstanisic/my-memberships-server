@@ -23,10 +23,14 @@ export class Arrival extends BaseEntity {
 
   /** At which location did arrival happen */
   /* istanbul ignore next */
-  @ManyToOne(type => Location, location => location.arrivals, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(
+    type => Location,
+    location => location.arrivals,
+    {
+      nullable: true,
+      onDelete: 'SET NULL',
+    },
+  )
   location?: Location;
 
   /** Get only Id from location */
@@ -40,6 +44,15 @@ export class Arrival extends BaseEntity {
   /** Company Id */
   @Column()
   companyId: string;
+
+  // @TODO make this non nullable
+  /** User that came */
+  @ManyToOne(type => User, { nullable: true })
+  user: User;
+
+  /** User that came id */
+  @Column({ nullable: true })
+  userId: string;
 
   /** When did person arrive */
   @Column({ update: false, default: new Date(), precision: 3 })

@@ -1,6 +1,5 @@
-import { Exclude } from 'class-transformer';
 import { IsOptional, Length } from 'class-validator';
-import { BaseUser, IUser, Role, BaseUserWithRoles } from 'nestjs-extra';
+import { BaseUserWithRoles } from 'nestjs-extra';
 import { Column, Entity, OneToMany } from 'typeorm';
 // import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../company/company.entity';
@@ -11,7 +10,10 @@ import { Subscription } from '../subscription/subscription.entity';
 @Entity('users')
 export class User extends BaseUserWithRoles {
   /* Every subscription user have or had in the past */
-  @OneToMany(type => Subscription, subscription => subscription.owner)
+  @OneToMany(
+    type => Subscription,
+    subscription => subscription.owner,
+  )
   subscriptions: Subscription[];
 
   /** Only subscription ids */
@@ -19,7 +21,10 @@ export class User extends BaseUserWithRoles {
   subscriptionIds: string[];
 
   /** Companies owned by this user */
-  @OneToMany(type => Company, company => company.owner)
+  @OneToMany(
+    type => Company,
+    company => company.owner,
+  )
   companies: Company[];
 
   /** Users phone number. It's not required */

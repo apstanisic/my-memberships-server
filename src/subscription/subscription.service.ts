@@ -30,7 +30,7 @@ export class SubscriptionService extends BaseService<Subscription> {
     const companyId = company.id;
     const currentSubs = await this.count({ companyId, active: true });
 
-    if (company.tier === 'free' && currentSubs >= 80) {
+    if (company.tier === 'free' && currentSubs >= 75) {
       throw new ForbiddenException('Max subs reached');
     }
 
@@ -38,7 +38,7 @@ export class SubscriptionService extends BaseService<Subscription> {
       throw new ForbiddenException('Max subs reached');
     }
 
-    if (company.tier === 'pro' && currentSubs >= 300) {
+    if (company.tier === 'pro' && currentSubs >= 400) {
       throw new ForbiddenException('Max subs reached');
     }
     if (currentSubs >= 600) {

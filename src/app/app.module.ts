@@ -6,11 +6,10 @@ import { CompanyModule } from '../company/company.module';
 import {
   allRoles,
   casbinModel,
-  casbinPolicies,
+  policies,
 } from '../config/access-control-config';
 import { appEntities } from '../config/db-config';
 import { LocationsModule } from '../locations/locations.module';
-// import { CoreModule } from '../core/core.module';
 import { PaymentModule } from '../payment/payment.module';
 import { PricingPlanModule } from '../pricing-plan/pricing-plan.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
@@ -18,21 +17,16 @@ import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-const env = readFileSync('.env');
-
 @Module({
   imports: [
     CoreModule.forRoot({
       storage: {},
       db: { entities: appEntities },
-      config: { configs: env },
-      accessControl: {
-        model: casbinModel,
-        policies: casbinPolicies,
-        availableRoles: allRoles,
-      },
+      config: { data: readFileSync('.env') },
+      accessControl: { policies, model: casbinModel, availableRoles: allRoles },
       dbLog: true,
       notifications: true,
+      mail: true,
     }),
     UserModule,
     LocationsModule,
@@ -45,7 +39,4 @@ const env = readFileSync('.env');
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  // forRoot(): DynamicModule {
-  // }
-}
+export class AppModule {}

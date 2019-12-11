@@ -27,6 +27,12 @@ import { availableTiers, Tier } from './payment-tiers.list';
  */
 @Entity('companies')
 export class Company extends BaseEntity {
+  constructor() {
+    super();
+    this.images = [];
+    this.credit = 0;
+  }
+
   /** Company name */
   @Column()
   @Index()
@@ -35,7 +41,10 @@ export class Company extends BaseEntity {
   name: string;
 
   /** Company owner */
-  @ManyToOne(type => User, owner => owner.companies)
+  @ManyToOne(
+    type => User,
+    owner => owner.companies,
+  )
   owner: User;
 
   /** Owner id */
@@ -44,7 +53,10 @@ export class Company extends BaseEntity {
   ownerId: string;
 
   /** All subscriptions in this company (valid, expired and deleted) */
-  @OneToMany(type => Subscription, subscription => subscription.company)
+  @OneToMany(
+    type => Subscription,
+    subscription => subscription.company,
+  )
   subscriptions: Subscription[];
 
   /** What type of business is this company. Must cloned because of readonly */
@@ -79,17 +91,27 @@ export class Company extends BaseEntity {
   credit: number;
 
   /** On which pricing plan is company */
-  @OneToMany(type => PricingPlan, plan => plan.company)
+  @OneToMany(
+    type => PricingPlan,
+    plan => plan.company,
+  )
   plans: PricingPlan[];
 
   /** All company locations */
-  @OneToMany(type => Location, location => location.company, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(
+    type => Location,
+    location => location.company,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   locations: Location[];
 
   /** All roles this company have. */
-  @OneToMany(type => Role, role => role.domain)
+  @OneToMany(
+    type => Role,
+    role => role.domain,
+  )
   roles: Role[];
 
   /** @TODO Implement this */
@@ -104,6 +126,9 @@ export class Company extends BaseEntity {
   images: Image[];
 
   // All payments for this company
-  @OneToMany(type => PaymentRecord, record => record.company)
+  @OneToMany(
+    type => PaymentRecord,
+    record => record.company,
+  )
   payments: PaymentRecord;
 }

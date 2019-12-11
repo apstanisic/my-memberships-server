@@ -13,6 +13,7 @@ export function generateArrival(companies: Company[]): Arrival {
   arrival.address = Faker.address.streetAddress();
   arrival.arrivedAt = new Date();
   arrival.subscription = random(company.subscriptions);
+  arrival.userId = arrival.subscription.ownerId;
   arrival.location = random(company.locations);
   arrival.company = company;
 
