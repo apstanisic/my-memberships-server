@@ -20,12 +20,11 @@ import {
   UUID,
   ValidReason,
 } from 'nestjs-extra';
-import { FindManyOptions } from 'typeorm';
 import { Arrival } from './arrivals.entity';
 import { ArrivalsService } from './arrivals.service';
 import { User } from '../user/user.entity';
 import { CreateArrivalDto } from './arrival.dto';
-import { LocationsService } from '../locations/locations.service';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 /**
  * Access arrivals directly by company.
@@ -37,7 +36,7 @@ import { LocationsService } from '../locations/locations.service';
 export class CompanyArrivalsController {
   constructor(
     private readonly arrivalsService: ArrivalsService,
-    private readonly locationService: LocationsService,
+    private readonly subService: SubscriptionService,
   ) {}
 
   @Get('')
@@ -70,15 +69,20 @@ export class CompanyArrivalsController {
   @Post('')
   async newArrival(
     @Param('companyId', ValidUUID) companyId: UUID,
-    @Body() { locationId, subscriptionId }: CreateArrivalDto,
-    @GetUser() user: User,
+    @Body() { locationId, userId }: CreateArrivalDto,
+    @GetUser() admin: User,
   ): Promise<Arrival> {
-    return this.arrivalsService.newArrival(
-      locationId,
-      subscriptionId,
-      companyId,
-      user,
+    const subscription = await this.subService.findOne(
+      { ownerId: userId, active: true, companyId },
+      { order: { expiresAt: 'DESC' } },
     );
+    return this.arrivalsService.newArrival({
+      admin,
+      location: locationId,
+      subscription,
+      company: companyId,
+      user: userId,
+    });
   }
 
   /**
@@ -90,14 +94,12 @@ export class CompanyArrivalsController {
   @Delete(':arivalId')
   async deleteArrival(
     @Param('companyId', ValidUUID) companyId: string,
-    @Param('locationId', ValidUUID) locationId: string,
     @Param('arivalId', ValidUUID) arrivalId: string,
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
-    await this.locationService.getLocationInCompany(companyId, locationId);
     return this.arrivalsService.deleteWhere(
-      { locationId, id: arrivalId },
+      { companyId, id: arrivalId },
       { user, reason },
     );
   }

@@ -6,5 +6,5 @@ export class CreateArrivalDto {
   locationId: UUID;
 
   @IsUUID()
-  subscriptionId: UUID;
+  userId: UUID;
 }
