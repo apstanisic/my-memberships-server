@@ -10,6 +10,7 @@ import { CompanyRolesService } from './company-roles.service';
 import { CompaniesController } from './company.controller';
 import { Company } from './company.entity';
 import { CompanyService } from './company.service';
+import { SubscriptionModule } from '../subscription/subscription.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Company]), LocationsModule],

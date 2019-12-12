@@ -9,6 +9,14 @@ import { Arrival } from './arrivals.entity';
 import { LocationsService } from '../locations/locations.service';
 import { Company } from '../company/company.entity';
 
+interface NewArrivalProps {
+  location: Location | UUID;
+  subscription: Subscription | UUID;
+  company: Company | UUID;
+  user: User | UUID;
+  admin?: User;
+}
+
 @Injectable()
 export class ArrivalsService extends BaseService<Arrival> {
   constructor(
@@ -22,12 +30,13 @@ export class ArrivalsService extends BaseService<Arrival> {
    * Creates new arrival. This method is specific for arrivals.
    * It's mostly wrapper around BaseService create method.
    */
-  async newArrival(
-    location: Location | UUID,
-    subscription: Subscription | UUID,
-    company: Company | UUID,
-    user: User,
-  ): Promise<Arrival> {
+  async newArrival({
+    location,
+    subscription,
+    company,
+    user,
+    admin,
+  }: NewArrivalProps): Promise<Arrival> {
     const companyId = typeof company === 'string' ? company : company.id;
     if (typeof location === 'string') {
       location = await this.locationService.getLocationInCompany(
@@ -39,7 +48,10 @@ export class ArrivalsService extends BaseService<Arrival> {
     arrival.address = location.address;
     arrival.lat = location.lat;
     arrival.long = location.long;
-    arrival.approvedBy = user;
+    arrival.companyId = companyId;
+    arrival.locationId = location.id;
+    arrival.userId = typeof user === 'string' ? user : user.id;
+    arrival.approvedBy = admin;
     arrival.subscriptionId =
       typeof subscription === 'string' ? subscription : subscription.id;
     return this.create(arrival);

@@ -42,7 +42,8 @@
     "no-param-reassign": "off", // Need to mutate entities
     "import/no-extraneous-dependencies": "off", // Easier to develop core module
     "import/no-unresolved": "off",
-    "no-undef": "off"
+    "no-undef": "off",
+    "import/extensions": "off" // There are some bugs
     // "import/no-unresolved": "off",
     // "import/prefer-default-export": "off",
     // "no-useless-constructor": "off",

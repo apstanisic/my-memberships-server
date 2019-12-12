@@ -20,7 +20,6 @@ import {
   UUID,
   ValidUUID,
 } from 'nestjs-extra';
-import { Like } from 'typeorm';
 import { CompanyService } from '../company/company.service';
 import { User } from '../user/user.entity';
 import {
@@ -60,19 +59,21 @@ export class SubscriptionController {
     });
   }
 
-  /** Get users that have valid subscription from this company */
+  /**
+   * Get users that have valid subscription from this company.
+   * This is only used for auto complete
+   */
   @Get('active-users')
   @UseGuards(AuthGuard('jwt'))
   async getUserFromCompany(
     @Param('companyId', ValidUUID) companyId: UUID,
-    @GetPagination() pg: PaginationParams,
+    @Query('email__lk') email: string,
   ): Promise<{ data: User[] }> {
-    const subs = await this.service.paginate(
-      { ...pg, relations: ['owner'] },
-      { companyId, active: true },
+    const users = await this.service.getUsersWithActiveSubscription(
+      companyId,
+      email,
     );
-
-    return { data: subs.data.map(sub => sub.owner) };
+    return { data: users };
   }
 
   /** Get subscription by id */
