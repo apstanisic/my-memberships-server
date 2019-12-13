@@ -3,8 +3,8 @@ import { Company } from './company.entity';
 
 @Injectable()
 export class CompanyRolesService {
-  canAddRole(company: Company): boolean {
-    const rolesAmount = company.roles?.length;
+  canAddRole(company: Company, rolesAmount: number): boolean {
+    // const rolesAmount = company.roles?.length;
 
     if (rolesAmount === undefined) throw new InternalServerErrorException();
 

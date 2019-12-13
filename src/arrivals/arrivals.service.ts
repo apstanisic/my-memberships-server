@@ -8,6 +8,7 @@ import { User } from '../user/user.entity';
 import { Arrival } from './arrivals.entity';
 import { LocationsService } from '../locations/locations.service';
 import { Company } from '../company/company.entity';
+import { SubscriptionService } from '../subscription/subscription.service';
 
 interface NewArrivalProps {
   location: Location | UUID;
@@ -22,6 +23,7 @@ export class ArrivalsService extends BaseService<Arrival> {
   constructor(
     @InjectRepository(Arrival) repository: Repository<Arrival>,
     private readonly locationService: LocationsService,
+    private readonly subService: SubscriptionService,
   ) {
     super(repository);
   }
@@ -44,6 +46,17 @@ export class ArrivalsService extends BaseService<Arrival> {
         location,
       );
     }
+
+    if (typeof subscription === 'string') {
+      subscription = await this.subService.findOne(
+        {
+          companyId,
+          ownerId: typeof user === 'string' ? user : user.id,
+          active: true,
+        },
+        { order: { createdAt: 'DESC' } },
+      );
+    }
     const arrival = new Arrival();
     arrival.address = location.address;
     arrival.lat = location.lat;
@@ -54,6 +67,10 @@ export class ArrivalsService extends BaseService<Arrival> {
     arrival.approvedBy = admin;
     arrival.subscriptionId =
       typeof subscription === 'string' ? subscription : subscription.id;
-    return this.create(arrival);
+    const arival = await this.create(arrival);
+    await this.subService.update(subscription, {
+      usedAmount: subscription.usedAmount + 1,
+    });
+    return arrival;
   }
 }
