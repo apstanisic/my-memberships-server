@@ -107,12 +107,13 @@ export class Company extends BaseEntity {
   )
   locations: Location[];
 
-  /** All roles this company have. */
-  @OneToMany(
-    type => Role,
-    role => role.domain,
-  )
-  roles: Role[];
+  // /** All roles this company have. */
+  // // Must be both way
+  // @OneToMany(
+  //   type => Role,
+  //   role => role.domain,
+  // )
+  // roles: Role[];
 
   /** @TODO Implement this */
   @Column({ default: 'free' })

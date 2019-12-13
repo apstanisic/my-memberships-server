@@ -66,9 +66,6 @@ export class Subscription extends BaseEntity {
   )
   arrivals: Arrival[];
 
-  // @RelationId((sub: Subscription) => sub.arrivals)
-  // arrivalIds: string[];
-
   /**
    * How much time can user use this subscription
    * (enter an gym, attend pilates...).
@@ -81,15 +78,8 @@ export class Subscription extends BaseEntity {
   @Column({ default: true })
   active: boolean;
 
-  /** How much time is this sub used */
-  // @Column({ default: 0 })
-  // usedAmount: number;
-
-  /** How much time is this sub used */
-  // @Expose()
-  // get usedAmount(): number {
-  //   return this.arrivalIds?.length ?? 0;
-  // }
+  @Column({ default: 0 })
+  usedAmount: number;
 
   /** Disables this subscription. It contains reason, who and when. */
   // @Column(type => DeleteColumns)
@@ -102,9 +92,9 @@ export class Subscription extends BaseEntity {
       this.active = false;
     }
 
-    // if (this.allowedUses && this.allowedUses <= this.usedAmount) {
-    //   this.active = false;
-    // }
+    if (this.allowedUses && this.allowedUses <= this.usedAmount) {
+      this.active = false;
+    }
   }
 
   /**

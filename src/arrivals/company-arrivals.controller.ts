@@ -74,7 +74,7 @@ export class CompanyArrivalsController {
   ): Promise<Arrival> {
     const subscription = await this.subService.findOne(
       { ownerId: userId, active: true, companyId },
-      { order: { expiresAt: 'DESC' } },
+      { order: { createdAt: 'DESC' } },
     );
     return this.arrivalsService.newArrival({
       admin,
@@ -98,9 +98,12 @@ export class CompanyArrivalsController {
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
-    return this.arrivalsService.deleteWhere(
+    const arrival = await this.arrivalsService.deleteWhere(
       { companyId, id: arrivalId },
       { user, reason },
     );
+    const sub = await this.subService.findOne({ id: arrival.subscriptionId });
+    this.subService.update(sub, { usedAmount: sub.usedAmount - 1 });
+    return arrival;
   }
 }

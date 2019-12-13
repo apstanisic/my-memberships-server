@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   AuthGuard,
@@ -26,6 +27,7 @@ import {
   GetUser,
   IdArrayDto,
 } from 'nestjs-extra';
+import { In } from 'typeorm';
 import { User } from '../user/user.entity';
 import { CompanyRolesService } from './company-roles.service';
 import { CompanyService } from './company.service';
@@ -110,10 +112,10 @@ export class CompaniesRolesController {
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
-    const company = await this.companyService.findOne(companyId, {
-      relations: ['roles'],
-    });
-    if (!this.companyRolesService.canAddRole(company)) {
+    const company = await this.companyService.findOne(companyId);
+    const roles = await this.rolesService.find({ domain: company.id });
+
+    if (!this.companyRolesService.canAddRole(company, roles.length)) {
       throw new ForbiddenException('Quota reached');
     }
 
