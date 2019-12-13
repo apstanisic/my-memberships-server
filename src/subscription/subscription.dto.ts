@@ -32,9 +32,9 @@ class SubscriptionDto {
 }
 
 export class CreateSubscriptionDto extends SubscriptionDto {
-  @IsDefined()
-  @IsUUID()
-  companyId: string;
+  // @IsDefined()
+  // @IsUUID()
+  // companyId: string;
 
   @IsDefined()
   startsAt: Date = new Date();

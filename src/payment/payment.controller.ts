@@ -11,7 +11,7 @@ import { ChangeCreditDto } from './payment.dto';
 import { PaymentService } from './payment.service';
 
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-@Controller('app/payment')
+@Controller('app/payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 

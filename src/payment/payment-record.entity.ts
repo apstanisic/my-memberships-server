@@ -15,6 +15,9 @@ export class PaymentRecord extends BaseEntity {
   @Column({ default: 0, type: 'int' })
   creditAdded: number;
 
+  @Column()
+  companyId: string;
+
   /** Company to which this credit is added */
   @ManyToOne(
     type => Company,

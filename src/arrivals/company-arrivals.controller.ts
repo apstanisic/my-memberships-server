@@ -91,19 +91,18 @@ export class CompanyArrivalsController {
    * This is sent as post request because body in delete request is not defined.
    * Some clients can't sent body in delete request
    */
-  @Delete(':arivalId')
+  @Delete(':arrivalId')
   async deleteArrival(
     @Param('companyId', ValidUUID) companyId: string,
-    @Param('arivalId', ValidUUID) arrivalId: string,
-    @GetUser() user: User,
+    @Param('arrivalId', ValidUUID) arrivalId: string,
+    @GetUser() loggedUser: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
-    const arrival = await this.arrivalsService.deleteWhere(
-      { companyId, id: arrivalId },
-      { user, reason },
-    );
-    const sub = await this.subService.findOne({ id: arrival.subscriptionId });
-    this.subService.update(sub, { usedAmount: sub.usedAmount - 1 });
-    return arrival;
+    return this.arrivalsService.deleteArrival({
+      companyId,
+      arrivalId,
+      reason,
+      loggedUser,
+    });
   }
 }

@@ -1,14 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService, UUID } from 'nestjs-extra';
-import { Repository } from 'typeorm';
+import {
+  EntityManager,
+  Repository,
+  Transaction,
+  TransactionManager,
+} from 'typeorm';
+import { Company } from '../company/company.entity';
 import { Location } from '../locations/location.entity';
+import { LocationsService } from '../locations/locations.service';
 import { Subscription } from '../subscription/subscription.entity';
+import { SubscriptionService } from '../subscription/subscription.service';
 import { User } from '../user/user.entity';
 import { Arrival } from './arrivals.entity';
-import { LocationsService } from '../locations/locations.service';
-import { Company } from '../company/company.entity';
-import { SubscriptionService } from '../subscription/subscription.service';
 
 interface NewArrivalProps {
   location: Location | UUID;
@@ -16,6 +21,20 @@ interface NewArrivalProps {
   company: Company | UUID;
   user: User | UUID;
   admin?: User;
+}
+
+interface CreateArrivalParams {
+  subscription: Subscription;
+  arrival: Arrival;
+}
+
+interface DeleteArrivalParams {
+  // subscription: Subscription;
+  // arrival: Arrival;
+  companyId: UUID;
+  arrivalId: UUID;
+  loggedUser: User;
+  reason?: string;
 }
 
 @Injectable()
@@ -65,12 +84,47 @@ export class ArrivalsService extends BaseService<Arrival> {
     arrival.locationId = location.id;
     arrival.userId = typeof user === 'string' ? user : user.id;
     arrival.approvedBy = admin;
-    arrival.subscriptionId =
-      typeof subscription === 'string' ? subscription : subscription.id;
-    const arival = await this.create(arrival);
-    await this.subService.update(subscription, {
-      usedAmount: subscription.usedAmount + 1,
-    });
+    arrival.subscriptionId = subscription.id;
+
+    return this.createArrivalTransaction({ arrival, subscription });
+  }
+
+  @Transaction()
+  private async createArrivalTransaction(
+    { arrival, subscription }: CreateArrivalParams,
+    @TransactionManager() em?: EntityManager,
+  ): Promise<Arrival> {
+    if (!em) throw new InternalServerErrorException();
+
+    const subService = new BaseService(em.getRepository(Subscription));
+    const arrivalService = new BaseService(em.getRepository(Arrival));
+
+    arrival = await arrivalService.create(arrival);
+
+    const usedAmount = subscription.usedAmount + 1;
+    await subService.update(subscription, { usedAmount });
+
+    return arrival;
+  }
+
+  @Transaction()
+  async deleteArrival(
+    { companyId, arrivalId, loggedUser, reason }: DeleteArrivalParams,
+    @TransactionManager() em?: EntityManager,
+  ): Promise<Arrival> {
+    if (!em) throw new InternalServerErrorException();
+
+    const arrivalsService = new BaseService(em.getRepository(Arrival));
+    const subService = new BaseService(em.getRepository(Subscription));
+
+    const arrival = await arrivalsService.deleteWhere(
+      { companyId, id: arrivalId },
+      { reason, user: loggedUser },
+    );
+
+    const sub = await subService.findOne({ id: arrival.subscriptionId });
+    await subService.update(sub, { usedAmount: sub.usedAmount - 1 });
+
     return arrival;
   }
 }
