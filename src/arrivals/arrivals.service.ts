@@ -7,13 +7,13 @@ import {
   Transaction,
   TransactionManager,
 } from 'typeorm';
-import { Company } from '../company/company.entity';
+import { Company } from '../companies/company.entity';
 import { Location } from '../locations/location.entity';
 import { LocationsService } from '../locations/locations.service';
-import { Subscription } from '../subscription/subscription.entity';
-import { SubscriptionService } from '../subscription/subscription.service';
-import { User } from '../user/user.entity';
-import { Arrival } from './arrivals.entity';
+import { Subscription } from '../subscriptions/subscription.entity';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { User } from '../users/user.entity';
+import { Arrival } from './arrival.entity';
 
 interface NewArrivalProps {
   location: Location | UUID;
@@ -42,7 +42,7 @@ export class ArrivalsService extends BaseService<Arrival> {
   constructor(
     @InjectRepository(Arrival) repository: Repository<Arrival>,
     private readonly locationService: LocationsService,
-    private readonly subService: SubscriptionService,
+    private readonly subService: SubscriptionsService,
   ) {
     super(repository);
   }

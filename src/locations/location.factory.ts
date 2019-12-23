@@ -1,6 +1,6 @@
 import * as Faker from 'faker';
 import { Location } from './location.entity';
-import { Company } from '../company/company.entity';
+import { Company } from '../companies/company.entity';
 
 const workhours = {
   monday: '09:00-21:00',

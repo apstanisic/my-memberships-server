@@ -19,15 +19,16 @@ services:
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
 
-  storage:
-    image: minio/minio
-    command: minio gateway s3 ${STORAGE_HOST}
-    restart: unless-stopped
-    environment:
-      MINIO_ACCESS_KEY: ${STORAGE_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${STORAGE_SECRET_KEY}
-    ports:
-      - 9000:9000
+  # AWS SDK works good enough
+  # storage:
+  #   image: minio/minio
+  #   command: minio gateway s3 ${STORAGE_HOST}
+  #   restart: unless-stopped
+  #   environment:
+  #     MINIO_ACCESS_KEY: ${STORAGE_ACCESS_KEY}
+  #     MINIO_SECRET_KEY: ${STORAGE_SECRET_KEY}
+  #   ports:
+  #     - 9000:9000
 
   log-db:
     image: mongo:4

@@ -8,10 +8,11 @@ import {
 } from 'class-validator';
 import { BaseEntity, Image } from 'nestjs-extra';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Arrival } from '../arrivals/arrivals.entity';
-import { Company } from '../company/company.entity';
+import { Arrival } from '../arrivals/arrival.entity';
+import { Company } from '../companies/company.entity';
 // import { BaseEntity } from '../core/entities/base.entity';
 import { Workhours } from './workhours';
+import { LocationImage } from '../location-images/location-image.entity';
 // import { Image } from '../core/types';
 
 // In future maybe add number that represents position in
@@ -20,7 +21,7 @@ import { Workhours } from './workhours';
 export class Location extends BaseEntity {
   constructor() {
     super();
-    this.images = [];
+    // this.images = [];
   }
   /** Company that is owner of this location */
   @ManyToOne(
@@ -80,9 +81,14 @@ export class Location extends BaseEntity {
   @IsNumber()
   long?: number;
 
-  /** Path to images of this location. Currently 5 images max */
-  @Column({ type: 'simple-json', default: [] })
-  // @IsString({ each: true })
-  @ArrayMaxSize(5)
-  images: Image[];
+  // /** Path to images of this location. Currently 5 images max */
+  // @Column({ type: 'simple-json', default: [] })
+  // // @IsString({ each: true })
+  // @ArrayMaxSize(5)
+  // images: Image[];
+  @OneToMany(
+    type => LocationImage,
+    image => image.location,
+  )
+  images: LocationImage[];
 }

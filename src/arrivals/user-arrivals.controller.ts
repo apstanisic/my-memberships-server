@@ -15,10 +15,10 @@ import {
   GetUser,
   UUID,
 } from 'nestjs-extra';
-import { User } from '../user/user.entity';
-import { Arrival } from './arrivals.entity';
+import { User } from '../users/user.entity';
+import { Arrival } from './arrival.entity';
 import { ArrivalsService } from './arrivals.service';
-import { UsersService } from '../user/user.service';
+import { UsersService } from '../users/users.service';
 
 /**
  * Get arrivals for users requests.

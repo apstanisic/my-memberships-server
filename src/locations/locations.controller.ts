@@ -20,9 +20,9 @@ import {
   UUID,
   ValidUUID,
 } from 'nestjs-extra';
-import { User } from '../user/user.entity';
+import { User } from '../users/user.entity';
 import { Location } from './location.entity';
-import { CreateLocationDto, UpdateLocationDto } from './locations.dto';
+import { CreateLocationDto, UpdateLocationDto } from './location.dto';
 import { LocationsService } from './locations.service';
 
 // import { IdArrayDto } from '../core/id-array.dto';
@@ -49,6 +49,7 @@ export class LocationsController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Query() query: IdArrayDto,
   ): Promise<Location[]> {
+    // return [];
     return this.locationsService.findByIds(query.ids, { where: { companyId } });
   }
 
@@ -63,9 +64,9 @@ export class LocationsController {
 
   /** Add new location */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Post()
+  @Post('')
   async create(
-    @Param('companyId', ValidUUID) companyId: string,
+    @Param('companyId', ValidUUID) companyId: UUID,
     @Body() location: CreateLocationDto,
     @GetUser() user: User,
   ): Promise<Location> {
@@ -99,9 +100,10 @@ export class LocationsController {
     @Param('id', ValidUUID) id: string,
     @GetUser() user: User,
   ): Promise<Location> {
-    return this.locationsService.deleteWhere(
-      { id, companyId },
-      { user, domain: companyId },
-    );
+    return this.locationsService.deleteLocation({ id, companyId, user });
+    // return this.locationsService.deleteWhere(
+    //   { id, companyId },
+    //   { user, domain: companyId },
+    // );
   }
 }

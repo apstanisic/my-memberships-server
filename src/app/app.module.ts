@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { readFileSync } from 'fs';
 import { CoreModule } from 'nestjs-extra';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
-import { CompanyModule } from '../company/company.module';
+import { CompaniesModule } from '../companies/companies.module';
+import { CompanyImagesModule } from '../company-images/company-images.module';
+import { CompanyLogsModule } from '../company-logs/company-logs.module';
+import { CompanyRolesModule } from '../company-roles/company-roles.module';
 import {
   allRoles,
   casbinModel,
@@ -10,10 +13,10 @@ import {
 } from '../config/access-control-config';
 import { appEntities } from '../config/db-config';
 import { LocationsModule } from '../locations/locations.module';
-import { PaymentModule } from '../payment/payment.module';
-import { PricingPlanModule } from '../pricing-plan/pricing-plan.module';
-import { SubscriptionModule } from '../subscription/subscription.module';
-import { UserModule } from '../user/user.module';
+import { PaymentsModule } from '../payments/payments.module';
+import { PricingPlansModule } from '../pricing-plans/pricing-plans.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
+import { UserModule } from '../users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -30,11 +33,14 @@ import { AppService } from './app.service';
     }),
     UserModule,
     LocationsModule,
-    CompanyModule,
-    SubscriptionModule,
+    CompaniesModule,
+    CompanyLogsModule,
+    CompanyImagesModule,
+    CompanyRolesModule,
+    SubscriptionsModule,
     ArrivalsModule,
-    PaymentModule,
-    PricingPlanModule,
+    PaymentsModule,
+    PricingPlansModule,
   ],
   controllers: [AppController],
   providers: [AppService],

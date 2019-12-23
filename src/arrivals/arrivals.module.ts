@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArrivalsService } from './arrivals.service';
-import { Arrival } from './arrivals.entity';
+import { Arrival } from './arrival.entity';
 import { LocationsModule } from '../locations/locations.module';
 import { UserArrivalsController } from './user-arrivals.controller';
 import { CompanyArrivalsController } from './company-arrivals.controller';
-import { SubscriptionModule } from '../subscription/subscription.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Arrival]),
     LocationsModule,
-    SubscriptionModule,
+    SubscriptionsModule,
   ],
   providers: [ArrivalsService],
   controllers: [UserArrivalsController, CompanyArrivalsController],

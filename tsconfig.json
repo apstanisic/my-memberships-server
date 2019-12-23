@@ -17,7 +17,11 @@
     "noImplicitReturns": true,
     // "allowUnreachableCode": false,
     "resolveJsonModule": true,
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "preserveSymlinks": true
+    // "paths": {
+    //   "nestjs-extra": ["~/Projects/nestjs-extra"]
+    // }
     // "noUnusedLocals": true
     // "allowJs": true
   },
