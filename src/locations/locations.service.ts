@@ -4,13 +4,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService, UUID } from 'nestjs-extra';
+import { BaseService, StorageImagesService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
 // import { BaseService } from '../core/base.service';
 // import { UUID } from '../core/types';
-import { User } from '../user/user.entity';
+import { User } from '../users/user.entity';
 import { Location } from './location.entity';
-import { CreateLocationDto } from './locations.dto';
+import { CreateLocationDto } from './location.dto';
 
 interface CreateLocationParams {
   user: User;
@@ -18,9 +18,18 @@ interface CreateLocationParams {
   location: CreateLocationDto;
 }
 
+interface DeleteLocationParams {
+  id: UUID;
+  companyId: UUID;
+  user: User;
+}
+
 @Injectable()
 export class LocationsService extends BaseService<Location> {
-  constructor(@InjectRepository(Location) repository: Repository<Location>) {
+  constructor(
+    @InjectRepository(Location) repository: Repository<Location>,
+    private readonly storageImageService: StorageImagesService,
+  ) {
     super(repository);
   }
 
@@ -53,6 +62,19 @@ export class LocationsService extends BaseService<Location> {
     }
 
     return this.create({ ...location, companyId }, { user, domain: companyId });
+  }
+
+  async deleteLocation({
+    id,
+    companyId,
+    user,
+  }: DeleteLocationParams): Promise<any> {
+    const location = await this.findOne({ id, companyId });
+    const deletingImages = await location.images.map(img =>
+      this.storageImageService.removeImage(img),
+    );
+    await Promise.all(deletingImages);
+    return this.delete(location, { user, domain: id });
   }
 
   async getLocationInCompany(

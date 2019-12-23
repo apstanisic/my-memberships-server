@@ -20,11 +20,11 @@ import {
   UUID,
   ValidReason,
 } from 'nestjs-extra';
-import { Arrival } from './arrivals.entity';
+import { Arrival } from './arrival.entity';
 import { ArrivalsService } from './arrivals.service';
-import { User } from '../user/user.entity';
+import { User } from '../users/user.entity';
 import { CreateArrivalDto } from './arrival.dto';
-import { SubscriptionService } from '../subscription/subscription.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 /**
  * Access arrivals directly by company.
@@ -36,7 +36,7 @@ import { SubscriptionService } from '../subscription/subscription.service';
 export class CompanyArrivalsController {
   constructor(
     private readonly arrivalsService: ArrivalsService,
-    private readonly subService: SubscriptionService,
+    private readonly subService: SubscriptionsService,
   ) {}
 
   @Get('')
