@@ -16,10 +16,10 @@ import { User } from '../users/user.entity';
 import { Arrival } from './arrival.entity';
 
 interface NewArrivalProps {
-  location: Location | UUID;
-  subscription: Subscription | UUID;
-  company: Company | UUID;
-  user: User | UUID;
+  locationId: UUID;
+  // subscriptionId: UUID;
+  companyId: UUID;
+  userId: UUID;
   admin?: User;
 }
 
@@ -52,37 +52,28 @@ export class ArrivalsService extends BaseService<Arrival> {
    * It's mostly wrapper around BaseService create method.
    */
   async newArrival({
-    location,
-    subscription,
-    company,
-    user,
+    locationId,
+    companyId,
+    userId,
     admin,
   }: NewArrivalProps): Promise<Arrival> {
-    const companyId = typeof company === 'string' ? company : company.id;
-    if (typeof location === 'string') {
-      location = await this.locationService.getLocationInCompany(
-        companyId,
-        location,
-      );
-    }
+    const location = await this.locationService.getLocationInCompany(
+      companyId,
+      locationId,
+    );
 
-    if (typeof subscription === 'string') {
-      subscription = await this.subService.findOne(
-        {
-          companyId,
-          ownerId: typeof user === 'string' ? user : user.id,
-          active: true,
-        },
-        { order: { createdAt: 'DESC' } },
-      );
-    }
+    const subscription = await this.subService.findOne(
+      { companyId, ownerId: userId, active: true },
+      { order: { createdAt: 'DESC' } },
+    );
+
     const arrival = new Arrival();
     arrival.address = location.address;
     arrival.lat = location.lat;
     arrival.long = location.long;
     arrival.companyId = companyId;
     arrival.locationId = location.id;
-    arrival.userId = typeof user === 'string' ? user : user.id;
+    arrival.userId = userId;
     arrival.approvedBy = admin;
     arrival.subscriptionId = subscription.id;
 
@@ -101,8 +92,9 @@ export class ArrivalsService extends BaseService<Arrival> {
 
     arrival = await arrivalService.create(arrival);
 
-    const usedAmount = subscription.usedAmount + 1;
-    await subService.update(subscription, { usedAmount });
+    await subService.update(subscription, {
+      usedAmount: subscription.usedAmount + 1,
+    });
 
     return arrival;
   }

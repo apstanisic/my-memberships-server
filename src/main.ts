@@ -2,6 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 
+// Webpack
 declare const module: any;
 
 async function bootstrap(): Promise<void> {
@@ -21,6 +22,7 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(4000);
 
+  // Webpack
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());

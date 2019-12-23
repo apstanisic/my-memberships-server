@@ -72,16 +72,11 @@ export class CompanyArrivalsController {
     @Body() { locationId, userId }: CreateArrivalDto,
     @GetUser() admin: User,
   ): Promise<Arrival> {
-    const subscription = await this.subService.findOne(
-      { ownerId: userId, active: true, companyId },
-      { order: { createdAt: 'DESC' } },
-    );
     return this.arrivalsService.newArrival({
       admin,
-      location: locationId,
-      subscription,
-      company: companyId,
-      user: userId,
+      locationId,
+      companyId,
+      userId,
     });
   }
 

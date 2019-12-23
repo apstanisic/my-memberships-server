@@ -1,5 +1,7 @@
-import * as Faker from 'faker';
 import * as bcrypt from 'bcryptjs';
+import { plainToClass } from 'class-transformer';
+import * as Faker from 'faker';
+import { Image } from 'nestjs-extra';
 import { User } from './user.entity';
 
 /* This will only once hash password */
@@ -12,12 +14,13 @@ export function generateUser(): User {
   user._password = passwordHash;
   user.name = Faker.name.firstName();
   user.phoneNumber = Faker.phone.phoneNumber();
-  user.avatar = {
+  user.avatar = plainToClass(Image, {
+    prefix: 'https://i.pravatar.cc',
     xs: 'https://i.pravatar.cc/220',
     sm: 'https://i.pravatar.cc/420',
     md: 'https://i.pravatar.cc/720',
     lg: 'https://i.pravatar.cc/920',
-  };
+  });
 
   return user;
 }
