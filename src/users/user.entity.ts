@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 // import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../companies/company.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
+import { Arrival } from '../arrivals/arrival.entity';
 // import { Role } from '../core/access-control/roles.entity';
 
 /** User Entity */
@@ -32,4 +33,10 @@ export class User extends BaseUserWithRoles {
   @IsOptional()
   @Length(5, 50)
   phoneNumber?: string;
+
+  @OneToMany(
+    type => Arrival,
+    arrival => arrival.user,
+  )
+  arrivals: Arrival[];
 }

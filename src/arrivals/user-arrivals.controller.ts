@@ -1,24 +1,18 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   AuthGuard,
   GetPagination,
+  GetUser,
   PaginationParams,
   PermissionsGuard,
   PgResult,
-  ValidUUID,
-  GetUser,
   UUID,
+  ValidUUID,
 } from 'nestjs-extra';
 import { User } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
 import { Arrival } from './arrival.entity';
 import { ArrivalsService } from './arrivals.service';
-import { UsersService } from '../users/users.service';
 
 /**
  * Get arrivals for users requests.
@@ -28,7 +22,6 @@ import { UsersService } from '../users/users.service';
  * @method findById Find arrival by Id.
  */
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-// @Controller('users/:userId/subscriptions/:subscriptionId/arrivals')
 @Controller('users/:userId/arrivals')
 export class UserArrivalsController {
   constructor(
@@ -40,11 +33,10 @@ export class UserArrivalsController {
   @Get('')
   async find(
     @Param('userId', ValidUUID) userId: UUID,
-    // @Param('subscriptionId', ValidUUID) subscriptionId: string,
     @GetPagination() params: PaginationParams,
     @GetUser() user: User,
   ): PgResult<Arrival> {
-    if (user.id !== userId) throw new ForbiddenException();
+    // if (user.id !== userId) throw new ForbiddenException();
     return this.arrivalsService.paginate(params, { user });
   }
 
@@ -52,32 +44,10 @@ export class UserArrivalsController {
   @Get(':id')
   async findById(
     @Param('userId', ValidUUID) userId: UUID,
-    // @Param('subscriptionId', ValidUUID) subscriptionId: string,
     @Param('id', ValidUUID) id: UUID,
     @GetUser() user: User,
   ): Promise<Arrival> {
-    if (user.id !== userId) throw new ForbiddenException();
+    // if (user.id !== userId) throw new ForbiddenException();
     return this.arrivalsService.findOne({ id, user });
   }
-
-  // /**
-  //  * Check if user has access to this subscription
-  //  *
-  //  * @param user Logged user
-  //  * @param uid User Id from request
-  //  * @param sid Subscription Id from request
-  //  */
-  // private async validUser(user: User, uid: string, sid: string): Promise<void> {
-  //   if (uid !== user.id) throw new ForbiddenException();
-
-  //   const fetchedUser = await this.userService.findOne(uid, {
-  //     relations: ['subscriptions'],
-  //   });
-
-  //   // If every subscription id is different from provided, throw an error
-  //   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  //   if (fetchedUser.subscriptions?.every(userSubId => userSubId.id !== sid)) {
-  //     throw new ForbiddenException();
-  //   }
-  // }
 }

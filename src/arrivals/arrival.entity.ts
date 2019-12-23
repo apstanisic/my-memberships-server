@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import * as moment from 'moment';
-import { BaseEntity } from 'nestjs-extra';
+import { BaseEntity, UUID } from 'nestjs-extra';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Company } from '../companies/company.entity';
 import { Location } from '../locations/location.entity';
@@ -14,15 +14,17 @@ import { User } from '../users/user.entity';
 @Entity('arrivals')
 export class Arrival extends BaseEntity {
   /** To which subscription this arrival belongs */
-  @ManyToOne(type => Subscription)
+  @ManyToOne(
+    type => Subscription,
+    sub => sub.arrivals,
+  )
   subscription: Subscription;
 
   /** Subscription that was used for this arrival */
-  @Column()
-  subscriptionId: string;
+  @Column({ update: false })
+  subscriptionId: UUID;
 
   /** At which location did arrival happen */
-  /* istanbul ignore next */
   @ManyToOne(
     type => Location,
     location => location.arrivals,
@@ -34,25 +36,28 @@ export class Arrival extends BaseEntity {
   location?: Location;
 
   /** Get only Id from location */
-  @Column({ nullable: true })
-  locationId?: string;
+  @Column({ nullable: true, update: false })
+  locationId?: UUID;
 
   /** Shortcut for geting company */
   @ManyToOne(type => Company)
   company: Company;
 
   /** Company Id */
-  @Column()
-  companyId: string;
+  @Column({ update: false })
+  companyId: UUID;
 
   // @TODO make this non nullable
   /** User that came */
-  @ManyToOne(type => User, { nullable: true })
+  @ManyToOne(
+    type => User,
+    user => user.arrivals,
+  )
   user: User;
 
   /** User that came id */
-  @Column({ nullable: true })
-  userId: string;
+  @Column({ update: false })
+  userId: UUID;
 
   /** When did person arrive */
   @Column({ update: false, default: new Date(), precision: 3 })
@@ -63,7 +68,7 @@ export class Arrival extends BaseEntity {
   leftAt?: Date;
 
   /** Address at which location is located */
-  @Column({ nullable: true })
+  @Column({ nullable: true, update: false })
   address?: string;
 
   /** Coordinate */
@@ -76,6 +81,9 @@ export class Arrival extends BaseEntity {
 
   @ManyToOne(type => User, { nullable: true })
   approvedBy?: User;
+
+  @Column({ nullable: true })
+  approvedById?: UUID;
 
   /** Get time spent in minutes */
   @Expose()
