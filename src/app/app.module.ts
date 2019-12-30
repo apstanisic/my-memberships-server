@@ -19,6 +19,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { UserModule } from '../users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CompanyConfigsModule } from '../company-config/company-config.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AppService } from './app.service';
     ArrivalsModule,
     PaymentsModule,
     PricingPlansModule,
+    CompanyConfigsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

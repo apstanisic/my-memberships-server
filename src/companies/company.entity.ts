@@ -9,7 +9,7 @@ import {
   Length,
 } from 'class-validator';
 import { BaseEntity, Image, Role } from 'nestjs-extra';
-import { Column, Entity, Index, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Index, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 // import { Role } from '../core/access-control/roles.entity';
 // import { BaseEntity } from '../core/entities/base.entity';
 // import { Image } from '../core/types';
@@ -20,6 +20,8 @@ import { Subscription } from '../subscriptions/subscription.entity';
 import { User } from '../users/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
 import { availableTiers, Tier } from './payment-tiers.list';
+import { CompanyConfig } from '../company-config/company-config.entity';
+import { CompanyImage } from '../company-images/company-image.entity';
 
 /**
  * Company can be deleted only if there is no more
@@ -29,8 +31,7 @@ import { availableTiers, Tier } from './payment-tiers.list';
 export class Company extends BaseEntity {
   constructor() {
     super();
-    this.images = [];
-    this.credit = 0;
+    this.credit = this.credit ?? 0;
   }
 
   /** Company name */
@@ -44,6 +45,7 @@ export class Company extends BaseEntity {
   @ManyToOne(
     type => User,
     owner => owner.companies,
+    { onDelete: 'SET NULL' },
   )
   owner: User;
 
@@ -101,9 +103,6 @@ export class Company extends BaseEntity {
   @OneToMany(
     type => Location,
     location => location.company,
-    {
-      onDelete: 'CASCADE',
-    },
   )
   locations: Location[];
 
@@ -121,15 +120,22 @@ export class Company extends BaseEntity {
   @IsIn([...availableTiers])
   tier: Tier;
 
-  /** Path to images of company. Currently 5 images max */
-  @Column({ type: 'simple-json', default: [] })
-  @IsString({ each: true })
-  images: Image[];
+  @OneToMany(
+    type => CompanyImage,
+    image => image.company,
+  )
+  images: CompanyImage[];
+
+  @OneToOne(
+    type => CompanyConfig,
+    config => config.company,
+  )
+  config: CompanyConfig;
 
   // All payments for this company
   @OneToMany(
     type => PaymentRecord,
     record => record.company,
   )
-  payments: PaymentRecord;
+  payments: PaymentRecord[];
 }

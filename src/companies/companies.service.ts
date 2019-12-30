@@ -7,6 +7,7 @@ import {
   RoleService,
 } from 'nestjs-extra';
 import { Repository } from 'typeorm';
+import { CompanyConfigService } from '../company-config/company-config.service';
 import { User } from '../users/user.entity';
 import { Company } from './company.entity';
 
@@ -16,6 +17,7 @@ export class CompaniesService extends BaseService<Company> {
     @InjectRepository(Company) repository: Repository<Company>,
     private readonly roleService: RoleService,
     private readonly notificationService: NotificationService,
+    private readonly companyConfigService: CompanyConfigService,
   ) {
     super(repository);
   }
@@ -34,7 +36,7 @@ export class CompaniesService extends BaseService<Company> {
       company = companyOrId;
     }
 
-    const notifications = company.subscriptions
+    const deletionNotification = company.subscriptions
       ?.filter(sub => sub.active)
       .map(sub =>
         this.notificationService.addNotification({
@@ -43,7 +45,9 @@ export class CompaniesService extends BaseService<Company> {
         }),
       );
 
-    await Promise.all(notifications);
+    await Promise.all(deletionNotification);
+    await this.companyConfigService.delete(company.id);
+    await this.roleService.getRepository().delete({ domain: company.id });
     return this.delete(company, meta);
   }
 
@@ -70,6 +74,11 @@ export class CompaniesService extends BaseService<Company> {
       },
       meta,
     );
+    await this.companyConfigService.create({
+      company,
+      version: 1,
+      config: {},
+    });
 
     return company;
   }

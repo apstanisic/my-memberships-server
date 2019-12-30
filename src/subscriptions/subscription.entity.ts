@@ -21,6 +21,7 @@ export class Subscription extends BaseEntity {
   @ManyToOne(
     type => Company,
     company => company.subscriptions,
+    { onDelete: 'CASCADE' },
   )
   company: Company;
 
@@ -32,6 +33,7 @@ export class Subscription extends BaseEntity {
   @ManyToOne(
     type => User,
     user => user.subscriptions,
+    { onDelete: 'SET NULL' },
   )
   owner: User;
 

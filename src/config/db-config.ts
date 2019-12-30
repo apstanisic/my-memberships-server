@@ -7,6 +7,7 @@ import { PaymentRecord } from '../payments/payment-record.entity';
 import { PricingPlan } from '../pricing-plans/pricing-plan.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
 import { User } from '../users/user.entity';
+import { CompanyConfig } from '../company-config/company-config.entity';
 
 export const appEntities = [
   User,
@@ -18,4 +19,5 @@ export const appEntities = [
   Subscription,
   LocationImage,
   CompanyImage,
+  CompanyConfig,
 ];

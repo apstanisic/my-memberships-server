@@ -70,7 +70,8 @@ export class LocationsService extends BaseService<Location> {
     user,
   }: DeleteLocationParams): Promise<any> {
     const location = await this.findOne({ id, companyId });
-    const deletingImages = await location.images.map(img =>
+    const deletingImages = location.images.map(img =>
+      // this.storageImageService.removeImage(img),
       this.storageImageService.removeImage(img),
     );
     await Promise.all(deletingImages);

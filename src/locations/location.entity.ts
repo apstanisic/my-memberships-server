@@ -19,14 +19,11 @@ import { LocationImage } from '../location-images/location-image.entity';
 // globe, so it's less expensive to find near places
 @Entity('locations')
 export class Location extends BaseEntity {
-  constructor() {
-    super();
-    // this.images = [];
-  }
   /** Company that is owner of this location */
   @ManyToOne(
     type => Company,
     company => company.locations,
+    { onDelete: 'CASCADE' },
   )
   company: Company;
 

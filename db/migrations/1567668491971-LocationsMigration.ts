@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Company } from '../../src/company/company.entity';
+import { Company } from '../../src/companies/company.entity';
 import { Location } from '../../src/locations/location.entity';
 import { generateLocation } from '../../src/locations/location.factory';
 

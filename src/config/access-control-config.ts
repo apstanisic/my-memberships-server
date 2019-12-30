@@ -35,6 +35,8 @@ p, admin, /companies/:id/locations, (read)|(write)
 p, admin, /companies/:id/locations/*, (read)|(write)
 p, admin, /companies/:id/arrivals, (read)|(write)
 p, admin, /companies/:id/arrivals/*, (read)|(write)
+p, admin, /companies/:id/config, (read)|(write)
+p, admin, /companies/:id/config/*, (read)|(write)
 p, admin, /companies/:id/roles, read
 p, admin, /companies/:id/roles/*, read
 p, user, /users/:id/*, read

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { generateCompany } from '../../src/company/company.factory';
-import { Company } from '../../src/company/company.entity';
-import { User } from '../../src/user/user.entity';
+import { generateCompany } from '../../src/companies/company.factory';
+import { Company } from '../../src/companies/company.entity';
+import { User } from '../../src/users/user.entity';
 
 export class CompaniesMigration1566417171153 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

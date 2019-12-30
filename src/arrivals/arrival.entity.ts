@@ -17,6 +17,7 @@ export class Arrival extends BaseEntity {
   @ManyToOne(
     type => Subscription,
     sub => sub.arrivals,
+    { onDelete: 'SET NULL' },
   )
   subscription: Subscription;
 
@@ -40,7 +41,7 @@ export class Arrival extends BaseEntity {
   locationId?: UUID;
 
   /** Shortcut for geting company */
-  @ManyToOne(type => Company)
+  @ManyToOne(type => Company, { onDelete: 'CASCADE' })
   company: Company;
 
   /** Company Id */
@@ -52,6 +53,7 @@ export class Arrival extends BaseEntity {
   @ManyToOne(
     type => User,
     user => user.arrivals,
+    { onDelete: 'SET NULL' },
   )
   user: User;
 
@@ -79,7 +81,7 @@ export class Arrival extends BaseEntity {
   @Column({ nullable: true, type: 'double precision', update: false })
   long?: number;
 
-  @ManyToOne(type => User, { nullable: true })
+  @ManyToOne(type => User, { nullable: true, onDelete: 'SET NULL' })
   approvedBy?: User;
 
   @Column({ nullable: true })

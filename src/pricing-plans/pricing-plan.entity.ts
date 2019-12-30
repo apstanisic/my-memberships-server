@@ -18,6 +18,7 @@ export class PricingPlan extends BaseEntity {
   @ManyToOne(
     type => Company,
     company => company.plans,
+    { onDelete: 'CASCADE' },
   )
   company: Company;
 
