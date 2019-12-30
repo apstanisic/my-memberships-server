@@ -22,6 +22,7 @@ export class PaymentRecord extends BaseEntity {
   @ManyToOne(
     type => Company,
     company => company.payments,
+    { onDelete: 'SET NULL' },
   )
   company: Company;
 

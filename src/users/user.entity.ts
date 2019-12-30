@@ -1,6 +1,6 @@
 import { IsOptional, Length } from 'class-validator';
-import { BaseUserWithRoles } from 'nestjs-extra';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { BaseUserWithRoles, Role, Notification } from 'nestjs-extra';
+import { Column, Entity, OneToMany, ManyToOne } from 'typeorm';
 // import { BaseUser } from '../core/entities/base-user.entity';
 import { Company } from '../companies/company.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
@@ -17,9 +17,17 @@ export class User extends BaseUserWithRoles {
   )
   subscriptions: Subscription[];
 
-  /** Only subscription ids */
-  // @RelationId((user: User) => user.subscriptions)
-  subscriptionIds: string[];
+  @OneToMany(
+    type => Role,
+    role => role.user,
+  )
+  roles: Role[];
+
+  @OneToMany(
+    type => Notification,
+    notification => notification.user,
+  )
+  notifications: Notification[];
 
   /** Companies owned by this user */
   @OneToMany(

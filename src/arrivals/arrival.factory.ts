@@ -1,6 +1,7 @@
 import * as Faker from 'faker';
-import { Arrival } from './arrival.entity';
+import * as moment from 'moment';
 import { Company } from '../companies/company.entity';
+import { Arrival } from './arrival.entity';
 
 export function generateArrival(companies: Company[]): Arrival {
   const random = Faker.random.arrayElement;
@@ -12,6 +13,9 @@ export function generateArrival(companies: Company[]): Arrival {
   arrival.long = Number(Faker.address.longitude());
   arrival.address = Faker.address.streetAddress();
   arrival.arrivedAt = new Date();
+  arrival.arrivedAt = moment()
+    .add(Math.ceil(Math.random() * 90) + 20, 'minute')
+    .toDate();
   arrival.subscription = random(company.subscriptions);
   arrival.userId = arrival.subscription.ownerId;
   arrival.location = random(company.locations);

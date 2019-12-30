@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Company } from '../../src/company/company.entity';
-import { User } from '../../src/user/user.entity';
-import { generateSubscription } from '../../src/subscription/subscription.factory';
-import { Subscription } from '../../src/subscription/subscription.entity';
+import { Company } from '../../src/companies/company.entity';
+import { User } from '../../src/users/user.entity';
+import { generateSubscription } from '../../src/subscriptions/subscription.factory';
+import { Subscription } from '../../src/subscriptions/subscription.entity';
 
 export class SubscriptionMigration1566417766995 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -12,7 +12,7 @@ export class SubscriptionMigration1566417766995 implements MigrationInterface {
 
     const companies: Company[] = await queryRunner.manager.find(Company);
 
-    for (let i = 0; i < 1500; i += 1) {
+    for (let i = 0; i < 400; i += 1) {
       subscriptions.push(generateSubscription(users, companies));
     }
     await queryRunner.manager.save(subscriptions);

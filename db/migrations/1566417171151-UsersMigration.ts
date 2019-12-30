@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { User } from '../../src/user/user.entity';
-import { generateUser } from '../../src/user/user.factory';
+import { User } from '../../src/users/user.entity';
+import { generateUser } from '../../src/users/user.factory';
 
 export class UsersMigration1566417171151 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {

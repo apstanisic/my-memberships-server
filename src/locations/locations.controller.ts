@@ -19,13 +19,18 @@ import {
   PgResult,
   UUID,
   ValidUUID,
+  BasicUserInfo,
 } from 'nestjs-extra';
+import {
+  plainToClass,
+  classToClass,
+  classToPlain,
+  Expose,
+} from 'class-transformer';
 import { User } from '../users/user.entity';
 import { Location } from './location.entity';
 import { CreateLocationDto, UpdateLocationDto } from './location.dto';
 import { LocationsService } from './locations.service';
-
-// import { IdArrayDto } from '../core/id-array.dto';
 
 /**
  * Controller for managing locations
@@ -50,7 +55,10 @@ export class LocationsController {
     @Query() query: IdArrayDto,
   ): Promise<Location[]> {
     // return [];
-    return this.locationsService.findByIds(query.ids, { where: { companyId } });
+    return this.locationsService.findByIds(query.ids, {
+      where: { companyId },
+      relations: ['images'],
+    });
   }
 
   /** Get location by id */

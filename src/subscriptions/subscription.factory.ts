@@ -13,6 +13,7 @@ export function generateSubscription(
   sub.setDuration();
   sub.owner = random(users);
   sub.company = random(companies);
+  sub.active = Math.random() > 0.3; // 7 / 10 are active
   sub.price = Faker.random.number({ min: 5, max: 100 }) * 100;
 
   return sub;

@@ -18,7 +18,6 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
-
   # AWS SDK works good enough
   # storage:
   #   image: minio/minio
@@ -29,15 +28,14 @@ services:
   #     MINIO_SECRET_KEY: ${STORAGE_SECRET_KEY}
   #   ports:
   #     - 9000:9000
-
-  log-db:
-    image: mongo:4
-    restart: unless-stopped
-    ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_DATABASE: ${LOG_DB_DATABASE}
-      # MONGO_INITDB_ROOT_USERNAME: ${LOG_DB_USER}
-      # MONGO_INITDB_ROOT_PASSWORD: ${LOG_DB_PASSWORD}
-    volumes:
-      - ./volumes/log-database:/data/db
+  # log-db:
+  #   image: mongo:4
+  #   restart: unless-stopped
+  #   ports:
+  #     - 27017:27017
+  #   environment:
+  #     MONGO_INITDB_DATABASE: ${LOG_DB_DATABASE}
+  #     MONGO_INITDB_ROOT_USERNAME: ${LOG_DB_USER}
+  #     MONGO_INITDB_ROOT_PASSWORD: ${LOG_DB_PASSWORD}
+  #   volumes:
+  #     - ./volumes/log-database:/data/db

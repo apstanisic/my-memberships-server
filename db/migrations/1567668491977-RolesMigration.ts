@@ -1,7 +1,7 @@
 import { generateRole, generateUserRole, Role } from 'nestjs-extra';
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Company } from '../../src/company/company.entity';
-import { User } from '../../src/user/user.entity';
+import { Company } from '../../src/companies/company.entity';
+import { User } from '../../src/users/user.entity';
 // import {
 //   generateRole,
 //   generateUserRole,
