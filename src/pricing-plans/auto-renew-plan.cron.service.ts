@@ -1,6 +1,8 @@
+import * as fs from 'fs';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import * as moment from 'moment';
-import { CronService, NotificationService, UUID } from 'nestjs-extra';
+import { NotificationService, UUID } from 'nestjs-extra';
 import { Between, MoreThan } from 'typeorm';
 import { CompaniesService } from '../companies/companies.service';
 // import { CronService } from '../core/cron/cron.service';
@@ -13,20 +15,20 @@ import { PricingPlanService } from './pricing-plans.service';
 @Injectable()
 export class AutoRenewPlansCronService {
   constructor(
-    private readonly cronService: CronService,
     private readonly pricingPlanService: PricingPlanService,
     private readonly companyService: CompaniesService,
     private readonly notificationService: NotificationService,
   ) {
     // In 00:30 check if plan has expired and revert company to free tier
-    this.cronService.startJob('30 0 * * *', this.extendPlans);
+    // this.cronService.startJob('30 0 * * *', this.extendPlans);
   }
 
   /**
    * All companies that plan has expired are reverted to free plan
    * If this expired plan has renewed plan it will not
    */
-  private async extendPlans(): Promise<void> {
+  @Cron('30 0 * * *')
+  async extendPlans(): Promise<void> {
     const prev24h = moment()
       .subtract(1, 'day')
       .toDate();

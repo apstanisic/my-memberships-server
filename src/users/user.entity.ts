@@ -1,11 +1,9 @@
 import { IsOptional, Length } from 'class-validator';
-import { BaseUserWithRoles, Role, Notification } from 'nestjs-extra';
-import { Column, Entity, OneToMany, ManyToOne } from 'typeorm';
-// import { BaseUser } from '../core/entities/base-user.entity';
+import { BaseUserWithRoles, Notification, Role } from 'nestjs-extra';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { Arrival } from '../arrivals/arrival.entity';
 import { Company } from '../companies/company.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
-import { Arrival } from '../arrivals/arrival.entity';
-// import { Role } from '../core/access-control/roles.entity';
 
 /** User Entity */
 @Entity('users')
