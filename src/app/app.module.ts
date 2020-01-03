@@ -1,8 +1,14 @@
 import { Module } from '@nestjs/common';
-import { readFileSync } from 'fs';
-import { CoreModule } from 'nestjs-extra';
+import { BullModule } from '@nestjs/bull';
+import {
+  CoreModule,
+  ConfigService,
+  REDIS_HOST,
+  REDIS_PORT,
+} from 'nestjs-extra';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompaniesModule } from '../companies/companies.module';
+import { CompanyConfigsModule } from '../company-config/company-config.module';
 import { CompanyImagesModule } from '../company-images/company-images.module';
 import { CompanyLogsModule } from '../company-logs/company-logs.module';
 import { CompanyRolesModule } from '../company-roles/company-roles.module';
@@ -19,19 +25,31 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { UserModule } from '../users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CompanyConfigsModule } from '../company-config/company-config.module';
 
+/**
+ * @todo Improve configModule params
+ */
 @Module({
   imports: [
     CoreModule.forRoot({
       storage: {},
       db: { entities: appEntities },
-      config: { data: readFileSync('.env') },
+      config: { isGlobal: true, envFilePath: `${__dirname}/../../../.env` },
       accessControl: { policies, model: casbinModel, availableRoles: allRoles },
       dbLog: true,
       notifications: true,
       mail: true,
     }),
+    BullModule.registerQueueAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          name: 'app',
+          redis: { host: config.get(REDIS_HOST), port: config.get(REDIS_PORT) },
+        };
+      },
+    }),
+
     UserModule,
     LocationsModule,
     CompaniesModule,

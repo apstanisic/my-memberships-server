@@ -1,10 +1,7 @@
-import {
-  Injectable,
-  Logger,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import * as moment from 'moment';
-import { CronService, Notification, NotificationService } from 'nestjs-extra';
+import { Notification, NotificationService } from 'nestjs-extra';
 import { Between } from 'typeorm';
 // import { CronService } from '../core/cron/cron.service';
 // import { Notification } from '../core/notification/notification.entity';
@@ -15,7 +12,6 @@ import { PricingPlanService } from './pricing-plans.service';
 @Injectable()
 export class SendPlanRemindersCronService {
   constructor(
-    private readonly cronService: CronService,
     private readonly notificationService: NotificationService,
     private readonly pricingPlanService: PricingPlanService,
   ) {
@@ -23,12 +19,13 @@ export class SendPlanRemindersCronService {
   }
 
   /** Check every night at 4 for plans that need notification. */
-  private startCronService(): void {
+  @Cron('0 4 * * *')
+  async startCronService(): Promise<void> {
     new Logger().log('Start checking plans', 'Pricing Plan');
-    this.cronService.startJob('0 4 * * *', async () => {
-      await this.expireInADay();
-      await this.expireInAWeek();
-    });
+    // this.cronService.startJob('0 4 * * *', async () => {
+    await this.expireInADay();
+    await this.expireInAWeek();
+    // });
   }
 
   /**

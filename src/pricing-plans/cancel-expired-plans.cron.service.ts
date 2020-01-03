@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CronService } from 'nestjs-extra';
 import { LessThan, MoreThan } from 'typeorm';
+import { Cron } from '@nestjs/schedule';
 import { Company } from '../companies/company.entity';
 import { CompaniesService } from '../companies/companies.service';
 // import { CronService } from '../core/cron/cron.service';
@@ -10,23 +10,23 @@ import { PricingPlanService } from './pricing-plans.service';
 @Injectable()
 export class CancelExpiredPlansCronService {
   constructor(
-    private readonly cronService: CronService,
     private readonly pricingPlanService: PricingPlanService,
     private readonly companyService: CompaniesService,
   ) {
-    this.startCronService();
+    // this.startCronService();
   }
 
   /** In 03:00 check if plan has expired and revert company to free tier */
-  startCronService(): void {
-    this.cronService.startJob('0 3 * * *', this.cancelExpiredPlans);
-  }
+  // startCronService(): void {
+  //   this.cronService.startJob('0 3 * * *', this.cancelExpiredPlans);
+  // }
 
   /**
    * All companies that plan has expired are reverted to free plan
    * If this expired plan has renewed plan it will not
    * Find all plans that are expired but still in use
    */
+  @Cron('0 3 * * * *')
   async cancelExpiredPlans(): Promise<void> {
     const updating: Promise<Company | PricingPlan>[] = [];
     // Find just expired plans

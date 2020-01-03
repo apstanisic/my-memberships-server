@@ -1,16 +1,18 @@
+import { InjectQueue } from '@nestjs/bull';
 import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
 import { BaseService, StorageImagesService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
 // import { BaseService } from '../core/base.service';
 // import { UUID } from '../core/types';
 import { User } from '../users/user.entity';
-import { Location } from './location.entity';
 import { CreateLocationDto } from './location.dto';
+import { Location } from './location.entity';
 
 interface CreateLocationParams {
   user: User;
@@ -28,7 +30,7 @@ interface DeleteLocationParams {
 export class LocationsService extends BaseService<Location> {
   constructor(
     @InjectRepository(Location) repository: Repository<Location>,
-    private readonly storageImageService: StorageImagesService,
+    @InjectQueue('app') private readonly queue: Queue,
   ) {
     super(repository);
   }
@@ -69,12 +71,15 @@ export class LocationsService extends BaseService<Location> {
     companyId,
     user,
   }: DeleteLocationParams): Promise<any> {
-    const location = await this.findOne({ id, companyId });
-    const deletingImages = location.images.map(img =>
-      // this.storageImageService.removeImage(img),
-      this.storageImageService.removeImage(img),
+    const location = await this.findOne(
+      { id, companyId },
+      { relations: ['images'] },
     );
-    await Promise.all(deletingImages);
+
+    location.images.forEach(img => {
+      this.queue.add('delete-image', img, { attempts: 3 });
+    });
+
     return this.delete(location, { user, domain: id });
   }
 
