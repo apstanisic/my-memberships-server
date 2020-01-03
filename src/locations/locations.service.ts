@@ -6,10 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Queue } from 'bull';
-import { BaseService, StorageImagesService, UUID } from 'nestjs-extra';
+import { BaseService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
-// import { BaseService } from '../core/base.service';
-// import { UUID } from '../core/types';
 import { User } from '../users/user.entity';
 import { CreateLocationDto } from './location.dto';
 import { Location } from './location.entity';
@@ -44,8 +42,41 @@ export class LocationsService extends BaseService<Location> {
       { companyId },
       { relations: ['company'] },
     );
+
+    this.checkIfCanAddLocation(locations);
+
+    return this.create({ ...location, companyId }, { user, domain: companyId });
+  }
+
+  async deleteLocation({
+    id,
+    companyId,
+    user,
+  }: DeleteLocationParams): Promise<Location> {
+    const location = await this.findOne(
+      { id, companyId },
+      { relations: ['images'] },
+    );
+
+    // Delete all images for location
+    location.images.forEach(img => {
+      this.queue.add('delete-image', img, { attempts: 3 });
+    });
+
+    return this.delete(location, { user, domain: id });
+  }
+
+  /** Get location that's in provided company */
+  async getLocationInCompany(
+    companyId: string,
+    locationId: string,
+  ): Promise<Location> {
+    return this.findOne({ companyId, id: locationId });
+  }
+
+  /** Check if company can add location. Throw error if forbidden */
+  private checkIfCanAddLocation(locations: Location[]): void {
     const amountOfLocations = locations.length;
-    // const tier = locations.length > 0 ? locations[0]?.company?.tier : undefined;
     const tier = locations[0]?.company?.tier;
 
     if (!tier) throw new InternalServerErrorException('Tier problem.');
@@ -62,31 +93,5 @@ export class LocationsService extends BaseService<Location> {
     if (amountOfLocations >= 20) {
       throw new ForbiddenException('Quota reached.');
     }
-
-    return this.create({ ...location, companyId }, { user, domain: companyId });
-  }
-
-  async deleteLocation({
-    id,
-    companyId,
-    user,
-  }: DeleteLocationParams): Promise<any> {
-    const location = await this.findOne(
-      { id, companyId },
-      { relations: ['images'] },
-    );
-
-    location.images.forEach(img => {
-      this.queue.add('delete-image', img, { attempts: 3 });
-    });
-
-    return this.delete(location, { user, domain: id });
-  }
-
-  async getLocationInCompany(
-    companyId: string,
-    locationId: string,
-  ): Promise<Location> {
-    return this.findOne({ companyId, id: locationId });
   }
 }

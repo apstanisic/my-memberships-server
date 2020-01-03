@@ -1,11 +1,12 @@
-import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
+import { Module } from '@nestjs/common';
 import {
-  CoreModule,
   ConfigService,
+  CoreModule,
   REDIS_HOST,
   REDIS_PORT,
 } from 'nestjs-extra';
+import { LocationImagesModule } from 'src/location-images/location-images.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompaniesModule } from '../companies/companies.module';
 import { CompanyConfigsModule } from '../company-config/company-config.module';
@@ -49,13 +50,13 @@ import { AppService } from './app.service';
         };
       },
     }),
-
     UserModule,
-    LocationsModule,
     CompaniesModule,
     CompanyLogsModule,
     CompanyImagesModule,
     CompanyRolesModule,
+    LocationsModule,
+    LocationImagesModule,
     SubscriptionsModule,
     ArrivalsModule,
     PaymentsModule,
