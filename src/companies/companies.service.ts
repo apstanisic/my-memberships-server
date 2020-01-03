@@ -77,6 +77,7 @@ export class CompaniesService extends BaseService<Company> {
     await this.companyConfigService.delete(company.id);
     // This deletes many
     await this.roleService.getRepository().delete({ domain: company.id });
+
     return this.delete(company, meta);
   }
 

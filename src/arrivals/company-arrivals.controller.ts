@@ -34,17 +34,13 @@ import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 @Controller('companies/:companyId/arrivals')
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 export class CompanyArrivalsController {
-  constructor(
-    private readonly arrivalsService: ArrivalsService,
-    private readonly subService: SubscriptionsService,
-  ) {}
+  constructor(private readonly arrivalsService: ArrivalsService) {}
 
   @Get('')
   async find(
     @Param('companyId', ValidUUID) companyId: string,
     @GetPagination() params: PaginationParams,
   ): PgResult<Arrival> {
-    // const location = await this.validLocation(companyId);
     return this.arrivalsService.paginate(params, { companyId });
   }
 
@@ -82,9 +78,9 @@ export class CompanyArrivalsController {
 
   /**
    * Remove arrival. Admins can cancel arrival if needed.
-   * For now it's as delete request but if there are future implement comments bellow
-   * This is sent as post request because body in delete request is not defined.
-   * Some clients can't sent body in delete request
+   * @Todo check if this should be post or delete request
+   * Semanticly it should be delete, but not all clients support body
+   * in delete request
    */
   @Delete(':arrivalId')
   async deleteArrival(

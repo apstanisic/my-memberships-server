@@ -54,7 +54,6 @@ export class LocationsController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @Query() query: IdArrayDto,
   ): Promise<Location[]> {
-    // return [];
     return this.locationsService.findByIds(query.ids, {
       where: { companyId },
       relations: ['images'],

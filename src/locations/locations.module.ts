@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BullModule } from '@nestjs/bull';
 import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
 import { Location } from './location.entity';
@@ -8,7 +9,10 @@ import { LocationImagesService } from '../location-images/location-images.servic
 import { LocationImage } from '../location-images/location-image.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Location, LocationImage])],
+  imports: [
+    TypeOrmModule.forFeature([Location, LocationImage]),
+    BullModule.registerQueue({ name: 'app' }),
+  ],
   providers: [LocationsService, LocationImagesService],
   controllers: [LocationsController, LocationImagesController],
   exports: [LocationsService],

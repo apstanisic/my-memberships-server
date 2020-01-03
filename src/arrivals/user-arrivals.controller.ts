@@ -24,10 +24,7 @@ import { ArrivalsService } from './arrivals.service';
 @UseGuards(AuthGuard('jwt'), PermissionsGuard)
 @Controller('users/:userId/arrivals')
 export class UserArrivalsController {
-  constructor(
-    private readonly arrivalsService: ArrivalsService,
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly arrivalsService: ArrivalsService) {}
 
   /** Get paginated arrivals for provided subscription. */
   @Get('')
@@ -36,7 +33,6 @@ export class UserArrivalsController {
     @GetPagination() params: PaginationParams,
     @GetUser() user: User,
   ): PgResult<Arrival> {
-    // if (user.id !== userId) throw new ForbiddenException();
     return this.arrivalsService.paginate(params, { user });
   }
 
@@ -47,7 +43,6 @@ export class UserArrivalsController {
     @Param('id', ValidUUID) id: UUID,
     @GetUser() user: User,
   ): Promise<Arrival> {
-    // if (user.id !== userId) throw new ForbiddenException();
     return this.arrivalsService.findOne({ id, user });
   }
 }
