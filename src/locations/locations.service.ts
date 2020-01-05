@@ -1,12 +1,10 @@
-import { InjectQueue } from '@nestjs/bull';
 import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Queue } from 'bull';
-import { BaseService, UUID } from 'nestjs-extra';
+import { BaseService, StorageImagesService, UUID } from 'nestjs-extra';
 import { Repository } from 'typeorm';
 import { User } from '../users/user.entity';
 import { CreateLocationDto } from './location.dto';
@@ -28,7 +26,8 @@ interface DeleteLocationParams {
 export class LocationsService extends BaseService<Location> {
   constructor(
     @InjectRepository(Location) repository: Repository<Location>,
-    @InjectQueue('app') private readonly queue: Queue,
+    // @InjectQueue('app') private readonly queue: Queue,
+    private readonly storageImagesService: StorageImagesService,
   ) {
     super(repository);
   }
@@ -59,9 +58,12 @@ export class LocationsService extends BaseService<Location> {
     );
 
     // Delete all images for location
-    location.images.forEach(img => {
-      this.queue.add('delete-image', img, { attempts: 3 });
-    });
+    // location.images.forEach(img => {
+    // this.queue.add('delete-image', img, { attempts: 3 });
+    // });
+    await Promise.all(
+      location.images.map(img => this.storageImagesService.removeImage(img)),
+    );
 
     return this.delete(location, { user, domain: id });
   }

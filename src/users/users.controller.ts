@@ -17,7 +17,7 @@ import { UsersService } from './users.service';
 export class UserController {
   constructor(private readonly usersService: UsersService) {}
 
-  /** Update user info */
+  /** Update user info. Not in BaseUserService because we don't know all fields */
   @Put()
   async updateUserInfo(
     @Body() updateData: UpdateUserInfo,

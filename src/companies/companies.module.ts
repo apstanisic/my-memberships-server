@@ -9,7 +9,7 @@ import { CompanyConfigsModule } from '../company-config/company-config.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Company]),
-    BullModule.registerQueue({ name: 'app' }),
+    BullModule.registerQueue({ name: 'company-images' }),
     CompanyConfigsModule,
   ],
   controllers: [CompaniesController],

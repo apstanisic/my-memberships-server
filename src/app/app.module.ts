@@ -28,7 +28,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 /**
- * @todo Improve configModule params
+ * @Todo Improve configModule params
+ * @Todo remove BullModule if using CoreModule, it's already imported
  */
 @Module({
   imports: [
