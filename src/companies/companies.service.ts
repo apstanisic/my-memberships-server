@@ -21,7 +21,7 @@ import { Company } from './company.entity';
 export class CompaniesService extends BaseService<Company> {
   constructor(
     @InjectRepository(Company) repository: Repository<Company>,
-    @InjectQueue('app') private readonly queue: Queue,
+    @InjectQueue('company-images') private readonly queue: Queue,
     private readonly roleService: RoleService,
     private readonly notificationService: NotificationService,
     private readonly companyConfigService: CompanyConfigService,
@@ -76,6 +76,7 @@ export class CompaniesService extends BaseService<Company> {
 
     await this.companyConfigService.delete(company.id);
     // This deletes many
+    /** @Todo use deleteMany from role service */
     await this.roleService.getRepository().delete({ domain: company.id });
 
     return this.delete(company, meta);
