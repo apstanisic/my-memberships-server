@@ -30,11 +30,7 @@ export class CompanyImagesService extends BaseService<CompanyImage> {
   }
 
   /** Add image to company */
-  async addImage({
-    companyId,
-    fileBuffer,
-    loggedUser,
-  }: AddImageParams): Promise<CompanyImage> {
+  async addImage({ companyId, fileBuffer, loggedUser }: AddImageParams): Promise<CompanyImage> {
     const company = await this.companyService.findOne(companyId);
 
     if (!this.canAddImageToCompany(company)) {
@@ -49,11 +45,7 @@ export class CompanyImagesService extends BaseService<CompanyImage> {
   }
 
   /** remove image from company */
-  async removeImage({
-    imageId,
-    companyId,
-    loggedUser,
-  }: RemoveImageParams): Promise<CompanyImage> {
+  async removeImage({ imageId, companyId, loggedUser }: RemoveImageParams): Promise<CompanyImage> {
     // const company = await this.companyService.findOne(companyId);
     const image = await this.findOne({ id: imageId, companyId });
     const deleted = await this.delete(image);

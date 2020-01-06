@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  UseGuards,
-  Body,
-  Post,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, Body, Post, Delete } from '@nestjs/common';
 import {
   AuthGuard,
   GetPagination,

@@ -33,10 +33,7 @@ export class SendPlanRemindersCronService {
    * Check for plans that expire between privided dates,
    * not auto renewable, and send them notification.
    */
-  private async sendNotifications(
-    start: Date,
-    end: Date,
-  ): Promise<Notification[]> {
+  private async sendNotifications(start: Date, end: Date): Promise<Notification[]> {
     const plans = await this.pricingPlanService.find(
       { expiresAt: Between(start, end), autoRenew: false },
       { relations: ['company'] },

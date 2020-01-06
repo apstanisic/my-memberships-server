@@ -25,12 +25,7 @@ export class PaymentsService extends BaseService<PaymentRecord> {
   }
 
   /** Add or substract credit from company */
-  async changeCredit({
-    companyId,
-    credit,
-    price,
-    user,
-  }: ChangeCreditParams): Promise<number> {
+  async changeCredit({ companyId, credit, price, user }: ChangeCreditParams): Promise<number> {
     const company = await this.companyService.findOne(companyId);
     // Create payment record
     await this.create(

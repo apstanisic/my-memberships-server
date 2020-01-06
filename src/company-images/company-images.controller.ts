@@ -9,13 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  AuthGuard,
-  GetUser,
-  PermissionsGuard,
-  UUID,
-  ValidUUID,
-} from 'nestjs-extra';
+import { AuthGuard, GetUser, PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
 import { User } from '../users/user.entity';
 import { Company } from '../companies/company.entity';
 import { CompanyImagesService } from './company-images.service';

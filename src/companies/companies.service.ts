@@ -8,7 +8,7 @@ import {
   Image,
   Notification,
   NotificationService,
-  RoleService,
+  RolesService,
   UUID,
 } from 'nestjs-extra';
 import { Subscription } from 'src/subscriptions/subscription.entity';
@@ -22,7 +22,7 @@ export class CompaniesService extends BaseService<Company> {
   constructor(
     @InjectRepository(Company) repository: Repository<Company>,
     @InjectQueue('company-images') private readonly queue: Queue,
-    private readonly roleService: RoleService,
+    private readonly rolesService: RolesService,
     private readonly notificationService: NotificationService,
     private readonly companyConfigService: CompanyConfigService,
   ) {
@@ -44,7 +44,7 @@ export class CompaniesService extends BaseService<Company> {
 
     if (meta) meta.domain = company.id;
 
-    await this.roleService.create(
+    await this.rolesService.create(
       {
         userId: owner.id,
         name: 'owner',
@@ -75,9 +75,7 @@ export class CompaniesService extends BaseService<Company> {
     );
 
     await this.companyConfigService.delete(company.id);
-    // This deletes many
-    /** @Todo use deleteMany from role service */
-    await this.roleService.getRepository().delete({ domain: company.id });
+    await this.rolesService.deleteMany({ domain: company.id });
 
     return this.delete(company, meta);
   }
@@ -101,10 +99,7 @@ export class CompaniesService extends BaseService<Company> {
   }
 
   /** Add job to delete all images from company and it's locations */
-  private deleteCompanyImages(
-    companyImages: Image[],
-    locationImages: Image[],
-  ): void {
+  private deleteCompanyImages(companyImages: Image[], locationImages: Image[]): void {
     // Delete all images for company
     companyImages.forEach(img => {
       this.queue.add('delete-images', img, { attempts: 3 });

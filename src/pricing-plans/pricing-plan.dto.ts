@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsPositive,
-} from 'class-validator';
+import { IsBoolean, IsIn, IsInt, IsOptional, IsPositive } from 'class-validator';
 import { availableTiers, Tier } from '../companies/payment-tiers.list';
 
 /** Values needed when extending currently active plan */

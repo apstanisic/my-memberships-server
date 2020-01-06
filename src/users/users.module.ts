@@ -1,8 +1,9 @@
+import { BullModule } from '@nestjs/bull';
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { USER_SERVICE } from 'nestjs-extra';
-import { UserController } from './users.controller';
 import { User } from './user.entity';
+import { UserController } from './users.controller';
 import { UsersService } from './users.service';
 
 /**
@@ -12,7 +13,7 @@ import { UsersService } from './users.service';
  */
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), BullModule.registerQueue({ name: 'auth-email' })],
   controllers: [UserController],
   exports: [UsersService, { provide: USER_SERVICE, useClass: UsersService }],
   providers: [UsersService, { provide: USER_SERVICE, useClass: UsersService }],

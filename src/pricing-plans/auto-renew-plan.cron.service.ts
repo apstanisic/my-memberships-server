@@ -96,9 +96,7 @@ export class AutoRenewPlansCronService {
   }
 
   /** Check if there is newer plan already manually created */
-  private async checkForNewerPlan(
-    companyId: UUID,
-  ): Promise<PricingPlan | undefined> {
+  private async checkForNewerPlan(companyId: UUID): Promise<PricingPlan | undefined> {
     try {
       const nextPlan = await this.pricingPlanService.findOne(
         { companyId, expiresAt: MoreThan(new Date()) },

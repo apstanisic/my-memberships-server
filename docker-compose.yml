@@ -28,6 +28,7 @@ services:
   #     MINIO_SECRET_KEY: ${STORAGE_SECRET_KEY}
   #   ports:
   #     - 9000:9000
+  # Using postgres jsonb for storing logs
   # log-db:
   #   image: mongo:4
   #   restart: unless-stopped

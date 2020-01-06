@@ -1,15 +1,6 @@
 import { BaseService, StorageImagesService, UUID, Image } from 'nestjs-extra';
-import {
-  Injectable,
-  InternalServerErrorException,
-  ForbiddenException,
-} from '@nestjs/common';
-import {
-  Transaction,
-  TransactionManager,
-  EntityManager,
-  Repository,
-} from 'typeorm';
+import { Injectable, InternalServerErrorException, ForbiddenException } from '@nestjs/common';
+import { Transaction, TransactionManager, EntityManager, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Location } from '../locations/location.entity';
 import { LocationsService } from '../locations/locations.service';

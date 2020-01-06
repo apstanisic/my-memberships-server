@@ -12,31 +12,31 @@ e = some(where (p.eft == allow))
 # validDomain('domen-id', '/domeni/domen-id') returns true;
 # keyMatch2(r.obj, p.obj) checks if object path is compatible with policies path
 # regexMatch(r.act, p.act) just check if user can preform action on object
-# regexMatch(read, (read)|(post))
+# regexMatch(read, (read)|(post)|(update)|(delete))
 [matchers]
 m = r.sub == p.sub && validDomain(r.dom, r.obj) && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)
 `;
 
 export const policies = `
-p, app_owner, /*,  (read)|(write)
-p, app_admin, /app/payment, (read)|(write)
-p, app_admin, /app/payment/*, (read)|(write)
-p, app_admin, /companies,  (read)|(write)
-p, app_admin, /companies/*,  (read)|(write)
-p, app_admin, /users,  (read)|(write)
-p, app_admin, /users/*,  (read)|(write)
-p, owner, /companies/:id,  (read)|(write)
-p, owner, /companies/:id/*, (read)|(write)
+p, app_owner, /*,  (read)|(create)|(update)|(delete)
+p, app_admin, /app/payment, (read)|(create)|(update)|(delete)
+p, app_admin, /app/payment/*, (read)|(create)|(update)|(delete)
+p, app_admin, /companies,  (read)|(create)|(update)|(delete)
+p, app_admin, /companies/*,  (read)|(create)|(update)|(delete)
+p, app_admin, /users,  (read)|(create)|(update)|(delete)
+p, app_admin, /users/*,  (read)|(create)|(update)|(delete)
+p, owner, /companies/:id,  (read)|(create)|(update)|(delete)
+p, owner, /companies/:id/*, (read)|(create)|(update)|(delete)
 p, admin, /companies/:id/logs, read
 p, admin, /companies/:id/logs/*, read
-p, admin, /companies/:id/subscriptions, (read)|(write)
-p, admin, /companies/:id/subscriptions/*, (read)|(write)
-p, admin, /companies/:id/locations, (read)|(write)
-p, admin, /companies/:id/locations/*, (read)|(write)
-p, admin, /companies/:id/arrivals, (read)|(write)
-p, admin, /companies/:id/arrivals/*, (read)|(write)
-p, admin, /companies/:id/config, (read)|(write)
-p, admin, /companies/:id/config/*, (read)|(write)
+p, admin, /companies/:id/subscriptions, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/subscriptions/*, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/locations, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/locations/*, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/arrivals, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/arrivals/*, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/config, (read)|(create)|(update)|(delete)
+p, admin, /companies/:id/config/*, (read)|(create)|(update)|(delete)
 p, admin, /companies/:id/roles, read
 p, admin, /companies/:id/roles/*, read
 p, user, /users/:id/*, read

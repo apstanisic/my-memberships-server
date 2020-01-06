@@ -2,15 +2,7 @@ import { Expose } from 'class-transformer';
 import { IsDate } from 'class-validator';
 import * as moment from 'moment';
 import { BaseEntity, getEndTime, IsBetween } from 'nestjs-extra';
-import {
-  BeforeUpdate,
-  Column,
-  Entity,
-  Index,
-  ManyToOne,
-  OneToMany,
-  RelationId,
-} from 'typeorm';
+import { BeforeUpdate, Column, Entity, Index, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Arrival } from '../arrivals/arrival.entity';
 import { Company } from '../companies/company.entity';
 import { User } from '../users/user.entity';

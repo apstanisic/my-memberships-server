@@ -1,13 +1,5 @@
 import { Exclude } from 'class-transformer';
-import {
-  IsEmail,
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 import { BaseEntity, Image, Role } from 'nestjs-extra';
 import { Column, Entity, Index, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 // import { Role } from '../core/access-control/roles.entity';

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard, GetUser, IdArrayDto, ValidUUID } from 'nestjs-extra';
 import { UpdateUserInfo } from './update-user.dto';
 import { User } from './user.entity';
@@ -19,10 +11,7 @@ export class UserController {
 
   /** Update user info. Not in BaseUserService because we don't know all fields */
   @Put()
-  async updateUserInfo(
-    @Body() updateData: UpdateUserInfo,
-    @GetUser() user: User,
-  ): Promise<User> {
+  async updateUserInfo(@Body() updateData: UpdateUserInfo, @GetUser() user: User): Promise<User> {
     return this.usersService.update(user, updateData);
   }
 

@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsEmail, IsNumber, IsOptional, IsString, Length } from 'class-validator';
 import { BaseEntity } from 'nestjs-extra';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Arrival } from '../arrivals/arrival.entity';

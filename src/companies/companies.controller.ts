@@ -16,7 +16,7 @@ import {
   PaginationParams,
   PermissionsGuard,
   PgResult,
-  RoleService,
+  RolesService,
   UUID,
   ValidUUID,
 } from 'nestjs-extra';
@@ -36,7 +36,7 @@ import { CompanyConfigService } from '../company-config/company-config.service';
 export class CompaniesController {
   constructor(
     private readonly companiesService: CompaniesService,
-    private readonly roleService: RoleService,
+    private readonly roleService: RolesService,
   ) {}
 
   /** Get companies, filtered and paginated */
@@ -63,10 +63,7 @@ export class CompaniesController {
   /** Create company */
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async create(
-    @Body() data: Partial<Company>,
-    @GetUser() user: User,
-  ): Promise<Company> {
+  async create(@Body() data: Partial<Company>, @GetUser() user: User): Promise<Company> {
     const amountOfCompanies = await this.companiesService.count({
       owner: user,
     });
@@ -82,10 +79,7 @@ export class CompaniesController {
   /** Remove company */
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Delete(':id')
-  remove(
-    @Param('id', ValidUUID) id: UUID,
-    @GetUser() user: User,
-  ): Promise<Company> {
+  remove(@Param('id', ValidUUID) id: UUID, @GetUser() user: User): Promise<Company> {
     return this.companiesService.deleteCompany(id, { user, domain: id });
   }
 
