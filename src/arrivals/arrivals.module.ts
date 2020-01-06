@@ -8,11 +8,7 @@ import { CompanyArrivalsController } from './company-arrivals.controller';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Arrival]),
-    LocationsModule,
-    SubscriptionsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Arrival]), LocationsModule, SubscriptionsModule],
   providers: [ArrivalsService],
   controllers: [UserArrivalsController, CompanyArrivalsController],
   exports: [ArrivalsService],

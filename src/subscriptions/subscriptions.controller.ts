@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import {
   AuthGuard,
   GetPagination,
@@ -22,10 +12,7 @@ import {
 } from 'nestjs-extra';
 import { CompaniesService } from '../companies/companies.service';
 import { User } from '../users/user.entity';
-import {
-  CreateSubscriptionDto,
-  UpdateSubscriptionDto,
-} from './subscription.dto';
+import { CreateSubscriptionDto, UpdateSubscriptionDto } from './subscription.dto';
 import { Subscription } from './subscription.entity';
 import { SubscriptionsService } from './subscriptions.service';
 // import { IdArrayDto } from '../core/id-array.dto';
@@ -70,11 +57,7 @@ export class SubscriptionsController {
     @Query('email__lk') email: string,
     @Query('active') active?: boolean,
   ): Promise<{ data: User[] }> {
-    const users = await this.service.getUsersWithSubscription(
-      companyId,
-      email,
-      active,
-    );
+    const users = await this.service.getUsersWithSubscription(companyId, email, active);
     return { data: users };
   }
 
@@ -116,9 +99,6 @@ export class SubscriptionsController {
     @Param('companyId', ValidUUID) companyId: UUID,
     @GetUser() user: User,
   ): Promise<Subscription> {
-    return this.service.deleteWhere(
-      { id, companyId },
-      { user, domain: companyId },
-    );
+    return this.service.deleteWhere({ id, companyId }, { user, domain: companyId });
   }
 }

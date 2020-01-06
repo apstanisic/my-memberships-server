@@ -3,10 +3,7 @@ import { Subscription } from './subscription.entity';
 import { User } from '../users/user.entity';
 import { Company } from '../companies/company.entity';
 
-export function generateSubscription(
-  users: User[],
-  companies: Company[],
-): Subscription {
+export function generateSubscription(users: User[], companies: Company[]): Subscription {
   const random = Faker.random.arrayElement;
   const sub = new Subscription();
 

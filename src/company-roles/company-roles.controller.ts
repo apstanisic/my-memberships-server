@@ -19,7 +19,7 @@ import {
   PermissionsGuard,
   PgResult,
   Role,
-  RoleService,
+  RolesService,
   UpdateRoleDto,
   UUID,
   ValidReason,
@@ -49,7 +49,7 @@ import { CompaniesService } from '../companies/companies.service';
 @Controller('companies/:companyId/roles')
 export class CompaniesRolesController {
   constructor(
-    private readonly rolesService: RoleService,
+    private readonly rolesService: RolesService,
     private readonly companyService: CompaniesService,
     private readonly companyRolesService: CompanyRolesService,
   ) {}
@@ -134,11 +134,11 @@ export class CompaniesRolesController {
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
-    return this.rolesService.updateWhere(
-      { domain: companyId, id: roleId },
-      data,
-      { user, reason, domain: companyId },
-    );
+    return this.rolesService.updateWhere({ domain: companyId, id: roleId }, data, {
+      user,
+      reason,
+      domain: companyId,
+    });
   }
 
   /** Delete role by Id that belongs to this company */
@@ -149,9 +149,6 @@ export class CompaniesRolesController {
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
-    return this.rolesService.deleteWhere(
-      { id: roleId, domain: companyId },
-      { user, reason },
-    );
+    return this.rolesService.deleteWhere({ id: roleId, domain: companyId }, { user, reason });
   }
 }

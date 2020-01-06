@@ -1,8 +1,4 @@
-import {
-  createParamDecorator,
-  UnauthorizedException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { createParamDecorator, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Company } from '../companies/company.entity';
 
 /**

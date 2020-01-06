@@ -1,12 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService, UUID } from 'nestjs-extra';
-import {
-  EntityManager,
-  Repository,
-  Transaction,
-  TransactionManager,
-} from 'typeorm';
+import { EntityManager, Repository, Transaction, TransactionManager } from 'typeorm';
 import { Company } from '../companies/company.entity';
 import { Location } from '../locations/location.entity';
 import { LocationsService } from '../locations/locations.service';
@@ -51,16 +46,8 @@ export class ArrivalsService extends BaseService<Arrival> {
    * Creates new arrival. This method is specific for arrivals.
    * It's mostly wrapper around BaseService create method.
    */
-  async newArrival({
-    locationId,
-    companyId,
-    userId,
-    admin,
-  }: NewArrivalProps): Promise<Arrival> {
-    const location = await this.locationService.getLocationInCompany(
-      companyId,
-      locationId,
-    );
+  async newArrival({ locationId, companyId, userId, admin }: NewArrivalProps): Promise<Arrival> {
+    const location = await this.locationService.getLocationInCompany(companyId, locationId);
 
     const subscription = await this.subService.findOne(
       { companyId, ownerId: userId, active: true },

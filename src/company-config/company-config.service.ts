@@ -2,18 +2,11 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { cloneDeep } from 'lodash';
 import { BaseService, UUID } from 'nestjs-extra';
-import {
-  EntityManager,
-  Repository,
-  Transaction,
-  TransactionManager,
-} from 'typeorm';
+import { EntityManager, Repository, Transaction, TransactionManager } from 'typeorm';
 import { CompanyConfig } from './company-config.entity';
 
 export class CompanyConfigService extends BaseService<CompanyConfig> {
-  constructor(
-    @InjectRepository(CompanyConfig) repository: Repository<CompanyConfig>,
-  ) {
+  constructor(@InjectRepository(CompanyConfig) repository: Repository<CompanyConfig>) {
     super(repository);
   }
 

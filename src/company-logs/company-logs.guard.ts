@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { CompaniesService } from '../companies/companies.service';
 
 /** Check if param for company is provided, get that company, or throw */

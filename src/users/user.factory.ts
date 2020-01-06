@@ -11,7 +11,7 @@ export function generateUser(): User {
   const user = new User(Faker.random.uuid());
   // user.id = Faker.random.uuid();
   user.email = Faker.internet.email().toLowerCase();
-  user._password = passwordHash;
+  user.password = passwordHash;
   user.name = Faker.name.firstName();
   user.phoneNumber = Faker.phone.phoneNumber();
   user.avatar = plainToClass(Image, {

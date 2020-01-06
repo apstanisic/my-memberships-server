@@ -9,13 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  AuthGuard,
-  GetUser,
-  PermissionsGuard,
-  UUID,
-  ValidUUID,
-} from 'nestjs-extra';
+import { AuthGuard, GetUser, PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
 import { validImage } from '../company-images/multer-options';
 import { User } from '../users/user.entity';
 import { Location } from '../locations/location.entity';

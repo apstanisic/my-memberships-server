@@ -48,8 +48,7 @@ export class PricingPlanService extends BaseService<PricingPlan> {
       { companyId, expiresAt: MoreThan(new Date()) },
       { order: { expiresAt: 'DESC' }, relations: ['company'] },
     );
-    const autoRenew =
-      changes.autoRenew !== undefined ? changes.autoRenew : oldPlan.autoRenew;
+    const autoRenew = changes.autoRenew !== undefined ? changes.autoRenew : oldPlan.autoRenew;
     const { company } = oldPlan;
     const tier = changes.tier || oldPlan.tier;
 

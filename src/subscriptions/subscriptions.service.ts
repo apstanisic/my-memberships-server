@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'nestjs-extra';
 import { Repository, Like } from 'typeorm';
@@ -64,10 +60,7 @@ export class SubscriptionsService extends BaseService<Subscription> {
       }
     }
 
-    return this.create(
-      { ...subscription, companyId },
-      { user, domain: companyId },
-    );
+    return this.create({ ...subscription, companyId }, { user, domain: companyId });
   }
 
   /**
