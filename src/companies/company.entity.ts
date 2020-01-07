@@ -1,10 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsIn, IsInt, IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { BaseEntity, Image, Role } from 'nestjs-extra';
+import { BaseEntity } from 'nestjs-extra';
 import { Column, Entity, Index, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-// import { Role } from '../core/access-control/roles.entity';
-// import { BaseEntity } from '../core/entities/base.entity';
-// import { Image } from '../core/types';
+import { CompanyConfig } from '../company-config/company-config.entity';
+import { CompanyImage } from '../company-images/company-image.entity';
 import { Location } from '../locations/location.entity';
 import { PaymentRecord } from '../payments/payment-record.entity';
 import { PricingPlan } from '../pricing-plans/pricing-plan.entity';
@@ -12,13 +11,8 @@ import { Subscription } from '../subscriptions/subscription.entity';
 import { User } from '../users/user.entity';
 import { companiesCategories, CompanyCategory } from './categories.list';
 import { availableTiers, Tier } from './payment-tiers.list';
-import { CompanyConfig } from '../company-config/company-config.entity';
-import { CompanyImage } from '../company-images/company-image.entity';
 
-/**
- * Company can be deleted only if there is no more
- * valid subscriptions
- */
+/** Company */
 @Entity('companies')
 export class Company extends BaseEntity {
   constructor() {
@@ -42,7 +36,6 @@ export class Company extends BaseEntity {
   owner: User;
 
   /** Owner id */
-  // @RelationId((company: Company) => company.owner)
   @Column()
   ownerId: string;
 
@@ -61,18 +54,18 @@ export class Company extends BaseEntity {
   /** Description of company, it's prices */
   @Column({ type: 'text' })
   @IsString()
-  @Length(4, 3000)
+  @Length(4, 2000)
   description: string;
 
   /** Company's main phone numbers */
-  @Column({ type: 'simple-json' })
+  @Column({ type: 'jsonb' })
   @IsNotEmpty()
   @IsString({ each: true })
   @Length(8, 30, { each: true })
   phoneNumbers: string[];
 
   /** Company's main emails */
-  @Column({ type: 'simple-array' })
+  @Column({ type: 'jsonb' })
   @IsNotEmpty()
   @IsEmail({}, { each: true })
   emails: string[];
@@ -84,13 +77,6 @@ export class Company extends BaseEntity {
   @Exclude()
   credit: number;
 
-  /** On which pricing plan is company */
-  @OneToMany(
-    type => PricingPlan,
-    plan => plan.company,
-  )
-  plans: PricingPlan[];
-
   /** All company locations */
   @OneToMany(
     type => Location,
@@ -98,36 +84,38 @@ export class Company extends BaseEntity {
   )
   locations: Location[];
 
-  // /** All roles this company have. */
-  // // Must be both way
-  // @OneToMany(
-  //   type => Role,
-  //   role => role.domain,
-  // )
-  // roles: Role[];
-
-  /** @TODO Implement this */
+  /** What pricing tier company is using currently */
   @Column({ default: 'free' })
   @Exclude()
+  @IsOptional()
   @IsIn([...availableTiers])
   tier: Tier;
 
+  /** Images of company */
   @OneToMany(
     type => CompanyImage,
     image => image.company,
   )
   images: CompanyImage[];
 
+  /** Company config (subscription types...) */
   @OneToOne(
     type => CompanyConfig,
     config => config.company,
   )
   config: CompanyConfig;
 
-  // All payments for this company
+  /** All payments in this company for services */
   @OneToMany(
     type => PaymentRecord,
     record => record.company,
   )
   payments: PaymentRecord[];
+
+  /** All plans this company had */
+  @OneToMany(
+    type => PricingPlan,
+    plan => plan.company,
+  )
+  plans: PricingPlan[];
 }

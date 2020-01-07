@@ -48,8 +48,9 @@ export class Arrival extends BaseEntity {
   @Column({ update: false })
   companyId: UUID;
 
-  // @TODO make this non nullable
-  /** User that came */
+  /** User that came
+   * @Todo check if this can be non nullable and onDelete set null
+   */
   @ManyToOne(
     type => User,
     user => user.arrivals,

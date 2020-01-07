@@ -45,7 +45,6 @@ export class CompanyLogsController {
   }
 
   /** Get actions from specific user */
-  /** @todo Test if executedBy: {id: id} works */
   @Get('users/:userId')
   getLogsByUser(
     @GetPagination() params: PaginationParams,
@@ -54,26 +53,7 @@ export class CompanyLogsController {
   ): PgResult<DbLog> {
     return this.dbLogger.paginate(params, {
       domainId: company.id,
-      executedBy: {
-        id: userId,
-      },
-    });
-  }
-
-  /**
-   * Get actions from specific user.
-   * @TODO this does not work. It has to have specific column.
-   */
-  // @Get('location/:locationId')
-  getLogsInLocation(
-    @GetPagination() params: PaginationParams,
-    @GetCompany() company: Company,
-    @Param('locationId', ValidUUID) locationId: UUID,
-  ): PgResult<DbLog> {
-    return this.dbLogger.paginate(params, {
-      domainId: company.id,
-      // This should be location id.
-      entityId: locationId,
+      executedById: userId,
     });
   }
 

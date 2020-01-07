@@ -7,9 +7,6 @@ import { LocationImage } from '../location-images/location-image.entity';
 import { Workhours } from './workhours';
 
 /**
- * @Todo Maybe store special number of combined lat & long.
- * That way it's easier to find near locations.
- * Maybe don't do anything.
  * @Todo Maybe improve storing of working hours.
  * Or validate them at least
  */

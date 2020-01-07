@@ -1,14 +1,16 @@
+import { plainToClass } from 'class-transformer';
 import * as Faker from 'faker';
-import { CompanyImage } from './company-image.entity';
+import { Image, generateImage } from 'nestjs-extra';
 import { Company } from '../companies/company.entity';
+import { CompanyImage } from './company-image.entity';
 
 const random = Faker.random.arrayElement;
 
-/** @todo Not working currently */
-export function generateUser(companies: Company[], position: number): CompanyImage {
-  const image = new CompanyImage();
+/** Generate company image */
+export function generateCompanyImage(companies: Company[], position: number): CompanyImage {
+  const baseImage: Image = generateImage(position);
+  const image = plainToClass(CompanyImage, baseImage);
   image.company = random(companies);
-  image.position = position;
 
   return image;
 }

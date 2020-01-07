@@ -1,16 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Process, Processor } from '@nestjs/bull';
+import { Logger } from '@nestjs/common';
 import * as moment from 'moment';
 import { Notification, NotificationService } from 'nestjs-extra';
 import { Between } from 'typeorm';
-// import { CronService } from '../core/cron/cron.service';
-// import { Notification } from '../core/notification/notification.entity';
-// import { NotificationService } from '../core/notification/notification.service';
+import { pricingPlanQueue, PricingPlanQueueTasks } from './pricing-plan.consts';
 import { PricingPlanService } from './pricing-plans.service';
 
 /** Remind owner that their plan soon expires */
-@Injectable()
-export class SendPlanRemindersCronService {
+@Processor(pricingPlanQueue)
+export class SendPlanRemindersProcessor {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly pricingPlanService: PricingPlanService,
@@ -18,14 +16,11 @@ export class SendPlanRemindersCronService {
     this.startCronService();
   }
 
-  /** Check every night at 4 for plans that need notification. */
-  @Cron('0 4 * * *')
+  @Process(PricingPlanQueueTasks.sendReminders)
   async startCronService(): Promise<void> {
     new Logger().log('Start checking plans', 'Pricing Plan');
-    // this.cronService.startJob('0 4 * * *', async () => {
     await this.expireInADay();
     await this.expireInAWeek();
-    // });
   }
 
   /**
