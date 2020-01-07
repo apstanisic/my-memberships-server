@@ -18,29 +18,18 @@ import { UserModule } from '../users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
-/**
- * @Todo Improve configModule params
- * @Todo remove BullModule if using CoreModule, it's already imported
- */
+/** First module */
 @Module({
   imports: [
     CoreModule.forRoot({
       storage: {},
       db: { entities: appEntities },
-      config: { isGlobal: true, envFilePath: `${__dirname}/../../../.env` },
+      config: { envFilePath: `${__dirname}/../../../.env` },
       accessControl: { policies, model: casbinModel, availableRoles: allRoles },
       dbLog: true,
       notifications: true,
       mail: true,
-    }),
-    BullModule.registerQueueAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        return {
-          name: 'app',
-          redis: { host: config.get(REDIS_HOST), port: config.get(REDIS_PORT) },
-        };
-      },
+      useCron: false,
     }),
     UserModule,
     CompaniesModule,

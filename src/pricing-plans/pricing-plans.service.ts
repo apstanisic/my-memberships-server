@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bull';
 import {
   BadRequestException,
   ForbiddenException,
@@ -5,16 +6,15 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
 import { BaseService, getEndTime, UUID } from 'nestjs-extra';
 import { MoreThan, Repository } from 'typeorm';
 import { CompaniesService } from '../companies/companies.service';
-// import { getEndTime } from '../core/add-duration';
-// import { BaseService } from '../core/base.service';
-// import { UUID } from '../core/types';
 import { User } from '../users/user.entity';
 import { tierPrices } from './payment-prices';
 import { ExtendActivePlanDto, NewPricingPlanDto } from './pricing-plan.dto';
 import { PricingPlan } from './pricing-plan.entity';
+import { pricingPlanQueue, PricingPlanQueueTasks } from './pricing-plan.consts';
 
 interface ContinueAfterOldPlanParams {
   companyId: UUID;
@@ -28,8 +28,13 @@ export class PricingPlanService extends BaseService<PricingPlan> {
   constructor(
     @InjectRepository(PricingPlan) repository: Repository<PricingPlan>,
     private readonly companyService: CompaniesService,
+    @InjectQueue(pricingPlanQueue) queue: Queue,
   ) {
     super(repository);
+    const Tasks = PricingPlanQueueTasks;
+    queue.add(Tasks.renew, null, { repeat: { cron: '30 0 * * *' } });
+    queue.add(Tasks.sendReminders, null, { repeat: { cron: '0 4 * * *' } });
+    queue.add(Tasks.cancelExpired, null, { repeat: { cron: '0 3 * * *' } });
   }
 
   /**

@@ -1,33 +1,29 @@
-import * as fs from 'fs';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Process, Processor } from '@nestjs/bull';
+import { InternalServerErrorException } from '@nestjs/common';
 import * as moment from 'moment';
 import { NotificationService, UUID } from 'nestjs-extra';
 import { Between, MoreThan } from 'typeorm';
 import { CompaniesService } from '../companies/companies.service';
-// import { CronService } from '../core/cron/cron.service';
 import { tierPrices } from './payment-prices';
 import { PricingPlan } from './pricing-plan.entity';
 import { PricingPlanService } from './pricing-plans.service';
-// import { NotificationService } from '../core/notification/notification.service';
-// import { UUID } from '../core/types';
+import { pricingPlanQueue, PricingPlanQueueTasks } from './pricing-plan.consts';
 
-@Injectable()
-export class AutoRenewPlansCronService {
+@Processor(pricingPlanQueue)
+export class AutoRenewPlansProcessor {
   constructor(
     private readonly pricingPlanService: PricingPlanService,
     private readonly companyService: CompaniesService,
     private readonly notificationService: NotificationService,
-  ) {
-    // In 00:30 check if plan has expired and revert company to free tier
-    // this.cronService.startJob('30 0 * * *', this.extendPlans);
-  }
+  ) {}
 
   /**
    * All companies that plan has expired are reverted to free plan
    * If this expired plan has renewed plan it will not
    */
-  @Cron('30 0 * * *')
+  // @Cron('30 0 * * *')
+
+  @Process(PricingPlanQueueTasks.renew)
   async extendPlans(): Promise<void> {
     const prev24h = moment()
       .subtract(1, 'day')

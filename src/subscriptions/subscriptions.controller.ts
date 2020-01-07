@@ -34,16 +34,13 @@ export class SubscriptionsController {
     return this.service.paginate(pg, { companyId });
   }
 
-  /** @Todo this should not fetch owner automaticly */
+  /** Get subs by id */
   @Get('ids')
   async getSubsByIds(
     @Param('companyId', ValidUUID) companyId: UUID,
     @Query() query: IdArrayDto,
   ): Promise<Subscription[]> {
-    return this.service.findByIds(query.ids, {
-      relations: ['owner'],
-      where: { companyId },
-    });
+    return this.service.findByIds(query.ids, { where: { companyId } });
   }
 
   /**

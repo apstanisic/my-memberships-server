@@ -67,24 +67,18 @@ export class CompanyArrivalsController {
     });
   }
 
-  /**
-   * Remove arrival. Admins can cancel arrival if needed.
-   * @Todo check if this should be post or delete request
-   * Semanticly it should be delete, but not all clients support body
-   * in delete request
-   */
+  /** Remove arrival. Admins can cancel arrival if needed. */
   @Delete(':arrivalId')
   async deleteArrival(
     @Param('companyId', ValidUUID) companyId: string,
     @Param('arrivalId', ValidUUID) arrivalId: string,
     @GetUser() loggedUser: User,
-    @Body('reason', ValidReason) reason?: string,
   ): Promise<Arrival> {
     return this.arrivalsService.deleteArrival({
       companyId,
       arrivalId,
-      reason,
       loggedUser,
+      reason: 'Delete arrival',
     });
   }
 }

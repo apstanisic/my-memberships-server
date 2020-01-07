@@ -28,6 +28,7 @@ import {
   IdArrayDto,
 } from 'nestjs-extra';
 import { In } from 'typeorm';
+import { allRoles } from 'src/config/access-control-config';
 import { User } from '../users/user.entity';
 import { CompanyRolesService } from './company-roles.service';
 import { CompaniesService } from '../companies/companies.service';
@@ -112,6 +113,10 @@ export class CompaniesRolesController {
     @GetUser() user: User,
     @Body('reason', ValidReason) reason?: string,
   ): Promise<Role> {
+    if (!allRoles.includes(data.name)) {
+      throw new BadRequestException('Role does not exist');
+    }
+
     const company = await this.companyService.findOne(companyId);
     const roles = await this.rolesService.find({ domain: company.id });
 
