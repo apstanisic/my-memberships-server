@@ -5,7 +5,7 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "ES2017",
+    "target": "ES2018",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -19,7 +19,8 @@
     "resolveJsonModule": true,
     "preserveConstEnums": true,
     "preserveSymlinks": true,
-    "lib": ["ES2019"]
+    "lib": ["ES2019"],
+    "esModuleInterop": true
     // "allowUnreachableCode": false,
     // "paths": {
     //   "nestjs-extra": ["~/Projects/nestjs-extra"]

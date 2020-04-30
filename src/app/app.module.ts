@@ -1,6 +1,6 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
-import { ConfigService, CoreModule, REDIS_HOST, REDIS_PORT } from 'nestjs-extra';
+import { ConfigService, CoreModule, REDIS_HOST, REDIS_PORT, initQueue } from 'nestjs-extra';
 import { LocationImagesModule } from 'src/location-images/location-images.module';
 import { ArrivalsModule } from '../arrivals/arrivals.module';
 import { CompaniesModule } from '../companies/companies.module';
@@ -21,6 +21,7 @@ import { AppService } from './app.service';
 /** First module */
 @Module({
   imports: [
+    BullModule.registerQueueAsync(initQueue('app')),
     CoreModule.forRoot({
       storage: {},
       db: { entities: appEntities },
@@ -29,7 +30,7 @@ import { AppService } from './app.service';
       dbLog: true,
       notifications: true,
       mail: true,
-      useCron: false,
+      useMq: true,
     }),
     UserModule,
     CompaniesModule,

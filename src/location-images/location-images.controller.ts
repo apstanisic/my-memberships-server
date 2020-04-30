@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard, GetUser, PermissionsGuard, UUID, ValidUUID } from 'nestjs-extra';
+import { v4 as uuid } from 'uuid';
 import { validImage } from '../company-images/multer-options';
-import { User } from '../users/user.entity';
 import { Location } from '../locations/location.entity';
+import { User } from '../users/user.entity';
 import { LocationImage } from './location-image.entity';
 import { LocationImagesService } from './location-images.service';
 
@@ -31,12 +32,22 @@ export class LocationImagesController {
   ): Promise<Location | any> {
     if (file?.buffer === undefined) throw new BadRequestException();
 
-    return this.locationImagesService.addImage({
+    // All sizes original image, and then replace original with right size
+    // const filename = await this.storageService.put(file, `temp-file/${uuid()}`);
+    // this.queue.add('location-image', { filename }, { attempts: 3 });
+    const tempImage = await this.locationImagesService.addImageToProcessing({
+      file: file.buffer,
       locationId,
       companyId,
-      loggedUser,
-      fileBuffer: file.buffer,
     });
+    return tempImage;
+
+    // return this.locationImagesService.addImage({
+    //   locationId,
+    //   companyId,
+    //   loggedUser,
+    //   fileBuffer: file.buffer,
+    // });
   }
 
   /** Remove image of location */

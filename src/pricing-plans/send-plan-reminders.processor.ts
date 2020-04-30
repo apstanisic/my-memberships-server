@@ -1,6 +1,5 @@
 import { Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Notification, NotificationService } from 'nestjs-extra';
 import { Between } from 'typeorm';
 import { pricingPlanQueue, PricingPlanQueueTasks } from './pricing-plan.consts';
@@ -12,13 +11,10 @@ export class SendPlanRemindersProcessor {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly pricingPlanService: PricingPlanService,
-  ) {
-    this.startCronService();
-  }
+  ) {}
 
   @Process(PricingPlanQueueTasks.sendReminders)
-  async startCronService(): Promise<void> {
-    new Logger().log('Start checking plans', 'Pricing Plan');
+  async checkForNotifications(): Promise<void> {
     await this.expireInADay();
     await this.expireInAWeek();
   }

@@ -1,6 +1,6 @@
 import { Process, Processor } from '@nestjs/bull';
 import { InternalServerErrorException } from '@nestjs/common';
-import * as moment from 'moment';
+import moment from 'moment';
 import { NotificationService, UUID } from 'nestjs-extra';
 import { Between, MoreThan } from 'typeorm';
 import { CompaniesService } from '../companies/companies.service';

@@ -10,7 +10,7 @@ export class ArrivalsMigration1567668491975 implements MigrationInterface {
       relations: ['subscriptions', 'locations'],
     });
 
-    for (let i = 0; i < 200; i += 1) {
+    for (let i = 0; i < 400; i += 1) {
       arrivals.push(generateArrival(companies));
     }
     await queryRunner.manager.save(arrivals);

@@ -36,7 +36,7 @@ export class Company extends BaseEntity {
   owner: User;
 
   /** Owner id */
-  @Column()
+  @Column({ nullable: true })
   ownerId: string;
 
   /** All subscriptions in this company (valid, expired and deleted) */

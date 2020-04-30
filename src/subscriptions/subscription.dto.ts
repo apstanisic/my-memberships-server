@@ -50,7 +50,7 @@ export class CreateSubscriptionDto extends SubscriptionDto {
   price: number;
 
   @IsDefined()
-  allowedUses: number = 31;
+  allowedUses = 31;
 
   // @IsDefined()
   @IsOptional()

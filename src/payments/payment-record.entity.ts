@@ -15,9 +15,6 @@ export class PaymentRecord extends BaseEntity {
   @Column({ default: 0, type: 'int' })
   creditAdded: number;
 
-  @Column()
-  companyId: string;
-
   /** Company to which this credit is added */
   @ManyToOne(
     type => Company,
@@ -25,6 +22,9 @@ export class PaymentRecord extends BaseEntity {
     { onDelete: 'SET NULL' },
   )
   company: Company;
+
+  @Column({ nullable: true })
+  companyId: string;
 
   /** App admin who executed this record */
   @ManyToOne(type => User)

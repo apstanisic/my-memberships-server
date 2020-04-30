@@ -27,8 +27,8 @@ interface ContinueAfterOldPlanParams {
 export class PricingPlanService extends BaseService<PricingPlan> {
   constructor(
     @InjectRepository(PricingPlan) repository: Repository<PricingPlan>,
-    private readonly companyService: CompaniesService,
     @InjectQueue(pricingPlanQueue) queue: Queue,
+    private readonly companyService: CompaniesService,
   ) {
     super(repository);
     const Tasks = PricingPlanQueueTasks;
