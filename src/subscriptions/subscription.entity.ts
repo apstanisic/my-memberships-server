@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsDate } from 'class-validator';
-import * as moment from 'moment';
+import moment from 'moment';
 import { BaseEntity, getEndTime, IsBetween } from 'nestjs-extra';
 import { BeforeUpdate, Column, Entity, Index, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Arrival } from '../arrivals/arrival.entity';
@@ -30,7 +30,7 @@ export class Subscription extends BaseEntity {
   owner: User;
 
   /** Subscription owner id  */
-  @Column()
+  @Column({ nullable: true })
   ownerId: string;
 
   /* Date from which subscription is valid */

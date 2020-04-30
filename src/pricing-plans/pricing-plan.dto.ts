@@ -6,7 +6,7 @@ export class ExtendActivePlanDto {
   /** Duration in months. Default 1 month */
   @IsOptional()
   @IsInt()
-  duration: number = 1;
+  duration = 1;
 
   /** If undefined use value of old plan */
   @IsOptional()
@@ -24,10 +24,10 @@ export class NewPricingPlanDto {
   /** Duration in months */
   @IsInt()
   @IsPositive()
-  duration: number = 1;
+  duration = 1;
 
   @IsBoolean()
-  autoRenew: boolean = false;
+  autoRenew = false;
 
   @IsIn([...availableTiers])
   tier: Tier = 'basic';

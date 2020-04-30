@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import * as moment from 'moment';
+import moment from 'moment';
 import { BaseEntity, UUID } from 'nestjs-extra';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Company } from '../companies/company.entity';
@@ -22,17 +22,14 @@ export class Arrival extends BaseEntity {
   subscription: Subscription;
 
   /** Subscription that was used for this arrival */
-  @Column({ update: false })
+  @Column({ update: false, nullable: true })
   subscriptionId: UUID;
 
   /** At which location did arrival happen */
   @ManyToOne(
     type => Location,
     location => location.arrivals,
-    {
-      nullable: true,
-      onDelete: 'SET NULL',
-    },
+    { onDelete: 'SET NULL' },
   )
   location?: Location;
 
@@ -48,9 +45,7 @@ export class Arrival extends BaseEntity {
   @Column({ update: false })
   companyId: UUID;
 
-  /** User that came
-   * @Todo check if this can be non nullable and onDelete set null
-   */
+  /** User that came */
   @ManyToOne(
     type => User,
     user => user.arrivals,
@@ -59,7 +54,7 @@ export class Arrival extends BaseEntity {
   user: User;
 
   /** User that came id */
-  @Column({ update: false })
+  @Column({ update: false, nullable: true })
   userId: UUID;
 
   /** When did person arrive */
@@ -82,7 +77,7 @@ export class Arrival extends BaseEntity {
   @Column({ nullable: true, type: 'double precision', update: false })
   long?: number;
 
-  @ManyToOne(type => User, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(type => User, { onDelete: 'SET NULL' })
   approvedBy?: User;
 
   @Column({ nullable: true })

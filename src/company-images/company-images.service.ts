@@ -1,11 +1,22 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import { ForbiddenException, Injectable, HttpService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService, StorageImagesService, UUID } from 'nestjs-extra';
+import { Queue } from 'bull';
+import {
+  BaseService,
+  StorageImagesService,
+  StorageService,
+  UUID,
+  ConfigService,
+  STORAGE_URL,
+} from 'nestjs-extra';
 import { Repository } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Company } from '../companies/company.entity';
+import { v4 as uuid } from 'uuid';
 import { CompaniesService } from '../companies/companies.service';
+import { Company } from '../companies/company.entity';
+import { User } from '../users/user.entity';
 import { CompanyImage } from './company-image.entity';
+import { companyImagesQueue, CompanyImagesQueueTasks } from './company-images.consts';
 
 interface RemoveImageParams {
   imageId: UUID;
@@ -23,10 +34,80 @@ interface AddImageParams {
 export class CompanyImagesService extends BaseService<CompanyImage> {
   constructor(
     @InjectRepository(CompanyImage) repository: Repository<CompanyImage>,
+    @InjectQueue(companyImagesQueue) private readonly queue: Queue,
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
     private readonly storageImagesService: StorageImagesService,
+    private readonly storageService: StorageService,
     private readonly companyService: CompaniesService,
   ) {
     super(repository);
+  }
+
+  /**
+   * When controller accepts image, call this method
+   * This method stores original image in s3 and db, then
+   * generates the job that will create all image sizes,
+   * update db with new sizes and then delete original image
+   */
+  async addImageToProcessing({
+    file,
+    companyId,
+  }: {
+    file: Buffer;
+    companyId: UUID;
+  }): Promise<CompanyImage> {
+    // Check if location belongs to company
+    const company = await this.companyService.findOne(companyId);
+
+    if (!this.canAddImageToCompany(company)) throw new ForbiddenException('Quota reached');
+
+    // Store original version
+    const filename = await this.storageService.put(file, `tmp/${Date.now()}-${uuid()}.jpg`);
+
+    // Store orignal version in db. All sizes are currently original version
+    const image = await this.create({
+      company,
+      original: filename,
+      prefix: filename,
+      lg: filename,
+      md: filename,
+      xs: filename,
+      sm: filename,
+    });
+
+    // Add job that will create all sizes
+    this.queue.add(CompanyImagesQueueTasks.generateImages, { image }, { attempts: 3 });
+    return image;
+  }
+
+  /**
+   * Generate all sizes for given image, and replace placeholder sizes
+   * with newly generated images.
+   * @param image Image that has all sizes original image
+   */
+  async generateImageSizes(image: CompanyImage): Promise<CompanyImage> {
+    // Original image s3 path
+    const { original } = image;
+    const s3url = this.configService.get(STORAGE_URL);
+    const file = await this.httpService
+      .get(`${s3url}/${original}`)
+      .toPromise()
+      .then(r => r.data);
+
+    console.log(file);
+
+    // Generate all image sizes
+    const storedImage = await this.storageImagesService.storeImage(file);
+    // Set original as undefined
+    storedImage.original = undefined;
+    // Update image in db
+    const updated = await this.update(image, storedImage);
+    // Delete original image
+    if (original) {
+      await this.storageService.delete(original);
+    }
+    return updated;
   }
 
   /** Add image to company */

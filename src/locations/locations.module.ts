@@ -13,8 +13,8 @@ import { LocationImage } from '../location-images/location-image.entity';
     TypeOrmModule.forFeature([Location, LocationImage]),
     BullModule.registerQueue({ name: 'app' }),
   ],
-  providers: [LocationsService, LocationImagesService],
-  controllers: [LocationsController, LocationImagesController],
+  providers: [LocationsService],
+  controllers: [LocationsController],
   exports: [LocationsService],
 })
 export class LocationsModule {}

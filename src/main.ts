@@ -1,6 +1,6 @@
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 import { AppModule } from './app/app.module';
 
 async function bootstrap(): Promise<void> {
@@ -19,9 +19,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  // Globally strip all @Exclude() properties
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
   await app.listen(4000);
 }
 bootstrap();

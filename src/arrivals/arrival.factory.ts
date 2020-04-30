@@ -1,5 +1,5 @@
 import * as Faker from 'faker';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Company } from '../companies/company.entity';
 import { Arrival } from './arrival.entity';
 

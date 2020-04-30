@@ -2,11 +2,6 @@ import { generateRole, generateUserRole, Role } from 'nestjs-extra';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { Company } from '../../src/companies/company.entity';
 import { User } from '../../src/users/user.entity';
-// import {
-//   generateRole,
-//   generateUserRole,
-// } from '../../src/core/access-control/role.factory';
-// import { Role } from '../../src/core/access-control/roles.entity';
 
 export class RolesMigration1566763274976 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<any> {
@@ -14,13 +9,15 @@ export class RolesMigration1566763274976 implements MigrationInterface {
     const users: User[] = await queryRunner.manager.find(User);
     const companies: Company[] = await queryRunner.manager.find(Company);
 
-    for (let i = 0; i < 300; i += 1) {
-      roles.push(
-        generateRole(
-          users,
-          companies.map(c => c.id),
-        ),
-      );
+    for (let i = 0; i < 3; i += 1) {
+      users.forEach(user => {
+        roles.push(
+          generateRole(
+            [user],
+            companies.map(c => c.id),
+          ),
+        );
+      });
     }
     users.forEach(user => roles.push(generateUserRole(user)));
 
